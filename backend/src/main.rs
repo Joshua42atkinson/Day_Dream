@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 
 // --- (IMPROVEMENT) Import Leptos routes ---
 // These helpers will allow us to host server functions
-use leptos::{get_configuration, logging, provide_context};
+use leptos::{get_configuration, logging};
 use leptos_axum::{generate_route_list, LeptosRoutes};
 
 // --- (IMPROVEMENT) Import frontend components ---
