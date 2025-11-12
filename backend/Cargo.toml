@@ -5,7 +5,9 @@ edition = "2021"
 
 [dependencies]
 # This backend depends on the shared data structures
-common = { path = "../common" }
+common = { path = "../common", features = ["ssr"] }
+frontend = { path = "../frontend" }
+
 
 # Web Server framework
 axum = "0.7"
@@ -24,8 +26,8 @@ tower-http = { version = "0.5", features = ["cors"] }
 # --- (IMPROVEMENT) Leptos Imports ---
 # We add these so the backend can understand
 # and serve Leptos's "server functions".
-leptos = { version = "0.6", features = ["ssr"] }
-leptos_axum = "0.6"
+leptos = { version = "0.6.9", features = ["ssr"] }
+leptos_axum = "0.6.9"
 
 # State Management (as per your docs)
 bevy_ecs = { version = "0.14", optional = true } # Optional for now

@@ -5,7 +5,6 @@
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use once_cell::sync::Lazy; // For loading static data
-use leptos::ServerFnError; // Used for our server action structs
 
 // --- Data Structures from quests.py ---
 // These are direct Rust translations of your Python quest data.

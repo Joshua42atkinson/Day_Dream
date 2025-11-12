@@ -18,4 +18,7 @@ once_cell = "1.19"
 # This allows our shared data (like `GameTurn` and `PlayerCharacter`)
 # to be serialized/deserialized by Leptos's server functions
 # and API helpers.
-leptos = { version = "0.6", features = ["serde"] }
+leptos = { version = "0.6.9", features = ["serde"] }
+
+[features]
+ssr = ["leptos/ssr"]

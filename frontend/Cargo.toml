@@ -27,15 +27,14 @@ site-root = "."
 common = { path = "../common" }
 
 # Leptos Framework
-# (IMPROVEMENT) We add "macros" and "nightly" features
+# (IMPROVEMENT) We add the "macros" feature
 # "macros" enables the `view!` macro and `#[component]`
-# "nightly" enables server functions (though we use reqwest for now)
-leptos = { version = "0.6", features = ["csr", "macros"] }
+leptos = { version = "0.6.9", features = ["csr"] }
 
 # (IMPROVEMENT) Leptos Router
 # This is new. We use this for <Router>, <Route>, and <A> components
 # to handle navigation.
-leptos_router = { version = "0.6", features = ["csr"] }
+leptos_router = { version = "0.6.9", features = ["csr"] }
 
 # HTTP client for making API calls from Wasm
 reqwest = { version = "0.12", features = ["json"] }
