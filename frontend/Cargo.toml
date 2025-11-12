@@ -1,0 +1,48 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+edition = "2021"
+
+# --- (IMPROVEMENT) Leptos Metadata ---
+# This section is new. It tells `cargo-leptos` how to build
+# and serve your application.
+[package.metadata.leptos]
+# The name of your Wasm binary.
+output-name = "daydream_frontend"
+
+# The address your backend server will run on.
+site-addr = "127.0.0.1:3001"
+
+# The port cargo-leptos will use to proxy requests.
+# Your browser will connect to this port.
+leptos-watch-port = 3000
+
+# The name of the `lib.rs` file
+lib-file = "src/lib.rs"
+
+# The `index.html` file to use as a template
+site-root = "."
+
+[dependencies]
+common = { path = "../common" }
+
+# Leptos Framework
+# (IMPROVEMENT) We add "macros" and "nightly" features
+# "macros" enables the `view!` macro and `#[component]`
+# "nightly" enables server functions (though we use reqwest for now)
+leptos = { version = "0.6", features = ["csr", "macros"] }
+
+# (IMPROVEMENT) Leptos Router
+# This is new. We use this for <Router>, <Route>, and <A> components
+# to handle navigation.
+leptos_router = { version = "0.6", features = ["csr"] }
+
+# HTTP client for making API calls from Wasm
+reqwest = { version = "0.12", features = ["json"] }
+
+# Required for Wasm
+wasm-bindgen = "0.2"
+
+# (IMPROVEMENT) This is for logging to the browser console
+console_log = "1.0"
+log = "0.4"

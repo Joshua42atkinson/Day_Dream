@@ -1,0 +1,12 @@
+# This is the root Cargo.toml for your entire project.
+# It defines a "virtual workspace," which tells Rust
+# that the `backend`, `frontend`, and `common` folders
+# are all related packages (crates) within one project.
+
+[workspace]
+resolver = "2"
+members = [
+    "backend",
+    "frontend",
+    "common"
+]

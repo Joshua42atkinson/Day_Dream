@@ -1,0 +1,45 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# This backend depends on the shared data structures
+common = { path = "../common" }
+
+# Web Server framework
+axum = "0.7"
+# The runtime for our server
+tokio = { version = "1", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# --- (IMPROVEMENT) CORS ---
+# This is new. It allows our frontend (on 127.0.0.1:3000)
+# to make requests to our backend (on 127.0.0.1:3001).
+tower-http = { version = "0.5", features = ["cors"] }
+
+# --- (IMPROVEMENT) Leptos Imports ---
+# We add these so the backend can understand
+# and serve Leptos's "server functions".
+leptos = { version = "0.6", features = ["ssr"] }
+leptos_axum = "0.6"
+
+# State Management (as per your docs)
+bevy_ecs = { version = "0.14", optional = true } # Optional for now
+
+# Database (as per your docs)
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres"], optional = true }
+dotenvy = { version = "0.15", optional = true }
+
+# Vector DB (as per your docs)
+lancedb = { version = "0.6", optional = true }
+
+# AI Orchestration (as per your docs)
+swarms-rs = { version = "0.1.5", optional = true }
+rig-core = { version = "0.1", optional = true }
+
+# GPU (as per your docs)
+rocm-rs = { version = "0.4.2", optional = true }
