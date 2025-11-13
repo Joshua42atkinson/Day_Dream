@@ -1,55 +1,66 @@
-use axum::Router;
-
-
-// --- (IMPROVEMENT) Import Leptos routes ---
-// These helpers will allow us to host server functions
+use axum::{Extension, Router};
+use bevy::prelude::{App as BevyApp, MinimalPlugins, Update, World};
+use common::PlayerCharacter;
 use leptos::{get_configuration, logging};
 use leptos_axum::{generate_route_list, LeptosRoutes};
-
-// --- (IMPROVEMENT) Import frontend components ---
-// This allows the backend to know about the server functions
-// defined in the frontend crate.
-use frontend::app::App; 
+use std::thread;
+use tokio::sync::{mpsc, oneshot};
+use frontend::app::App;
 
 mod handlers;
 mod routes;
 mod domain;
 
+use domain::game_logic::process_command;
+use domain::player::get_simulated_character;
 use routes::player::player_routes;
+use tokio::sync::mpsc::Receiver;
 
-// --- Main Server Function ---
+fn run_bevy_app(
+    mut rx: Receiver<(String, oneshot::Sender<PlayerCharacter>)>,
+) {
+    let mut app = BevyApp::new();
+    app.add_plugins(MinimalPlugins)
+        .add_systems(Update, move |world: &mut World| {
+            process_command(world, &mut rx);
+        });
+
+    // Spawn a simulated player entity for testing
+    let simulated_player = get_simulated_character();
+    app.world_mut().spawn(simulated_player);
+
+    app.run();
+}
+
 #[tokio::main]
 async fn main() {
     logging::log!("Starting Daydream Backend Server...");
 
-    // --- (IMPROVEMENT) Load Leptos Config ---
-    // This loads the `frontend/Cargo.toml` (which contains a [package.metadata.leptos] section)
-    // to configure server-side rendering, etc.
+    // Create a channel for sending commands from Axum to Bevy
+    let (tx, rx) =
+        mpsc::channel::<(String, oneshot::Sender<PlayerCharacter>)>(100);
+
+    // Spawn the Bevy app in a separate thread
+    thread::spawn(move || run_bevy_app(rx));
+
     let conf = get_configuration(Some("frontend/Cargo.toml")).await.unwrap();
     let leptos_options = conf.leptos_options;
     let addr = leptos_options.site_addr;
-    let routes = generate_route_list(App); // Get all routes from the <App/> component
+    let routes = generate_route_list(App);
 
-    // --- (IMPROVEMENT) CORS Layer ---
-    // This allows requests from our frontend (running on :3000)
-    // to our backend (running on :3001)
-    use tower_http::cors::{CorsLayer, Any};
+    use tower_http::cors::{Any, CorsLayer};
     let cors = CorsLayer::new()
-        .allow_origin(Any) // Allow any origin for development
+        .allow_origin(Any)
         .allow_methods(Any)
         .allow_headers(Any);
 
-    // Build our application router
     let app = Router::new()
-        // --- (IMPROVEMENT) Leptos Routes ---
-        // This line adds all the routes needed for Leptos server functions.
-        // It's separate from the file serving, which `cargo-leptos` handles.
         .leptos_routes(&leptos_options, routes, App)
         .merge(player_routes(&leptos_options))
-        .layer(cors) // Apply the CORS middleware
+        .layer(cors)
+        .layer(Extension(tx))
         .with_state(leptos_options);
 
-    // Run the server
     logging::log!("Backend listening on http://{}", &addr);
     axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
         .await

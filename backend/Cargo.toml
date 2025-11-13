@@ -30,6 +30,7 @@ leptos = { version = "0.6.9", features = ["ssr"] }
 leptos_axum = "0.6.9"
 
 # State Management (as per your docs)
+bevy = { version = "0.14" }
 bevy_ecs = { version = "0.14", optional = true } # Optional for now
 
 # Database (as per your docs)

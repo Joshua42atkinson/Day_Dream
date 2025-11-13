@@ -78,7 +78,11 @@ pub struct RaceData {
 // --- Main PlayerCharacter Struct ---
 // This is the "master" struct for a player's character,
 // combining all the data from your Python app's `load_character_data`.
+#[cfg(feature = "ssr")]
+use bevy_ecs::prelude::Component;
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "ssr", derive(Component))]
 pub struct PlayerCharacter {
     pub id: String, // The character's document ID
     pub user_id: String,
