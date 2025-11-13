@@ -3,9 +3,12 @@ use axum::{
     http::StatusCode,
     Json,
     extract::State,
+    Extension,
 };
 use leptos::LeptosOptions;
 use std::collections::{HashMap};
+use tokio::sync::{mpsc, oneshot};
+use common::PlayerCharacter;
 
 // Import our shared data structures
 use common::{
@@ -24,37 +27,29 @@ use crate::domain::player::get_simulated_character;
 /// and returns the new game state.
 pub async fn handle_submit_command(
     State(_options): State<LeptosOptions>,
-    // Axum deserializes the request JSON into our `PlayerCommand` struct
-    Json(payload): Json<PlayerCommand>
+    Extension(tx): Extension<mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>>,
+    Json(payload): Json<PlayerCommand>,
 ) -> impl IntoResponse {
+    let (one_tx, one_rx) = oneshot::channel();
+    let command = payload.command_text.clone();
+    tx.send((command, one_tx)).await.unwrap();
 
-    // Get the character state that the frontend sent us
-    let mut character = payload.current_character;
+    let updated_character = one_rx.await.unwrap();
 
-    // --- Simulation of Game Logic ---
-    // (Here we would port all your `app.py` logic for
-    // command parsing, quest triggers, AI calls, etc.)
+    let ai_narrative = if payload.current_character.current_step_id
+        != updated_character.current_step_id
+    {
+        "You feel a sense of progress as you complete the task.".to_string()
+    } else {
+        "Your command has been processed, but nothing seems to have changed."
+            .to_string()
+    };
 
-    // For now, let's just simulate a simple response
-    let ai_narrative = format!(
-        "You attempt to '{}'. The world shifts around you. The air smells of ozone and forgotten memories.",
-        payload.command_text
-    );
-
-    // Simulate finding an item
-    character.inventory.push("Strange Cog".to_string());
-    // Simulate spending a fate point
-    character.fate_points -= 1;
-
-    let system_message = Some("You found a 'Strange Cog'!".to_string());
-    // --- End Simulation ---
-
-    // Create the response object
     let game_turn = GameTurn {
         player_command: payload.command_text,
         ai_narrative,
-        system_message,
-        updated_character: character, // Send the modified character back
+        system_message: None,
+        updated_character,
     };
 
     (StatusCode::OK, Json(game_turn))
