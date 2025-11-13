@@ -8,6 +8,8 @@ use wasm_bindgen::prelude::*;
 
 
 // Import our shared data structures
+use crate::components::onboarding::OnboardingTutorial;
+use crate::components::persistent_ui::PersistentUiPanel;
 use common::{
     PlayerCharacter, ProfileData, JournalData,
     // (IMPROVEMENT) New structs for interactivity
@@ -148,6 +150,9 @@ fn ProfileView() -> impl IntoView {
                                 </select>
                             </div>
 
+                            // Add the OnboardingTutorial component here
+                            <OnboardingTutorial />
+
                         }.into_view(),
                         None => view! { <p class="text-red-400">"Failed to load profile data."</p> }.into_view()
                     }
@@ -246,7 +251,11 @@ fn GameView() -> impl IntoView {
 
     // --- 7. The UI (View) ---
     view! {
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        // The PersistentUiPanel is fixed, so it will float on the side.
+        <PersistentUiPanel />
+
+        // We adjust the main grid to leave space for the sidebar.
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 pr-80"> // Added pr-80 for sidebar
 
             // Left Column: Character & Quest Info
             <div class="md:col-span-1 flex flex-col gap-6">
