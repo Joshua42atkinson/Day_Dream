@@ -1,1 +1,13 @@
+# Rust artifacts
 /target/
+
+# Ignore all .env files
+.env
+**/.env
+
+# Editor configuration
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
