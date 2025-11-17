@@ -13,15 +13,17 @@ pub fn get_simulated_character() -> PlayerCharacter {
     let template = CHARACTER_TEMPLATES.get(0).cloned().unwrap();
     let base_fate_points = 1;
     let race_data = RACE_DATA_MAP.get(&template.race_name).unwrap();
-    let mut quest_title = "Starting Quest".to_string();
-    let mut step_desc = "Begin your journey.".to_string();
-    let start_quest = QUEST_DATA.get(&template.starting_quest_id);
+    let mut quest_title = "No Quest".to_string();
+    let mut step_desc = "You are ready for an adventure.".to_string();
+    let start_quest_id_str = "Q_THE_WAY_IS_SHUT";
+    let start_quest = QUEST_DATA.get(start_quest_id_str);
+
     let (start_step_id, start_quest_id) = if let Some(quest) = start_quest {
         quest_title = quest.title.clone();
         if let Some(step) = quest.steps.get(&quest.starting_step) {
             step_desc = step.description.clone();
         }
-        (Some(quest.starting_step.clone()), Some(template.starting_quest_id.clone()))
+        (Some(quest.starting_step.clone()), Some(start_quest_id_str.to_string()))
     } else {
         (None, None)
     };

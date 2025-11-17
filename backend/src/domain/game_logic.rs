@@ -15,11 +15,13 @@ pub fn process_command(
             {
                 if let Some(quest) = QUEST_DATA.get(quest_id) {
                     if let Some(step) = quest.steps.get(step_id) {
-                        if step.trigger_condition == "ai_check:initial_description_provided"
-                            && !command.is_empty()
-                        {
-                            player.current_step_id = step.next_step.clone();
-                            info!("Quest step completed!");
+                        let command_lower = command.trim().to_lowercase();
+                        if let Some(choice) = step.choices.iter().find(|c| c.command == command_lower) {
+                            if let Some(next_step_data) = quest.steps.get(&choice.next_step) {
+                                player.current_step_id = Some(choice.next_step.clone());
+                                player.current_step_description = next_step_data.description.clone();
+                                info!("Quest advanced to step: {}", choice.next_step);
+                            }
                         }
                     }
                 }
