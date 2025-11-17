@@ -1,0 +1,11 @@
+{
+    "id": "klex",
+    "name": "Klex",
+    "race_name": "Slime",
+    "class_name": "Archanist",
+    "philosophy_name": "Pointlessnesses",
+    "boon": "A Smooth, Resonating Stone (Vibrates faintly near strong emotions or energy)",
+    "backstory": "Klex oozed into existence from a pool of raw conceptual residue mixed with forgotten arcane energy. It doesn't perceive rigid forms or goals as important, finding fascination in the ebb and flow of energy and information itself. Drawn to Thetopia's relative stability, it seeks interesting energy sources to observe or absorb, guided by the vibrations of its resonating stone. It communicates through gestures, simple words, and changes in its translucent form.",
+    "starting_quest_id": "Q_K1_TASTING_THE_AETHER",
+    "display_desc": "An amorphous Slime Archanist fascinated by energy flows, guided by a resonating stone."
+}

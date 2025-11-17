@@ -1,0 +1,11 @@
+{
+    "id": "pip_quickwit",
+    "name": "Pip Quickwit",
+    "race_name": "Leprechaun",
+    "class_name": "Rascal",
+    "philosophy_name": "Pointlessnesses",
+    "boon": "A \"Lucky\" Tarnished Copper Coin (Seems to occasionally distract others)",
+    "backstory": "Pip doesn't remember where they *really* came from, just that they \"found\" themselves near Thetopia with a strange coin. They believe meaning is fleeting and focus on opportunities in the present. Pip enjoys observing people, finding shortcuts, and acquiring \"misplaced\" shiny things, though not maliciously - more out of opportunistic curiosity. They talk fast and think faster, always looking for an angle or an interesting tidbit of information.",
+    "starting_quest_id": "Q_P1_SIZING_UP_THE_MARK",
+    "display_desc": "A fast-talking Leprechaun Rascal living for the moment, always looking for an opportunity with a 'lucky' coin."
+}

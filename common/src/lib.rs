@@ -30,11 +30,68 @@ pub struct QuestReward {
     pub silent: Option<bool>,
 }
 
+// --- Persona Engine Data Structures ---
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Archetype {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Stat {
+    pub id: i32,
+    pub name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct ArchetypeStatBuff {
+    pub archetype_id: i32,
+    pub stat_id: i32,
+    pub buff_value: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Dilemma {
+    pub id: i32,
+    pub title: String,
+    pub dilemma_text: String,
+    pub choices: Vec<DilemmaChoice>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct DilemmaChoice {
+    pub id: i32,
+    pub dilemma_id: i32,
+    pub choice_text: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct DilemmaChoiceArchetypePoint {
+    pub dilemma_choice_id: i32,
+    pub archetype_id: i32,
+    pub points: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct QuizSubmission {
+    pub answers: HashMap<i32, i32>, // dilemma_id -> choice_id
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct QuizResult {
+    pub player: PlayerCharacter,
+    pub archetype: Archetype,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Choice {
     pub text: String,
     pub command: String,
     pub next_step: String,
+    #[serde(default)]
+    pub required_archetype_id: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -110,6 +167,12 @@ pub struct PlayerCharacter {
     pub fate_points: i32,
     pub report_summaries: Vec<ReportSummary>,
     
+    // --- Persona Engine Fields ---
+    #[serde(default)]
+    pub primary_archetype_id: Option<i32>,
+    #[serde(default)]
+    pub stats: HashMap<String, i32>,
+
     // --- Fields managed ONLY by the server ---
     // We `skip` serializing them when sending to the frontend
     // to save bandwidth and keep secrets (if any).
@@ -179,6 +242,16 @@ pub struct GameTurn {
     pub updated_character: PlayerCharacter, // The *new* state
 }
 
+// --- (IMPROVEMENT) Axum-to-Bevy Communication ---
+#[derive(Debug, Clone)]
+pub enum Command {
+    ProcessPlayerInput(String),
+    SetArchetype {
+        archetype_id: i32,
+        stats: HashMap<String, i32>,
+    },
+}
+
 // --- Load Static Game Data ---
 // This Rust pattern is the equivalent of your Python module-level dictionaries.
 // It loads the data from the JSON files *at compile time* and parses them
@@ -186,18 +259,6 @@ pub struct GameTurn {
 
 // `cfg(feature = "ssr")` means "only include this code when compiling for the server"
 // This keeps the large JSON data out of the frontend Wasm file.
-#[cfg(feature = "ssr")]
-pub static QUEST_DATA: Lazy<QuestData> = Lazy::new(|| {
-    let quest_json = include_str!("quests.json");
-    serde_json::from_str(quest_json).expect("Failed to parse quests.json")
-});
-
-#[cfg(feature = "ssr")]
-pub static CHARACTER_TEMPLATES: Lazy<Vec<CharacterTemplate>> = Lazy::new(|| {
-    let char_json = include_str!("characters.json");
-    serde_json::from_str(char_json).expect("Failed to parse characters.json")
-});
-
 #[cfg(feature = "ssr")]
 pub static RACE_DATA_MAP: Lazy<HashMap<String, RaceData>> = Lazy::new(|| {
     let mut m = HashMap::new();

@@ -1,0 +1,11 @@
+{
+    "id": "mama_willow",
+    "name": "Mama Willow",
+    "race_name": "Opossuman",
+    "class_name": "Counselor",
+    "philosophy_name": "Becoming Awesome",
+    "boon": "Pouch of Assorted Comforting Seeds (Effect unknown, but they smell nice)",
+    "backstory": "Mama Willow feels a strong protective instinct towards the newcomers and disparate entities of Thetopia. She emerged from a cluster of resilient Opossuman concepts focused on community and care. She believes everyone has potential (\"inner awesome\") and wants to help others find stability and purpose within the community. She often carries seeds, hoping to plant metaphorical (and sometimes literal) roots of well-being.",
+    "starting_quest_id": "Q_W1_FEELING_THE_ROOM",
+    "display_desc": "A caring Opossuman Counselor nurturing the potential in others, offering comfort (and seeds)."
+}

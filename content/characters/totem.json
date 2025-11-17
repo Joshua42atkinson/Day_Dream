@@ -1,0 +1,11 @@
+{
+    "id": "totem",
+    "name": "Totem",
+    "race_name": "Sasquatch",
+    "class_name": "Soldier",
+    "philosophy_name": "Pointlessnesses",
+    "boon": "Trembling Porcupine Companion",
+    "backstory": "Totem is from a deep cave on the side of a mountain surrounded by a large forest and comes to Thetopia in search of food beyond the mushrooms and moss he is used to. Totem can't remember how old he is and only focuses on the past month. When he tries to remember anything from earlier it's foggy at best. Totem doesn't know if he has a family or not. Sasquatches are solitary creatures and only venture into communities to fulfill their longing for unique food. Totem is unique among Sasquaches because he is very social and likes to talk to people about food. Totem knows he is a soldier and chooses to help protect nature.",
+    "starting_quest_id": "Q_T1_FIRST_IMPRESSIONS",
+    "display_desc": "A forgetful but friendly Sasquatch Soldier seeking new tastes and protecting nature, accompanied by a porcupine."
+}

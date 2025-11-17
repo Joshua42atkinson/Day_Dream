@@ -1,0 +1,44 @@
+{
+    "title": "Feeling the Room",
+    "chapter_theme": "The Ordinary World / Call to Adventure",
+    "description": "You arrive in Thetopia Square, a place buzzing with chaotic energy but also hidden anxieties. As a Counselor focused on 'Becoming Awesome', take a moment to sense the emotional atmosphere and present yourself.",
+    "starting_step": "STEP_01_OBSERVE_EMOTIONS",
+    "completion_reward": {
+        "type": "fate_points",
+        "value": 1
+    },
+    "steps": {
+        "STEP_01_OBSERVE_EMOTIONS": {
+            "description": "Observe the inhabitants of the Town Square. Describe the general emotional 'vibe' you pick up using your empathic senses. How does your own warm, perhaps slightly unusual, Opossuman appearance and demeanor project into this scene?",
+            "trigger_condition": "ai_check:emotions_described",
+            "step_reward": null,
+            "next_step": "STEP_02_PROJECT_CALM",
+            "is_major_plot_point": false
+        },
+        "STEP_02_PROJECT_CALM": {
+            "description": "Subtly project a sense of calm or welcome using your Counselor's presence. Describe how you carry yourself, maybe offering a gentle nod or smile to passersby. Do any individuals react noticeably?",
+            "trigger_condition": "ai_check:calm_projected_described",
+            "step_reward": null,
+            "next_step": "STEP_03_FIND_FOCUS",
+            "is_major_plot_point": false
+        },
+        "STEP_03_FIND_FOCUS": {
+            "description": "Identify one individual who seems particularly troubled, lost, or perhaps receptive to your calming presence amidst the crowd. What draws your attention to them specifically?",
+            "trigger_condition": "ai_check:focus_individual_identified",
+            "step_reward": {
+                "type": "info",
+                "details": "You've found someone who might benefit from your guidance.",
+                "silent": true
+            },
+            "next_step": "STEP_04_CONSIDER_OPENING",
+            "is_major_plot_point": false
+        },
+        "STEP_04_CONSIDER_OPENING": {
+            "description": "How would you initiate contact? A direct approach? Offer a small token (like seeds from your boon)? Or simply make eye contact and offer a warm greeting? Describe your intended opening move to help them on their path to 'Becoming Awesome'.",
+            "trigger_condition": "ai_check:opening_move_described",
+            "step_reward": null,
+            "next_step": null,
+            "is_major_plot_point": true
+        }
+    }
+}

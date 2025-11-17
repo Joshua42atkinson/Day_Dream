@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 
 
 // Import our shared data structures
-use crate::components::onboarding::OnboardingTutorial;
+use crate::components::persona_quiz::PersonaQuiz;
 use crate::components::persistent_ui::PersistentUiPanel;
 use common::{
     PlayerCharacter, ProfileData, JournalData,
@@ -114,45 +114,44 @@ fn ProfileView() -> impl IntoView {
 
     view! {
         <div class="max-w-4xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6">"Your Profile"</h1>
+            <h1 class="text-3xl font-bold mb-6">"Character Creation"</h1>
+
+            // The PersonaQuiz is now the main focus of this page.
+            <div class="mb-8">
+                 <PersonaQuiz />
+            </div>
+
             // <Suspense> shows a fallback UI while the data is loading
-            <Suspense fallback=move || view! { <p>"Loading profile..."</p> }>
+            <Suspense fallback=move || view! { <p>"Loading profile data..."</p> }>
                 {move || profile_data.get().map(|data| {
                     match data {
                         Some(profile) => view! {
-                            <div class="leptos-panel border border-gray-700 rounded-lg p-6 mb-6">
-                                <p><strong>"Email: "</strong>{profile.email}</p>
-                                <p><strong>"Premium Status: "</strong>{if profile.has_premium { "Active" } else { "Inactive" }}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="leptos-panel border border-gray-700 rounded-lg p-6">
+                                    <h2 class="text-2xl font-semibold mb-4">"Your Characters"</h2>
+                                    <ul class="space-y-2">
+                                        {profile.characters.into_iter().map(|char| view! {
+                                            <li class="flex justify-between items-center">
+                                                <span>{char.name} " (" {char.race} " " {char.class_name} ") "</span>
+                                                <div>
+                                                    <button class="bg-cyan-600 hover:bg-cyan-500 text-white py-1 px-3 rounded-md mr-2">"Load"</button>
+                                                    <button class="bg-red-600 hover:bg-red-500 text-white py-1 px-3 rounded-md">"Delete"</button>
+                                                </div>
+                                            </li>
+                                        }).collect_view()}
+                                    </ul>
+                                </div>
+
+                                <div class="leptos-panel border border-gray-700 rounded-lg p-6">
+                                    <h2 class="text-2xl font-semibold mb-4">"Or, Create From Template"</h2>
+                                    <select class="w-full p-2 bg-gray-800 border border-gray-600 rounded-md">
+                                        <option>"-- Select a Template --"</option>
+                                        {profile.premade_characters.into_iter().map(|premade| view!{
+                                            <option value=premade.id>{premade.name} " (" {premade.race_name} " " {premade.class_name} ")"</option>
+                                        }).collect_view()}
+                                    </select>
+                                </div>
                             </div>
-
-                            <div class="leptos-panel border border-gray-700 rounded-lg p-6 mb-6">
-                                <h2 class="text-2xl font-semibold mb-4">"Your Characters"</h2>
-                                <ul class="space-y-2">
-                                    {profile.characters.into_iter().map(|char| view! {
-                                        <li class="flex justify-between items-center">
-                                            <span>{char.name} " (" {char.race} " " {char.class_name} ") "</span>
-                                            <div>
-                                                <button class="bg-cyan-600 hover:bg-cyan-500 text-white py-1 px-3 rounded-md mr-2">"Load"</button>
-                                                <button class="bg-red-600 hover:bg-red-500 text-white py-1 px-3 rounded-md">"Delete"</button>
-                                            </div>
-                                        </li>
-                                    }).collect_view()}
-                                </ul>
-                            </div>
-
-                            <div class="leptos-panel border border-gray-700 rounded-lg p-6">
-                                <h2 class="text-2xl font-semibold mb-4">"Create New Character"</h2>
-                                <select class="w-full p-2 bg-gray-800 border border-gray-600 rounded-md">
-                                    <option>"-- Select a Template --"</option>
-                                    {profile.premade_characters.into_iter().map(|premade| view!{
-                                        <option value=premade.id>{premade.name} " (" {premade.race_name} " " {premade.class_name} ")"</option>
-                                    }).collect_view()}
-                                </select>
-                            </div>
-
-                            // Add the OnboardingTutorial component here
-                            <OnboardingTutorial />
-
                         }.into_view(),
                         None => view! { <p class="text-red-400">"Failed to load profile data."</p> }.into_view()
                     }

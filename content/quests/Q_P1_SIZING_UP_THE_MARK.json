@@ -1,0 +1,44 @@
+{
+    "title": "Sizing Up the Mark",
+    "chapter_theme": "The Ordinary World / Call to Adventure",
+    "description": "You arrive in Thetopia's Town Square, a whirlwind of potential opportunities. The 'lucky' coin feels warm in your pocket. Take stock of the situation – who looks important, who looks distracted, what looks valuable or interestingly 'lost'?",
+    "starting_step": "STEP_01_SCAN_THE_CROWD",
+    "completion_reward": {
+        "type": "fate_points",
+        "value": 1
+    },
+    "steps": {
+        "STEP_01_SCAN_THE_CROWD": {
+            "description": "Scan the crowd in the Town Square. Describe your initial assessment from your Leprechaun perspective – focus on movement, exchanges, unattended items. How does your small stature affect your view or allow you to go unnoticed?",
+            "trigger_condition": "ai_check:initial_scan_described",
+            "step_reward": null,
+            "next_step": "STEP_02_ASSESS_VALUE",
+            "is_major_plot_point": false
+        },
+        "STEP_02_ASSESS_VALUE": {
+            "description": "What seems most 'valuable' right now? Not just monetary value, but potential value for information (like Info-Broker Pip might have), amusement, or leverage. Describe the most tempting target.",
+            "trigger_condition": "ai_check:value_assessed_described",
+            "step_reward": null,
+            "next_step": "STEP_03_IDENTIFY_OPPORTUNITY",
+            "is_major_plot_point": false
+        },
+        "STEP_03_IDENTIFY_OPPORTUNITY": {
+            "description": "Focus on one specific person (like the Info-Broker or Guard Captain), item (maybe something near the fountain?), or conversation that seems like the most promising 'opportunity' for your Rascal talents. What makes it stand out?",
+            "trigger_condition": "ai_check:opportunity_identified",
+            "step_reward": {
+                "type": "info",
+                "details": "You've zeroed in on a potentially interesting situation.",
+                "silent": true
+            },
+            "next_step": "STEP_04_PLAN_APPROACH",
+            "is_major_plot_point": false
+        },
+        "STEP_04_PLAN_APPROACH": {
+            "description": "How would you approach this opportunity? Use your 'Quick Wits'? Try a 'Fortunate Find'? Or perhaps just a charming distraction? Describe your initial plan.",
+            "trigger_condition": "ai_check:approach_planned_described",
+            "step_reward": null,
+            "next_step": null,
+            "is_major_plot_point": true
+        }
+    }
+}

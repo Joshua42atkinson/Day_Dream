@@ -1,0 +1,11 @@
+{
+    "id": "bolt",
+    "name": "Unit 734 (\"Bolt\")",
+    "race_name": "Android",
+    "class_name": "Inventor",
+    "philosophy_name": "Law and Order",
+    "boon": "Multi-tool Device (Slightly damaged, basic functions work: screwdriver, pliers, small light)",
+    "backstory": "Bolt activated in a scrap heap outside Thetopia with fragmented directives mentioning \"system integrity\" and \"component optimization.\" It seeks purpose by applying logic and order to the chaos of Dumpster Planet, starting with Thetopia. It believes in understanding systems to improve them and finds comfort in repairing or building things. Its multi-tool feels familiar, possibly a key to its past function.",
+    "starting_quest_id": "Q_B1_FAULTY_FOUNTAIN",
+    "display_desc": "A logical Android Inventor seeking purpose through order and repair, equipped with a familiar multi-tool."
+}

@@ -1,22 +1,21 @@
 use std::collections::{HashMap, HashSet};
 use common::{
     PlayerCharacter, ReportSummary,
-    CHARACTER_TEMPLATES, // Our static list of premade characters
-    QUEST_DATA,          // Our static map of quest data
     RACE_DATA_MAP,       // Our static map of race data
 };
+use crate::domain::content_loader::GameData;
 
 // --- Simulated Database Function ---
 // This creates a "Totem" character on-the-fly for testing.
 // (Unchanged from previous version)
-pub fn get_simulated_character() -> PlayerCharacter {
-    let template = CHARACTER_TEMPLATES.get(0).cloned().unwrap();
+pub fn get_simulated_character(game_data: &GameData) -> PlayerCharacter {
+    let template = game_data.characters.get("totem").cloned().unwrap();
     let base_fate_points = 1;
     let race_data = RACE_DATA_MAP.get(&template.race_name).unwrap();
     let mut quest_title = "No Quest".to_string();
     let mut step_desc = "You are ready for an adventure.".to_string();
-    let start_quest_id_str = "Q_THE_WAY_IS_SHUT";
-    let start_quest = QUEST_DATA.get(start_quest_id_str);
+    let start_quest_id_str = "Q_T1_FIRST_IMPRESSIONS";
+    let start_quest = game_data.quests.get(start_quest_id_str);
 
     let (start_step_id, start_quest_id) = if let Some(quest) = start_quest {
         quest_title = quest.title.clone();
@@ -47,6 +46,8 @@ pub fn get_simulated_character() -> PlayerCharacter {
         current_step_description: step_desc,
         fate_points: base_fate_points + race_data.fate_point_mod,
         learned_vocab: HashSet::new(),
+        primary_archetype_id: None,
+        stats: HashMap::new(),
         report_summaries: vec![
             ReportSummary {
                 chapter: 1,

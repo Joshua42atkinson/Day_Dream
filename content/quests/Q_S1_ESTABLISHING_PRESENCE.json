@@ -1,0 +1,44 @@
+{
+    "title": "Establishing Presence",
+    "chapter_theme": "The Ordinary World / Call to Adventure",
+    "description": "You arrive methodically in Thetopia's Town Square. As a proponent of Law and Order, understanding the environment requires careful observation and establishing a stable position.",
+    "starting_step": "STEP_01_FIND_POSITION",
+    "completion_reward": {
+        "type": "fate_points",
+        "value": 1
+    },
+    "steps": {
+        "STEP_01_FIND_POSITION": {
+            "description": "Find a suitable, stable location within the Town Square from which to observe. Describe the spot you choose and why it appeals to your Tortisian sense of order. Describe your posture and appearance as you settle in.",
+            "trigger_condition": "ai_check:position_described",
+            "step_reward": null,
+            "next_step": "STEP_02_INITIAL_OBSERVATION",
+            "is_major_plot_point": false
+        },
+        "STEP_02_INITIAL_OBSERVATION": {
+            "description": "From your chosen position, make one specific observation about the flow of traffic or interaction patterns. Is there a discernible pattern, or pure chaos? Describe what you see.",
+            "trigger_condition": "ai_check:initial_observation_made",
+            "step_reward": null,
+            "next_step": "STEP_03_IDENTIFY_RULE",
+            "is_major_plot_point": false
+        },
+        "STEP_03_IDENTIFY_RULE": {
+            "description": "Based on your observation, try to deduce one apparent 'rule' (spoken or unspoken) governing behavior in the square. It might relate to interacting with Guards, using the fountain, or bartering. What rule do you hypothesize?",
+            "trigger_condition": "ai_check:rule_hypothesized",
+            "step_reward": {
+                "type": "info",
+                "details": "You've begun your systematic analysis of Thetopia's social dynamics.",
+                "silent": true
+            },
+            "next_step": "STEP_04_PLAN_VERIFICATION",
+            "is_major_plot_point": false
+        },
+        "STEP_04_PLAN_VERIFICATION": {
+            "description": "How might you verify this hypothesized rule? Further observation? Asking someone (like Guard Captain Elena or Professor Quill)? Or perhaps a small, controlled test? Describe your next logical step according to Law and Order.",
+            "trigger_condition": "ai_check:verification_planned_described",
+            "step_reward": null,
+            "next_step": null,
+            "is_major_plot_point": true
+        }
+    }
+}

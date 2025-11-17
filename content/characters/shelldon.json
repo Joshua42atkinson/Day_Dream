@@ -1,0 +1,11 @@
+{
+    "id": "shelldon",
+    "name": "Shelldon",
+    "race_name": "Tortisian",
+    "class_name": "Counselor",
+    "philosophy_name": "Law and Order",
+    "boon": "Set of Polishing Cloths (For maintaining one's shell or perhaps other surfaces)",
+    "backstory": "Shelldon represents the concept of meticulous order and preservation. They believe structure and well-maintained systems (both physical and social) are crucial for survival and purpose on Dumpster Planet. They arrived in Thetopia seeking to understand its rules and contribute to its stability. Shelldon finds satisfaction in careful observation, offering measured advice, and keeping things tidy, starting with their own artistic shell.",
+    "starting_quest_id": "Q_S1_ESTABLISHING_PRESENCE",
+    "display_desc": "A meticulous Tortisian Counselor seeking to understand and maintain order, starting with a polished shell."
+}

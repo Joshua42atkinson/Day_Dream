@@ -1,0 +1,66 @@
+{
+    "title": "The Faulty Fountain",
+    "chapter_theme": "The Ordinary World / Call to Adventure",
+    "description": "As an Inventor new to Thetopia, you observe the Town Square, noting inefficiencies. The central data fountain sputters erratically – a clear system flaw. Analyzing and repairing this disorder could be a logical first step towards establishing purpose.",
+    "starting_step": "STEP_01_ANALYZE_FOUNTAIN",
+    "completion_reward": {
+        "type": "relationship",
+        "target": "Thetopia Populace",
+        "change": 1,
+        "details": "Fixing the fountain seems to have improved the general mood slightly. You notice fewer annoyed glances directed your way."
+    },
+    "steps": {
+        "STEP_01_ANALYZE_FOUNTAIN": {
+            "description": "Approach the sputtering data fountain in the Town Square. Describe how you perceive its malfunction and use your analytical skills (perhaps related to your 'Integrated Systems' ability?) to diagnose the problem.",
+            "trigger_condition": "ai_check:fountain_analysis_described",
+            "step_reward": {
+                "type": "info",
+                "set_flag": {"fountain_analyzed": true},
+                "silent": true
+            },
+            "next_step": "STEP_02_IDENTIFY_PARTS",
+            "is_major_plot_point": false
+        },
+        "STEP_02_IDENTIFY_PARTS": {
+            "description": "Based on your analysis (now that `fountain_analyzed` flag is True), determine the specific component(s) needed for the repair. Perhaps consult your internal schematics or observe the fountain's mechanism closely.",
+            "trigger_condition": "ai_check:fountain_parts_identified",
+            "step_reward": {
+                "type": "info",
+                "details": "You determine a 'Hydro-Spanner' and a 'Type-3 Cogwheel' seem necessary.",
+                "set_flag": {"fountain_parts_identified": true},
+                "silent": false
+            },
+            "next_step": "STEP_03_ACQUIRE_PARTS",
+            "is_major_plot_point": false
+        },
+        "STEP_03_ACQUIRE_PARTS": {
+            "description": "Acquire the needed Hydro-Spanner and Type-3 Cogwheel. Perhaps Maker's Alley has parts, or maybe ask the Info-Broker?",
+            "trigger_condition": "inventory_has:Hydro-Spanner and Type-3 Cogwheel",
+            "step_reward": null,
+            "next_step": "STEP_04_ATTEMPT_REPAIR",
+            "is_major_plot_point": false
+        },
+        "STEP_04_ATTEMPT_REPAIR": {
+            "description": "With the necessary parts in hand, attempt to repair the data fountain using your 'Tinker' ability and the acquired components. Describe your repair process.",
+            "trigger_condition": "ai_check:repair_attempt_made",
+            "step_reward": {
+                "type": "info",
+                "set_flag": {"repair_attempted": true},
+                "silent": true
+            },
+            "next_step": "STEP_05_CHECK_RESULTS",
+            "is_major_plot_point": false
+        },
+        "STEP_05_CHECK_RESULTS": {
+            "description": "Observe the data fountain. Did the repair work? Is the data flowing smoothly now?",
+            "trigger_condition": "ai_check:fountain_repair_successful",
+            "step_reward": {
+                "type": "fate_points",
+                "value": 1,
+                "silent": true
+            },
+            "next_step": null,
+            "is_major_plot_point": true
+        }
+    }
+}

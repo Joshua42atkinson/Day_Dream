@@ -1,0 +1,44 @@
+{
+    "title": "Tasting the Aether",
+    "chapter_theme": "The Ordinary World / Call to Adventure",
+    "description": "You flow into Thetopia's Town Square, a nexus of strange energies from discarded ideas. As an Archanist attuned to magical flows, your first task is to understand the ambient 'flavor' of this place.",
+    "starting_step": "STEP_01_SENSE_AMBIENCE",
+    "completion_reward": {
+        "type": "fate_points",
+        "value": 1
+    },
+    "steps": {
+        "STEP_01_SENSE_AMBIENCE": {
+            "description": "Extend your senses (or pseudopods?). Describe the overall magical or energetic 'feel' of the Town Square. Is it buzzing, stagnant, sharp, chaotic? How does your amorphous Slime nature interact with the environment?",
+            "trigger_condition": "ai_check:ambience_described",
+            "step_reward": null,
+            "next_step": "STEP_02_DIFFERENTIATE_SOURCES",
+            "is_major_plot_point": false
+        },
+        "STEP_02_DIFFERENTIATE_SOURCES": {
+            "description": "Try to differentiate the various energy signatures. Can you distinguish the data fountain's murmur from the whispers of the nearby Willow Plaza, or the crackle from Maker's Alley? Describe the different 'flavors' you detect.",
+            "trigger_condition": "ai_check:sources_differentiated_described",
+            "step_reward": null,
+            "next_step": "STEP_03_PINPOINT_FOCUS",
+            "is_major_plot_point": false
+        },
+        "STEP_03_PINPOINT_FOCUS": {
+            "description": "Identify the single strongest, most unusual, or most appealing source of energy you can detect nearby. What does it feel like (e.g., sharp, humming, erratic, warm)? Describe the specific signature.",
+            "trigger_condition": "ai_check:energy_source_identified",
+            "step_reward": {
+                "type": "info",
+                "details": "You've locked onto a significant energy signature.",
+                "silent": true
+            },
+            "next_step": "STEP_04_CONSIDER_INTERACTION",
+            "is_major_plot_point": false
+        },
+        "STEP_04_CONSIDER_INTERACTION": {
+            "description": "How might you interact with this energy signature? Attempt to 'Absorb Magic'? Use your 'Arcane Affinity'? Or simply observe it more closely? Describe your intended next step.",
+            "trigger_condition": "ai_check:interaction_intent_described",
+            "step_reward": null,
+            "next_step": null,
+            "is_major_plot_point": true
+        }
+    }
+}

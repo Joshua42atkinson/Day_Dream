@@ -12,7 +12,6 @@ use common::PlayerCharacter;
 
 // Import our shared data structures
 use common::{
-    CHARACTER_TEMPLATES, // Our static list of premade characters
     JournalData, VocabEntry,
     ProfileData, CharacterSummary,
     // (IMPROVEMENT) New structs for interactivity
@@ -20,6 +19,8 @@ use common::{
 };
 
 use crate::domain::player::get_simulated_character;
+use crate::AppState;
+use common::Command;
 
 // --- (IMPROVEMENT) New Handler for Submitting Commands ---
 /// This function is the new API endpoint for the game loop.
@@ -27,11 +28,11 @@ use crate::domain::player::get_simulated_character;
 /// and returns the new game state.
 pub async fn handle_submit_command(
     State(_options): State<LeptosOptions>,
-    Extension(tx): Extension<mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>>,
+    Extension(tx): Extension<mpsc::Sender<(Command, oneshot::Sender<PlayerCharacter>)>>,
     Json(payload): Json<PlayerCommand>,
 ) -> impl IntoResponse {
     let (one_tx, one_rx) = oneshot::channel();
-    let command = payload.command_text.clone();
+    let command = Command::ProcessPlayerInput(payload.command_text.clone());
     tx.send((command, one_tx)).await.unwrap();
 
     let updated_character = one_rx.await.unwrap();
@@ -61,15 +62,15 @@ pub async fn handle_submit_command(
 // --- API Handlers for GETting page data ---
 
 /// Handler for the main game view and character/quest journal
-pub async fn get_player_character(State(_options): State<LeptosOptions>) -> impl IntoResponse {
-    let character = get_simulated_character();
+pub async fn get_player_character(State(_options): State<LeptosOptions>, Extension(app_state): Extension<AppState>) -> impl IntoResponse {
+    let character = get_simulated_character(&app_state.game_data);
     (StatusCode::OK, Json(character))
 }
 
 /// Handler for the vocab/report journal
-pub async fn get_journal_data(State(_options): State<LeptosOptions>) -> impl IntoResponse {
+pub async fn get_journal_data(State(_options): State<LeptosOptions>, Extension(app_state): Extension<AppState>) -> impl IntoResponse {
     // (This function is unchanged from the previous version)
-    let character = get_simulated_character();
+    let character = get_simulated_character(&app_state.game_data);
     let mut awl_words = Vec::new();
     awl_words.push(VocabEntry { word: "analyse".to_string(), definition: "To examine something methodically...".to_string() });
     awl_words.push(VocabEntry { word: "approach".to_string(), definition: "A way of dealing with something...".to_string() });
@@ -89,7 +90,7 @@ pub async fn get_journal_data(State(_options): State<LeptosOptions>) -> impl Int
 }
 
 /// Handler for the profile page
-pub async fn get_profile_data(State(_options): State<LeptosOptions>) -> impl IntoResponse {
+pub async fn get_profile_data(State(_options): State<LeptosOptions>, Extension(app_state): Extension<AppState>) -> impl IntoResponse {
     // (This function is unchanged from the previous version)
     let characters = vec![
         CharacterSummary {
@@ -106,11 +107,13 @@ pub async fn get_profile_data(State(_options): State<LeptosOptions>) -> impl Int
         }
     ];
 
+    let premade_characters = app_state.game_data.characters.values().cloned().collect();
+
     let data = ProfileData {
         email: "player@daydream.com".to_string(),
         has_premium: true, // Simulate premium access
         characters: characters,
-        premade_characters: CHARACTER_TEMPLATES.to_vec(),
+        premade_characters: premade_characters,
     };
     (StatusCode::OK, Json(data))
 }

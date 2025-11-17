@@ -31,7 +31,7 @@ leptos_axum = "0.6.9"
 
 # State Management (as per your docs)
 bevy = { version = "0.14" }
-bevy_ecs = { version = "0.14", optional = true } # Optional for now
+bevy_ecs = { version = "0.14" }
 
 # Database (as per your docs)
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres"] }
