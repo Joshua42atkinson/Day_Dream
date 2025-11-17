@@ -28,14 +28,24 @@ pub struct QuestReward {
     pub set_flag: Option<HashMap<String, bool>>, // For info type
     #[serde(default)]
     pub silent: Option<bool>,
+    #[serde(default)]
+    pub vocab: Option<Vec<String>>, // For vocabulary
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Choice {
+    pub text: String,
+    pub command: String,
+    pub next_step: String,
+    #[serde(default)]
+    pub required_vocab: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct QuestStep {
     pub description: String,
-    pub trigger_condition: String,
+    pub choices: Vec<Choice>,
     pub step_reward: Option<QuestReward>,
-    pub next_step: Option<String>,
     #[serde(default)] // Default to `false` if missing
     pub is_major_plot_point: bool,
 }
@@ -178,8 +188,22 @@ pub struct GameTurn {
 // It loads the data from the JSON files *at compile time* and parses them
 // *once* when the application first runs.
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct VocabWord {
+    pub word: String,
+    pub definition: String,
+}
+
+pub type VocabData = HashMap<String, VocabWord>;
+
 // `cfg(feature = "ssr")` means "only include this code when compiling for the server"
 // This keeps the large JSON data out of the frontend Wasm file.
+#[cfg(feature = "ssr")]
+pub static VOCAB_DATA: Lazy<VocabData> = Lazy::new(|| {
+    let vocab_json = include_str!("vocabulary.json");
+    serde_json::from_str(vocab_json).expect("Failed to parse vocabulary.json")
+});
+
 #[cfg(feature = "ssr")]
 pub static QUEST_DATA: Lazy<QuestData> = Lazy::new(|| {
     let quest_json = include_str!("quests.json");
