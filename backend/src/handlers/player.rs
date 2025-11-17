@@ -36,19 +36,22 @@ pub async fn handle_submit_command(
 
     let updated_character = one_rx.await.unwrap();
 
-    let ai_narrative = if payload.current_character.current_step_id
-        != updated_character.current_step_id
-    {
-        "You feel a sense of progress as you complete the task.".to_string()
+    let (ai_narrative, system_message) = if payload.current_character.current_step_id != updated_character.current_step_id {
+        (
+            updated_character.current_step_description.clone(),
+            Some("Quest step advanced.".to_string()),
+        )
     } else {
-        "Your command has been processed, but nothing seems to have changed."
-            .to_string()
+        (
+            "Your command has been processed, but nothing seems to have changed.".to_string(),
+            None,
+        )
     };
 
     let game_turn = GameTurn {
         player_command: payload.command_text,
         ai_narrative,
-        system_message: None,
+        system_message,
         updated_character,
     };
 

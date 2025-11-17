@@ -30,12 +30,18 @@ pub struct QuestReward {
     pub silent: Option<bool>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Choice {
+    pub text: String,
+    pub command: String,
+    pub next_step: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct QuestStep {
     pub description: String,
-    pub trigger_condition: String,
+    pub choices: Vec<Choice>,
     pub step_reward: Option<QuestReward>,
-    pub next_step: Option<String>,
     #[serde(default)] // Default to `false` if missing
     pub is_major_plot_point: bool,
 }
