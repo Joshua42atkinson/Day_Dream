@@ -1,6 +1,18 @@
 use leptos::*;
 use common::Dilemma;
 
+// --- Tech Debt Note ---
+// This component is currently NON-INTERACTIVE. It correctly fetches and displays
+// the quiz dilemmas from the backend, but the buttons have no click handlers
+// and the form cannot be submitted.
+//
+// This is a temporary measure to resolve a persistent Leptos lifetime compilation
+// error that was blocking the architectural refactoring. The backend is fully
+// functional and ready to handle quiz submissions.
+//
+// TODO: Re-implement the interactive state management (signals, actions)
+// to make this component functional. This will likely require a more advanced
+// understanding of Leptos's ownership patterns for nested, reactive views.
 #[component]
 pub fn PersonaQuiz() -> impl IntoView {
     let dilemmas = create_resource(|| (), |_| async move {
