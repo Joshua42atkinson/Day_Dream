@@ -14,7 +14,10 @@ mod domain;
 use domain::game_logic::process_command;
 use domain::player::get_simulated_character;
 use routes::player::player_routes;
+use routes::persona::persona_routes;
 use tokio::sync::mpsc::Receiver;
+use sqlx::postgres::PgPoolOptions;
+use std::env;
 
 fn run_bevy_app(
     mut rx: Receiver<(String, oneshot::Sender<PlayerCharacter>)>,
@@ -54,11 +57,20 @@ async fn main() {
         .allow_methods(Any)
         .allow_headers(Any);
 
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await
+        .expect("Failed to create database pool");
+
     let app = Router::new()
         .leptos_routes(&leptos_options, routes, App)
         .merge(player_routes(&leptos_options))
+        .merge(persona_routes(&leptos_options))
         .layer(cors)
         .layer(Extension(tx))
+        .layer(Extension(pool))
         .with_state(leptos_options);
 
     logging::log!("Backend listening on http://{}", &addr);
