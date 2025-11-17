@@ -47,6 +47,8 @@ pub fn get_simulated_character() -> PlayerCharacter {
         current_step_description: step_desc,
         fate_points: base_fate_points + race_data.fate_point_mod,
         learned_vocab: HashSet::new(),
+        primary_archetype_id: None,
+        stats: HashMap::new(),
         report_summaries: vec![
             ReportSummary {
                 chapter: 1,

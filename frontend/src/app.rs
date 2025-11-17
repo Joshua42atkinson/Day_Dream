@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 
 
 // Import our shared data structures
-use crate::components::onboarding::OnboardingTutorial;
+use crate::components::persona_quiz::PersonaQuiz;
 use crate::components::persistent_ui::PersistentUiPanel;
 use common::{
     PlayerCharacter, ProfileData, JournalData,
@@ -150,8 +150,8 @@ fn ProfileView() -> impl IntoView {
                                 </select>
                             </div>
 
-                            // Add the OnboardingTutorial component here
-                            <OnboardingTutorial />
+                            // Add the PersonaQuiz component here
+                            <PersonaQuiz />
 
                         }.into_view(),
                         None => view! { <p class="text-red-400">"Failed to load profile data."</p> }.into_view()

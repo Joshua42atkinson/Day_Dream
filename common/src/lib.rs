@@ -30,11 +30,62 @@ pub struct QuestReward {
     pub silent: Option<bool>,
 }
 
+// --- Persona Engine Data Structures ---
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Archetype {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Stat {
+    pub id: i32,
+    pub name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct ArchetypeStatBuff {
+    pub archetype_id: i32,
+    pub stat_id: i32,
+    pub buff_value: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Dilemma {
+    pub id: i32,
+    pub title: String,
+    pub dilemma_text: String,
+    pub choices: Vec<DilemmaChoice>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct DilemmaChoice {
+    pub id: i32,
+    pub dilemma_id: i32,
+    pub choice_text: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct DilemmaChoiceArchetypePoint {
+    pub dilemma_choice_id: i32,
+    pub archetype_id: i32,
+    pub points: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct QuizSubmission {
+    pub answers: HashMap<i32, i32>, // dilemma_id -> choice_id
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Choice {
     pub text: String,
     pub command: String,
     pub next_step: String,
+    #[serde(default)]
+    pub required_archetype_id: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -110,6 +161,12 @@ pub struct PlayerCharacter {
     pub fate_points: i32,
     pub report_summaries: Vec<ReportSummary>,
     
+    // --- Persona Engine Fields ---
+    #[serde(default)]
+    pub primary_archetype_id: Option<i32>,
+    #[serde(default)]
+    pub stats: HashMap<String, i32>,
+
     // --- Fields managed ONLY by the server ---
     // We `skip` serializing them when sending to the frontend
     // to save bandwidth and keep secrets (if any).
