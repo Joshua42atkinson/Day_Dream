@@ -3,45 +3,18 @@ name = "frontend"
 version = "0.1.0"
 edition = "2021"
 
-# --- (IMPROVEMENT) Leptos Metadata ---
-# This section is new. It tells `cargo-leptos` how to build
-# and serve your application.
-[package.metadata.leptos]
-# The name of your Wasm binary.
-output-name = "daydream_frontend"
-
-# The address your backend server will run on.
-site-addr = "127.0.0.1:3001"
-
-# The port cargo-leptos will use to proxy requests.
-# Your browser will connect to this port.
-leptos-watch-port = 3000
-
-# The name of the `lib.rs` file
-lib-file = "src/lib.rs"
-
-# The `index.html` file to use as a template
-site-root = "."
-
 [dependencies]
-common = { path = "../common" }
-
-# Leptos Framework
-# (IMPROVEMENT) We add the "macros" feature
-# "macros" enables the `view!` macro and `#[component]`
-leptos = { version = "0.6.9", features = ["csr"] }
-
-# (IMPROVEMENT) Leptos Router
-# This is new. We use this for <Router>, <Route>, and <A> components
-# to handle navigation.
-leptos_router = { version = "0.6.9", features = ["csr"] }
-
-# HTTP client for making API calls from Wasm
-reqwest = { version = "0.12", features = ["json"] }
-
-# Required for Wasm
-wasm-bindgen = "0.2"
-
-# (IMPROVEMENT) This is for logging to the browser console
-console_log = "1.0"
+# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
+leptos = { version = "0.6", features = ["csr"] }
+# Routing for handling your Portfolio/Foundations/Design pages
+leptos_router = { version = "0.6", features = ["csr"] }
+# Logging for debugging
+console_log = "1"
 log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+console_error_panic_hook = "0.1.7"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z' # Optimize for size (WASM)
