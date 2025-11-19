@@ -1,3 +1,2 @@
-pub mod onboarding;
-pub mod persistent_ui;
-pub mod persona_quiz;
+pub mod glass_panel;
+pub mod artifact_card;

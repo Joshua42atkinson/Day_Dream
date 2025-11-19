@@ -1,59 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>playdaydream.com</title>
-    
-    <!-- (IMPROVEMENT) This is required for cargo-leptos to work -->
-    <!-- It tells the build tool where to inject the <script> tag
-         that loads your Wasm application. -->
-    <link data-trunk rel="rust" data-wasm-opt="z" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joshua Atkinson | LDT Portfolio</title>
     
     <!-- Load Tailwind CSS -->
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
     <script>
-      // Configure Tailwind to use the "Inter" font
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               inter: ['Inter', 'sans-serif'],
             },
+            animation: {
+              'blob': 'blob 7s infinite',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              }
+            }
           }
         }
       }
     </script>
     
     <style>
-      /* Simple dark mode theme as a base */
       body {
-        font-family: 'Inter', sans-serif;
-      }
-      .dark {
-        background-color: #1a1a1a;
-        color: #f0f0f0;
-      }
-      /* A custom class for our panels */
-      .dark .leptos-panel {
-        background-color: #2a2a2a;
-        border-color: #444;
-      }
-      /* Style for narrative log */
-      .narrative-log {
-        height: 400px; /* Give it a fixed height */
-        overflow-y: auto; /* Make it scrollable */
-        display: flex;
-        flex-direction: column-reverse; /* (IMPROVEMENT) New messages appear at the bottom */
+        background-color: #0f172a; /* Slate 900 */
+        color: #e2e8f0; /* Slate 200 */
       }
     </style>
-</head>
-<body class="dark">
-    <!-- 
-      This is the mount point for your Leptos app.
-      The `id="app"` is not strictly needed, but `data-leptos-mount` is.
-      Your entire <App/> component will be rendered inside this div.
-    -->
-    <div id="app" data-leptos-mount></div>
-</body>
+  </head>
+  <body>
+  </body>
 </html>
