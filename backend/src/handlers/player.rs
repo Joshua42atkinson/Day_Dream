@@ -8,7 +8,7 @@ use tokio::sync::{mpsc, oneshot};
 use sqlx::PgPool;
 
 // Import from our project
-use crate::AppError;
+use crate::{AppError, Result};
 use crate::domain::player::get_simulated_character;
 
 // Import our shared data structures
@@ -121,33 +121,6 @@ pub async fn get_profile_data(State(_options): State<LeptosOptions>) -> Result<J
 /// Notice the clean return type: Result<Json<PlayerProfile>>
 pub async fn get_player_profile(
     State(_pool): State<PgPool>,
-    // In the future, we will add Auth extractor here
-) -> Result<Json<PlayerProfile>> {
-    // Simulation of a DB call
-    // If sqlx fails, the '?' operator automatically converts it to AppError::DatabaseError
-    // which automatically logs it and returns a safe 500 to the user.
-    /* let player = sqlx::query_as!(PlayerProfile, "SELECT * FROM players WHERE id = $1", 1)
-        .fetch_optional(&pool)
-        .await?
-        .ok_or(AppError::NotFound)?;
-    */
-
-    // For now, returning a mock to prove the type system works
-    Ok(Json(PlayerProfile {
-        id: 1,
-        username: "Daydreamer".to_string(),
-        archetype: "The Sage".to_string(),
-    }))
-}
-
-// Define a custom Result alias for cleaner signatures
-use crate::Result;
-
-// This saves us from typing Result<T, AppError> everywhere
-/// Get Player Profile
-/// Notice the clean return type: Result<Json<PlayerProfile>>
-pub async fn get_player_profile(
-    State(pool): State<PgPool>,
     // In the future, we will add Auth extractor here
 ) -> Result<Json<PlayerProfile>> {
     // Simulation of a DB call
