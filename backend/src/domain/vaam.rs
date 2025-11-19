@@ -1,0 +1,89 @@
+use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
+use time::OffsetDateTime;
+
+/// A word available to be "discovered" or "used" in the game.
+#[derive(Debug, Serialize, FromRow)]
+pub struct VocabWord {
+    pub id: i32,
+    pub word: String,
+    pub definition: String,
+    pub context_tag: String, // e.g., "throne_room", "market"
+    pub complexity_tier: i32,
+}
+
+/// Tracks a player's relationship with a word.
+#[derive(Debug, Serialize, FromRow)]
+pub struct MasteryRecord {
+    pub word_id: i32,
+    pub times_used: i32,
+    pub is_mastered: bool,
+    pub last_used_at: Option<OffsetDateTime>,
+}
+
+/// The payload sent by the frontend when a player makes a choice.
+#[derive(Debug, Deserialize)]
+pub struct WordUsageRequest {
+    pub player_id: i32, // In prod, this comes from Auth Token
+    pub word_id: i32,
+    pub context_used: String,
+}
+
+use sqlx::PgPool;
+use crate::Result; // Our custom error alias
+
+pub struct VaamService;
+
+impl VaamService {
+    /// Fetch words relevant to the current game scene.
+    /// e.g., If player enters "Throne Room", fetch "Implore", "Beseech", "Sovereignty".
+    pub async fn get_words_for_context(pool: &PgPool, context_tag: &str) -> Result<Vec<VocabWord>> {
+        let words = sqlx::query_as!(
+            VocabWord,
+            "SELECT id, word, definition, context_tag, complexity_tier
+             FROM vocab_words
+             WHERE context_tag = $1",
+            context_tag
+        )
+        .fetch_all(pool)
+        .await?;
+
+        Ok(words)
+    }
+
+    /// The Core Loop: Log usage -> Check Threshold -> Grant Mastery.
+    pub async fn log_usage(pool: &PgPool, req: WordUsageRequest) -> Result<bool> {
+        // 1. Log the usage event
+        // Note: We use a transaction to ensure data integrity
+        let mut tx = pool.begin().await?;
+
+        // Insert the raw log (Privacy: We store WHEN and WHERE, but minimizing PII)
+        sqlx::query!(
+            "INSERT INTO word_usage_logs (player_id, word_id, context_used) VALUES ($1, $2, $3)",
+            req.player_id, req.word_id, req.context_used
+        )
+        .execute(&mut *tx)
+        .await?;
+
+        // 2. Update the aggregate mastery record
+        // We increment usage count. If it hits 3, we flip 'is_mastered' to true.
+        // This is the 'Rule of Three' from Learning Science.
+        let record = sqlx::query!(
+            "INSERT INTO player_mastery (player_id, word_id, times_used, is_mastered)
+             VALUES ($1, $2, 1, false)
+             ON CONFLICT (player_id, word_id)
+             DO UPDATE SET
+                times_used = player_mastery.times_used + 1,
+                is_mastered = (player_mastery.times_used + 1) >= 3,
+                last_used_at = NOW()
+             RETURNING is_mastered",
+            req.player_id, req.word_id
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+
+        tx.commit().await?;
+
+        Ok(record.is_mastered)
+    }
+}
