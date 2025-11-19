@@ -10,6 +10,9 @@ use frontend::app::App;
 mod handlers;
 mod routes;
 mod domain;
+mod error;
+// Re-export for easy access across the app
+pub use error::{AppError, Result}; // We will define a custom Result alias below
 
 use domain::game_logic::process_command;
 use domain::player::get_simulated_character;
