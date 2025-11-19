@@ -20,7 +20,7 @@ pub enum AppError {
     DatabaseError(#[from] sqlx::Error),
 
     #[error("Invalid input data: {0}")]
-    ValidationError(String),
+    ValidationError(&'static str),
 
     #[error("Internal Server Error")]
     InternalServerError,
@@ -37,7 +37,7 @@ impl IntoResponse for AppError {
         let (status, error_message) = match self {
             AppError::AuthError => (StatusCode::UNAUTHORIZED, "Authentication required"),
             AppError::NotFound => (StatusCode::NOT_FOUND, "Resource not found"),
-            AppError::ValidationError(msg) => (StatusCode::BAD_REQUEST, msg.as_str()),
+            AppError::ValidationError(msg) => (StatusCode::BAD_REQUEST, msg),
 
             // SECURITY CRITICAL: Log the real error, send a generic one.
             AppError::DatabaseError(e) => {

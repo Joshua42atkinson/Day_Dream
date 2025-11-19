@@ -1,20 +1,51 @@
-[package]
-name = "ldt_portfolio"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+    "frontend",
+    "backend",
+    "common",
+]
+resolver = "2"
 
-[dependencies]
-# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
-leptos = { version = "0.6", features = ["csr"] }
-# Routing for handling your Portfolio/Foundations/Design pages
-leptos_router = { version = "0.6", features = ["csr"] }
-# Logging for debugging
-console_log = "1"
-log = "0.4"
-serde = { version = "1.0", features = ["derive"] }
-console_error_panic_hook = "0.1.7"
+# Defines a multi-package leptos project.
+[[workspace.metadata.leptos]]
+# The name of the project.
+name = "daydream"
 
-[profile.release]
-codegen-units = 1
-lto = true
-opt-level = 'z' # Optimize for size (WASM)
+# The package that contains the server binary.
+bin-package = "backend"
+
+# The package that contains the frontend wasm binary.
+lib-package = "frontend"
+
+# The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle.
+output-name = "daydream"
+
+# The site root folder is where cargo-leptos generate all output.
+site-root = "target/site"
+
+# The site-pkg-dir is where cargo-leptos generate the JS/WASM bundle.
+site-pkg-dir = "pkg"
+
+# The browserlist query used for optimizing the CSS.
+browserquery = "defaults"
+
+# The style file is the input for Tailwind CSS.
+style-file = "style/main.css"
+
+# Assets source dir. All files found here will be copied and synchronized to site-root.
+assets-dir = "public"
+
+# The IP and port (ex: 127.0.0.1:3000) where the server serves the content.
+site-addr = "127.0.0.1:3000"
+
+# The port to use for automatic reload monitoring
+reload-port = 3001
+
+# The command to use when running end-to-end tests. It will run in the browser rather than headless.
+end2end-cmd = "npx playwright test"
+
+# The browser to use for end-to-end testing. Can be 'chromium', 'firefox', 'webkit' or 'all'.
+end2end-browser = "chromium"
+
+# The command to use to run tests headless
+end2end-cmd-headless = "npx playwright test"

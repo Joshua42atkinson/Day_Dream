@@ -2,14 +2,14 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use leptos::LeptosOptions;
+use crate::AppState;
 
 use crate::handlers::persona::{get_dilemmas, get_archetypes, submit_quiz};
 
-pub fn persona_routes(leptos_options: &LeptosOptions) -> Router<LeptosOptions> {
+pub fn persona_routes(app_state: &AppState) -> Router<AppState> {
     Router::new()
         .route("/api/dilemmas", get(get_dilemmas))
         .route("/api/archetypes", get(get_archetypes))
         .route("/api/submit_quiz", post(submit_quiz))
-        .with_state(leptos_options.clone())
+        .with_state(app_state.clone())
 }

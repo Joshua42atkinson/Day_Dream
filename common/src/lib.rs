@@ -91,7 +91,10 @@ pub struct Choice {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct QuestStep {
     pub description: String,
+    #[serde(default)]
     pub choices: Vec<Choice>,
+    pub trigger_condition: String,
+    pub next_step: Option<String>,
     pub step_reward: Option<QuestReward>,
     #[serde(default)] // Default to `false` if missing
     pub is_major_plot_point: bool,
