@@ -1,12 +1,20 @@
-# This is the root Cargo.toml for your entire project.
-# It defines a "virtual workspace," which tells Rust
-# that the `backend`, `frontend`, and `common` folders
-# are all related packages (crates) within one project.
+[package]
+name = "ldt_portfolio"
+version = "0.1.0"
+edition = "2021"
 
-[workspace]
-resolver = "2"
-members = [
-    "backend",
-    "frontend",
-    "common"
-]
+[dependencies]
+# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
+leptos = { version = "0.6", features = ["csr"] }
+# Routing for handling your Portfolio/Foundations/Design pages
+leptos_router = { version = "0.6", features = ["csr"] }
+# Logging for debugging
+console_log = "1"
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+console_error_panic_hook = "0.1.7"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z' # Optimize for size (WASM)
