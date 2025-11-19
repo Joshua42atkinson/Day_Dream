@@ -35,8 +35,9 @@ bevy = { version = "0.14" }
 bevy_ecs = { version = "0.14", optional = true } # Optional for now
 
 # Database (as per your docs)
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "time"] }
 dotenvy = "0.15"
+time = { version = "0.3", features = ["serde"] }
 
 # Vector DB (as per your docs)
 lancedb = { version = "0.6", optional = true }

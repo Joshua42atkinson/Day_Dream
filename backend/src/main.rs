@@ -18,6 +18,7 @@ use domain::game_logic::process_command;
 use domain::player::get_simulated_character;
 use routes::player::player_routes;
 use routes::persona::persona_routes;
+use routes::vaam::vaam_routes;
 use tokio::sync::mpsc::Receiver;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
@@ -71,6 +72,7 @@ async fn main() {
         .leptos_routes(&leptos_options, routes, App)
         .merge(player_routes(&leptos_options))
         .merge(persona_routes(&leptos_options))
+        .merge(vaam_routes(&leptos_options))
         .layer(cors)
         .layer(Extension(tx))
         .layer(Extension(pool))
