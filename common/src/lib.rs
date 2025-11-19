@@ -229,6 +229,13 @@ pub struct PlayerCommand {
 /// This is the data the backend sends back to the frontend
 /// after processing a command.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct PlayerProfile {
+    pub id: i32,
+    pub username: String,
+    pub archetype: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct GameTurn {
     pub player_command: String, // The command the player sent
     pub ai_narrative: String,   // The AI's response
