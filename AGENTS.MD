@@ -43,3 +43,46 @@ This file is a "Schema-Aligned Markdown" document.
 
 * **google_search Tool:** Use this tool to research Rust libraries, crates.io documentation, and Axum/Leptos best practices.
 * **view_text_website Tool:** **FORBIDDEN**.
+
+## 6. Rust Learning Resources for New 'Rustaceans'
+
+For new "Rustaceans" (the community's nickname for Rust developers), the learning curve can be steep, often called "fighting the borrow checker." Here are some of the best tips and resources from the Rust community to help you navigate the early stages.
+
+### 1. Shift Your Mindset: "The Compiler is Your Friend"
+
+In languages like Python or JavaScript, you often run code to find errors. In Rust, the compiler is strictly designed to prevent you from writing bugs.
+
+  * **Don't fight the Borrow Checker:** When you get a borrow checker error, it's usually identifying a real potential memory bug or race condition. Instead of trying to "trick" it, try to understand *why* it thinks your code is unsafe.
+  * **Read Error Messages Carefully:** Rust has some of the best error messages in programming. They often tell you exactly where the problem is and suggest the specific code to fix it.
+
+### 2. Practical Coding Tips for Beginners
+
+  * **It's Okay to `clone()`:** Beginners often obsess over performance and try to pass everything by reference to avoid copying data. This leads to "lifetime hell." **Tip:** When starting out, just `.clone()` the data. It solves ownership issues instantly. You can optimize later once the code works.
+  * **Avoid References in Structs:** Trying to put references (like `&str`) inside structs requires explicit lifetime annotations (e.g., `<'a>`), which is complex for beginners. **Tip:** Use "owned" types like `String` or `Vec<T>` inside your structs instead. It simplifies memory management significantly.
+  * **Use `cargo clippy`:** This is the official "linter." It catches common mistakes and non-idiomatic code, often teaching you better ways to write Rust as you go. Run it frequently:
+    ```bash
+    cargo clippy
+    ```
+  * **Don't Abuse `unwrap()`:** While `unwrap()` is fine for quick prototypes, it causes your program to crash (panic) if it hits an error. **Tip:** Get used to using `match` or the `?` operator to handle `Result` and `Option` types gracefully.
+
+### 3. Recommended Learning Resources
+
+The internet is full of excellent, free resources specifically for new Rustaceans:
+
+  * **"The Book" (The Rust Programming Language):** The official bible of Rust. It’s highly recommended to read it, even if you usually skip manuals, because Rust concepts (Ownership, Borrowing) are unique.
+  * **Rustlings:** Small, bite-sized exercises to get you used to reading and writing Rust code. It’s interactive and runs in your terminal.
+      * *Command:* `cargo install rustlings`
+  * **Rust by Example:** If you learn better by reading code than text, this resource shows you concepts through executable examples.
+  * **Jon Gjengset (YouTube):** His "Crust of Rust" series is excellent for intermediate topics when you're ready to dive deeper into things like lifetimes or smart pointers.
+
+### 4. Common "Crustacean" Pitfalls to Avoid
+
+  * **Linked Lists:** Don't try to implement a Linked List as your first project. It is notoriously difficult in Rust due to ownership rules. Stick to `Vec` (vectors).
+  * **String Concatenation:** Instead of adding strings with `+` (which can be inefficient and messy), use the `format!` macro:
+    ```rust
+    // Better
+    let full_name = format!("{} {}", first, last);
+    ```
+  * **Confusing `String` vs `&str`:**
+      * `String`: Owned data (heap allocated). Use this when you need to modify or own the text.
+      * `&str`: A "view" into a string (borrowed). Use this for function arguments when you just need to read the text.

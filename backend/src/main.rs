@@ -1,27 +1,42 @@
-use axum::{Extension, Router};
+use axum::{Router, extract::FromRef};
 use bevy::prelude::{App as BevyApp, MinimalPlugins, Update, World};
 use common::PlayerCharacter;
-use leptos::{get_configuration, logging};
+use leptos::{get_configuration, logging, LeptosOptions};
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use std::thread;
 use tokio::sync::{mpsc, oneshot};
 use frontend::app::App;
+use sqlx::{PgPool, postgres::PgPoolOptions};
+use std::env;
+use tower_http::cors::{Any, CorsLayer};
 
 mod handlers;
 mod routes;
 mod domain;
 mod error;
-// Re-export for easy access across the app
-pub use error::{AppError, Result}; // We will define a custom Result alias below
 
+pub use error::{AppError, Result};
 use domain::game_logic::process_command;
 use domain::player::get_simulated_character;
 use routes::player::player_routes;
 use routes::persona::persona_routes;
 use routes::vaam::vaam_routes;
 use tokio::sync::mpsc::Receiver;
-use sqlx::postgres::PgPoolOptions;
-use std::env;
+
+// Define a shared application state
+#[derive(Clone)]
+pub struct AppState {
+    pub leptos_options: LeptosOptions,
+    pub pool: PgPool,
+    pub tx: mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>,
+}
+
+// Implement FromRef<AppState> for LeptosOptions
+impl FromRef<AppState> for LeptosOptions {
+    fn from_ref(state: &AppState) -> Self {
+        state.leptos_options.clone()
+    }
+}
 
 fn run_bevy_app(
     mut rx: Receiver<(String, oneshot::Sender<PlayerCharacter>)>,
@@ -32,7 +47,6 @@ fn run_bevy_app(
             process_command(world, &mut rx);
         });
 
-    // Spawn a simulated player entity for testing
     let simulated_player = get_simulated_character();
     app.world_mut().spawn(simulated_player);
 
@@ -43,23 +57,15 @@ fn run_bevy_app(
 async fn main() {
     logging::log!("Starting Daydream Backend Server...");
 
-    // Create a channel for sending commands from Axum to Bevy
     let (tx, rx) =
         mpsc::channel::<(String, oneshot::Sender<PlayerCharacter>)>(100);
 
-    // Spawn the Bevy app in a separate thread
     thread::spawn(move || run_bevy_app(rx));
 
-    let conf = get_configuration(Some("frontend/Cargo.toml")).await.unwrap();
+    let conf = get_configuration(None).await.unwrap();
     let leptos_options = conf.leptos_options;
-    let addr = leptos_options.site_addr;
+    let addr = leptos_options.site_addr.clone();
     let routes = generate_route_list(App);
-
-    use tower_http::cors::{Any, CorsLayer};
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
@@ -68,15 +74,25 @@ async fn main() {
         .await
         .expect("Failed to create database pool");
 
+    // Create the application state
+    let app_state = AppState {
+        leptos_options,
+        pool,
+        tx,
+    };
+
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
+
     let app = Router::new()
-        .leptos_routes(&leptos_options, routes, App)
-        .merge(player_routes(&leptos_options))
-        .merge(persona_routes(&leptos_options))
-        .merge(vaam_routes(&leptos_options))
+        .merge(player_routes(&app_state))
+        .merge(persona_routes(&app_state))
+        .merge(vaam_routes(&app_state))
+        .leptos_routes(&app_state, routes, App)
         .layer(cors)
-        .layer(Extension(tx))
-        .layer(Extension(pool))
-        .with_state(leptos_options);
+        .with_state(app_state);
 
     logging::log!("Backend listening on http://{}", &addr);
     axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)

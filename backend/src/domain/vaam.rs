@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use time::OffsetDateTime;
 
 /// A word available to be "discovered" or "used" in the game.
 #[derive(Debug, Serialize, FromRow)]
@@ -8,17 +7,8 @@ pub struct VocabWord {
     pub id: i32,
     pub word: String,
     pub definition: String,
-    pub context_tag: String, // e.g., "throne_room", "market"
-    pub complexity_tier: i32,
-}
-
-/// Tracks a player's relationship with a word.
-#[derive(Debug, Serialize, FromRow)]
-pub struct MasteryRecord {
-    pub word_id: i32,
-    pub times_used: i32,
-    pub is_mastered: bool,
-    pub last_used_at: Option<OffsetDateTime>,
+    pub context_tag: Option<String>, // e.g., "throne_room", "market"
+    pub complexity_tier: Option<i32>,
 }
 
 /// The payload sent by the frontend when a player makes a choice.
@@ -41,7 +31,7 @@ impl VaamService {
         let words = sqlx::query_as!(
             VocabWord,
             "SELECT id, word, definition, context_tag, complexity_tier
-             FROM vocab_words
+             FROM vocabulary_words
              WHERE context_tag = $1",
             context_tag
         )

@@ -1,40 +1,27 @@
 use axum::{
-    extract::{State, Extension},
+    extract::State,
     Json,
 };
-use leptos::LeptosOptions;
-use std::collections::{HashMap};
-use tokio::sync::{mpsc, oneshot};
-use sqlx::PgPool;
-
-// Import from our project
-use crate::{AppError, Result};
+use std::collections::HashMap;
+use tokio::sync::{oneshot};
+use crate::{AppState, AppError, Result};
 use crate::domain::player::get_simulated_character;
-
-// Import our shared data structures
 use common::{
     PlayerCharacter,
-    CHARACTER_TEMPLATES, // Our static list of premade characters
+    CHARACTER_TEMPLATES,
     JournalData, VocabEntry,
     ProfileData, CharacterSummary,
-    // (IMPROVEMENT) New structs for interactivity
     PlayerCommand, GameTurn,
     PlayerProfile,
 };
 
-
-// --- (IMPROVEMENT) New Handler for Submitting Commands ---
-/// This function is the new API endpoint for the game loop.
-/// It receives a command from the frontend, processes it (simulated),
-/// and returns the new game state.
 pub async fn handle_submit_command(
-    State(_options): State<LeptosOptions>,
-    Extension(tx): Extension<mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>>,
+    State(app_state): State<AppState>,
     Json(payload): Json<PlayerCommand>,
 ) -> Result<Json<GameTurn>> {
     let (one_tx, one_rx) = oneshot::channel();
     let command = payload.command_text.clone();
-    tx.send((command, one_tx)).await.map_err(|_| AppError::InternalServerError)?;
+    app_state.tx.send((command, one_tx)).await.map_err(|_| AppError::InternalServerError)?;
 
     let updated_character = one_rx.await.map_err(|_| AppError::InternalServerError)?;
 
@@ -60,17 +47,12 @@ pub async fn handle_submit_command(
     Ok(Json(game_turn))
 }
 
-// --- API Handlers for GETting page data ---
-
-/// Handler for the main game view and character/quest journal
-pub async fn get_player_character(State(_options): State<LeptosOptions>) -> Result<Json<PlayerCharacter>> {
+pub async fn get_player_character(State(_app_state): State<AppState>) -> Result<Json<PlayerCharacter>> {
     let character = get_simulated_character();
     Ok(Json(character))
 }
 
-/// Handler for the vocab/report journal
-pub async fn get_journal_data(State(_options): State<LeptosOptions>) -> Result<Json<JournalData>> {
-    // (This function is unchanged from the previous version)
+pub async fn get_journal_data(State(_app_state): State<AppState>) -> Result<Json<JournalData>> {
     let character = get_simulated_character();
     let mut awl_words = Vec::new();
     awl_words.push(VocabEntry { word: "analyse".to_string(), definition: "To examine something methodically...".to_string() });
@@ -90,9 +72,7 @@ pub async fn get_journal_data(State(_options): State<LeptosOptions>) -> Result<J
     Ok(Json(data))
 }
 
-/// Handler for the profile page
-pub async fn get_profile_data(State(_options): State<LeptosOptions>) -> Result<Json<ProfileData>> {
-    // (This function is unchanged from the previous version)
+pub async fn get_profile_data(State(_app_state): State<AppState>) -> Result<Json<ProfileData>> {
     let characters = vec![
         CharacterSummary {
             id: "char_sim_totem_001".to_string(),
@@ -110,29 +90,21 @@ pub async fn get_profile_data(State(_options): State<LeptosOptions>) -> Result<J
 
     let data = ProfileData {
         email: "player@daydream.com".to_string(),
-        has_premium: true, // Simulate premium access
+        has_premium: true,
         characters: characters,
         premade_characters: CHARACTER_TEMPLATES.to_vec(),
     };
     Ok(Json(data))
 }
 
-/// Get Player Profile
-/// Notice the clean return type: Result<Json<PlayerProfile>>
 pub async fn get_player_profile(
-    State(_pool): State<PgPool>,
-    // In the future, we will add Auth extractor here
+    State(_app_state): State<AppState>,
 ) -> Result<Json<PlayerProfile>> {
-    // Simulation of a DB call
-    // If sqlx fails, the '?' operator automatically converts it to AppError::DatabaseError
-    // which automatically logs it and returns a safe 500 to the user.
-    /* let player = sqlx::query_as!(PlayerProfile, "SELECT * FROM players WHERE id = $1", 1)
-        .fetch_optional(&pool)
-        .await?
-        .ok_or(AppError::NotFound)?;
-    */
+    // let player = sqlx::query_as!(PlayerProfile, "SELECT * FROM players WHERE id = $1", 1)
+    //     .fetch_optional(&app_state.pool)
+    //     .await?
+    //     .ok_or(AppError::NotFound)?;
 
-    // For now, returning a mock to prove the type system works
     Ok(Json(PlayerProfile {
         id: 1,
         username: "Daydreamer".to_string(),
