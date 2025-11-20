@@ -27,7 +27,7 @@ use tokio::sync::mpsc::Receiver;
 #[derive(Clone)]
 pub struct AppState {
     pub leptos_options: LeptosOptions,
-    pub pool: PgPool,
+    pub pool: Option<PgPool>,
     pub tx: mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>,
 }
 
@@ -67,12 +67,22 @@ async fn main() {
     let addr = leptos_options.site_addr.clone();
     let routes = generate_route_list(App);
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
-        .await
-        .expect("Failed to create database pool");
+    let pool = match env::var("DATABASE_URL") {
+        Ok(database_url) => {
+            logging::log!("DATABASE_URL found, connecting to the database...");
+            Some(
+                PgPoolOptions::new()
+                    .max_connections(5)
+                    .connect(&database_url)
+                    .await
+                    .expect("Failed to create database pool"),
+            )
+        }
+        Err(_) => {
+            logging::log!("WARN: DATABASE_URL not found. Running in SIMULATION MODE - No Database.");
+            None
+        }
+    };
 
     // Create the application state
     let app_state = AppState {

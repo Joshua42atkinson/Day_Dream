@@ -1,7 +1,8 @@
 use leptos::*;
 use crate::components::glass_panel::GlassPanel;
 use crate::components::artifact_card::ArtifactCard;
-use crate::models::Artifact;
+use crate::models::{Artifact, PlayerCommand, GameTurn};
+use gloo_net::http::Request;
 
 #[component]
 pub fn Daydream() -> impl IntoView {
@@ -82,6 +83,88 @@ pub fn Daydream() -> impl IntoView {
                     }).collect_view()}
                 </div>
             </div>
+
+            // Game Terminal Section
+            <div class="space-y-8">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-3xl font-bold text-white">"Game Terminal"</h2>
+                    <div class="h-px flex-grow bg-white/10"></div>
+                </div>
+                <GameTerminal />
+            </div>
         </div>
+    }
+}
+
+#[component]
+fn GameTerminal() -> impl IntoView {
+    let (history, set_history) = create_signal(vec!["Welcome to the Daydream Initiative terminal.".to_string()]);
+    let (command, set_command) = create_signal(String::new());
+
+    let send_command = move |_| {
+        let cmd = command.get_untracked();
+        if !cmd.is_empty() {
+            set_history.update(|h| h.push(format!("> {}", cmd)));
+            let cmd_clone = cmd.clone();
+            spawn_local(async move {
+                let command_payload = PlayerCommand {
+                    command_text: cmd_clone,
+                };
+                let response = Request::post("/api/submit_command")
+                    .json(&command_payload)
+                    .expect("Failed to build request.")
+                    .send()
+                    .await;
+
+                match response {
+                    Ok(resp) => {
+                        if resp.ok() {
+                            let game_turn: GameTurn = resp.json().await.expect("Failed to parse response.");
+                            set_history.update(|h| h.push(game_turn.ai_narrative));
+                            if let Some(msg) = game_turn.system_message {
+                                set_history.update(|h| h.push(format!("[SYSTEM] {}", msg)));
+                            }
+                        } else {
+                            set_history.update(|h| h.push(format!("Error: {}", resp.status_text())));
+                        }
+                    }
+                    Err(_) => {
+                        set_history.update(|h| h.push("Error: Could not reach backend.".to_string()));
+                    }
+                }
+            });
+            set_command.set(String::new());
+        }
+    };
+
+    view! {
+        <GlassPanel>
+            <div class="flex flex-col h-96">
+                <div class="flex-grow overflow-y-auto bg-black/50 p-4 rounded-t-lg font-mono text-sm text-green-400 space-y-2">
+                    <For
+                        each=move || history.get().into_iter().enumerate()
+                        key=|(index, _)| *index
+                        children=move |(_, line)| view! { <p>{line}</p> }
+                    />
+                </div>
+                <div class="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
+                    <div class="flex items-center gap-4">
+                        <input
+                            type="text"
+                            class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400"
+                            placeholder="Type your command..."
+                            on:input=move |ev| set_command.set(event_target_value(&ev))
+                            prop:value=command
+                        />
+                        <button
+                            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-bold"
+                            on:click=send_command
+                        >
+                            "Send"
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </GlassPanel>
     }
 }
