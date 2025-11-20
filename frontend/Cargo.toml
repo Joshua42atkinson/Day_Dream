@@ -56,3 +56,5 @@ optional = true
 codegen-units = 1
 lto = true
 opt-level = 'z' # Optimize for size (WASM)
+[target."cfg(all(target_arch = \"wasm32\", target_os = \"unknown\"))".dependencies]
+getrandom = { version = "0.2", features = ["js"] }

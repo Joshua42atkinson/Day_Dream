@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script automates the setup of the development environment for the Daydream project.
+# It is designed to be idempotent and combat non-persistent environments.
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
@@ -38,15 +39,25 @@ esac
 
 # 2. Add wasm32-unknown-unknown target
 print_message "Adding wasm32-unknown-unknown Rust target..."
-rustup target add wasm32-unknown-unknown
+rustup target add wasm32-unknown-unknown --toolchain stable
 
 # 3. Install required cargo tools
 print_message "Installing required cargo tools (cargo-binstall, sqlx-cli, cargo-leptos)..."
-cargo install cargo-binstall
-cargo binstall sqlx-cli -y
-cargo binstall cargo-leptos -y
+# Use cargo install if cargo binstall is not found, ensuring persistence
+if ! [ -x "$(command -v cargo-binstall)" ]; then
+    echo "cargo-binstall not found. Installing via cargo install."
+    cargo install cargo-binstall
+fi
 
-# 4. Check for Docker
+cargo binstall sqlx-cli -y || cargo install sqlx-cli
+cargo binstall cargo-leptos -y || cargo install cargo-leptos
+
+# 4. Create the necessary 'public' directory for Leptos assets
+print_message "Creating required 'public' asset directory..."
+mkdir -p public
+echo "Created directory 'public/'"
+
+# 5. Check for Docker
 print_message "Checking for Docker installation..."
 if ! [ -x "$(command -v docker)" ]; then
   echo "Docker is not installed. Please install Docker to run the database."
@@ -55,7 +66,7 @@ if ! [ -x "$(command -v docker)" ]; then
 fi
 echo "Docker is installed."
 
-# 5. Create .env file
+# 6. Create .env file
 print_message "Setting up the .env file..."
 if [ -f "backend/.env.example" ]; then
   if [ ! -f "backend/.env" ]; then
@@ -65,10 +76,7 @@ if [ -f "backend/.env.example" ]; then
     echo "backend/.env already exists. Skipping creation."
   fi
 else
-    echo "backend/.env.example not found. Please create a '.env' file in the 'backend' directory with the following content:"
-    echo ""
-    echo "DATABASE_URL=\"postgres://user:password@localhost:5432/daydream_db\""
-    echo ""
+    echo "backend/.env.example not found. Please ensure it exists."
 fi
 
 print_message "Development environment setup is complete!"

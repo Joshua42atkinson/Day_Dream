@@ -1,6 +1,4 @@
 use leptos::*;
-
-#[cfg(feature = "ssr")]
 use crate::components::reflection_form::ReflectionForm;
 
 #[component]
