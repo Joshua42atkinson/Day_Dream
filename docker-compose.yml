@@ -6,13 +6,13 @@ version: '3.8'
 services:
   db:
     # Use the official Postgres image, version 16
-    image: postgres:16
+    image: quay.io/sclorg/postgresql-16-c9s
     restart: always
     environment:
       # Sets the default user, password, and database name
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: daydream_db
+      POSTGRESQL_USER: user
+      POSTGRESQL_PASSWORD: password
+      POSTGRESQL_DATABASE: daydream_db
     ports:
       # Maps your computer's port 5432 to the container's port 5432
       # This lets your `backend` connect to `localhost:5432`
