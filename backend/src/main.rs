@@ -1,4 +1,4 @@
-use axum::{Router, extract::FromRef};
+use axum::{Router, extract::FromRef, Extension};
 use bevy::prelude::{App as BevyApp, MinimalPlugins, Update, World};
 use common::PlayerCharacter;
 use leptos::{get_configuration, logging, LeptosOptions};
@@ -35,6 +35,13 @@ pub struct AppState {
 impl FromRef<AppState> for LeptosOptions {
     fn from_ref(state: &AppState) -> Self {
         state.leptos_options.clone()
+    }
+}
+
+// Implement FromRef<AppState> for PgPool
+impl FromRef<AppState> for PgPool {
+    fn from_ref(state: &AppState) -> Self {
+        state.pool.clone().expect("Database pool not available. This handler should not be reachable in simulation mode.")
     }
 }
 

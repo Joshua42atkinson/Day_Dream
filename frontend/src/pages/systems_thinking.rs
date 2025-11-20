@@ -1,5 +1,8 @@
 use leptos::*;
 
+#[cfg(feature = "ssr")]
+use crate::components::reflection_form::ReflectionForm;
+
 #[component]
 pub fn SystemsThinkingPage() -> impl IntoView {
     view! {
@@ -15,7 +18,7 @@ pub fn SystemsThinkingPage() -> impl IntoView {
                 </p>
             </div>
 
-            <div class="bg-gray-800 bg-opacity-50 p-6 rounded-lg shadow-lg">
+            <div class="bg-gray-800 bg-opacity-50 p-6 rounded-lg shadow-lg mb-8">
                 <h2 class="text-2xl font-semibold text-pink-400 mb-4">Reflection</h2>
                 <div class="space-y-4 text-lg text-gray-300">
                     <p>
@@ -29,6 +32,9 @@ pub fn SystemsThinkingPage() -> impl IntoView {
                     </p>
                 </div>
             </div>
+
+            #[cfg(feature = "ssr")]
+            <ReflectionForm />
         </div>
     }
 }
