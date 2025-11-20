@@ -11,18 +11,18 @@ name = "dev-server"
 path = "src/main.rs"
 
 [dependencies]
-# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
-leptos = { version = "0.6", features = ["csr"] }
-# Routing for handling your Portfolio/Foundations/Design pages
-leptos_router = { version = "0.6", features = ["csr"] }
-# Logging for debugging
+# Core Framework - Pinned to 0.8.12 for stability
+leptos = { version = "0.8.12", features = ["nightly"] }
+leptos_router = { version = "0.8.12", features = ["nightly"] }
+leptos_meta = { version = "0.8.12", features = ["nightly"] }
+serde = { version = "1.0", features = ["derive"] }
+wasm-bindgen = "0.2.93"
+common = { path = "../common", features = ["ssr"] }
+chrono = { version = "0.4.31", features = ["serde"] }
+gloo-net = { version = "0.6.0", features = ["json"] }
 console_log = "1"
 log = "0.4"
-serde = { version = "1.0", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
-gloo-net = { version = "0.6.0", features = ["json"] }
-chrono = { version = "0.4.31", features = ["serde"] }
-common = { path = "../common", features = ["ssr"] }
 
 [features]
 ssr = [
@@ -35,11 +35,12 @@ ssr = [
 ]
 
 [dependencies.leptos_axum]
-version = "0.6"
+version = "0.8.12"
 optional = true
+features = ["nightly"]
 
 [dependencies.tokio]
-version = "1"
+version = "1.37"
 features = ["full"]
 optional = true
 
@@ -49,10 +50,13 @@ features = ["runtime-tokio-rustls", "postgres", "chrono"]
 optional = true
 
 [dependencies.axum]
-version = "0.7.5"
+version = "0.8.7"
 optional = true
 
 [profile.release]
 codegen-units = 1
 lto = true
 opt-level = 'z' # Optimize for size (WASM)
+
+[target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
