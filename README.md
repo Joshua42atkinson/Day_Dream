@@ -2,41 +2,23 @@
 
 Welcome to the Daydream Initiative, a "Creator's Sandbox" for Instructional Designers to build narrative-driven, AI-powered learning experiences. This project is a full-stack web application built entirely in Rust, using Leptos for the frontend and Axum for the backend.
 
-##  Prerequisites
+## Quickstart
 
-Before you begin, ensure you have the following installed on your system:
+This project includes a setup script to automate the installation of dependencies.
 
-- **Rust & Cargo:** [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
-- **Docker & Docker Compose:** [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
-- **`cargo-leptos`:** The CLI tool for building and serving Leptos applications.
-  ```sh
-  cargo install cargo-leptos
-  ```
-  > **Note:** The installation of `cargo-leptos` can be slow and has been observed to time out in some environments. If you encounter issues, please try the command again.
-
-- **System Dependencies (for Bevy on Linux):**
-  ```sh
-  sudo apt-get update
-  sudo apt-get install -y libasound2-dev libudev-dev
-  ```
-
-## Project Setup
-
-1.  **Clone the repository:**
+1.  **Run the setup script:**
     ```sh
-    git clone <repository-url>
-    cd <repository-directory>
+    chmod +x scripts/dev_setup.sh
+    ./scripts/dev_setup.sh
     ```
+    This script will:
+    - Attempt to install required system dependencies for Debian-based systems and provide guidance for other platforms.
+    - Add the `wasm32-unknown-unknown` Rust target.
+    - Install necessary cargo tools (`cargo-binstall`, `sqlx-cli`, `cargo-leptos`).
+    - Check for a Docker installation.
+    - Create a `backend/.env` file from `backend/.env.example`.
 
-2.  **Set up environment variables:**
-    - Navigate to the `backend` directory.
-    - Copy the example `.env` file:
-      ```sh
-      cp .env.example .env
-      ```
-    - The default `DATABASE_URL` in the `.env` file is configured to work with the included Docker Compose setup. No changes are needed if you are using Docker for the database.
-
-3.  **Start the database:**
+2.  **Start the database:**
     - From the root of the project, run:
       ```sh
       sudo docker compose up -d db
