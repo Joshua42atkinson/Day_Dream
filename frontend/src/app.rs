@@ -4,6 +4,7 @@ use leptos_router::*;
 use crate::pages::home::Home;
 use crate::pages::daydream::Daydream;
 use crate::pages::design::Design;
+use crate::pages::systems_thinking::SystemsThinkingPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -14,6 +15,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/" view=Home/>
                     <Route path="/daydream" view=Daydream/>
                     <Route path="/design" view=Design/>
+                    <Route path="/systems-thinking" view=SystemsThinkingPage/>
                     <Route path="/*any" view=|| view! { <div class="text-center p-10">"Page Not Found"</div> }/>
                 </Routes>
             </Layout>
@@ -48,6 +50,7 @@ fn Layout(children: Children) -> impl IntoView {
                                 <a href="/" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Home"</a>
                                 <a href="/daydream" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Daydream Initiative"</a>
                                 <a href="/design" class="text-gray-300 hover:text-indigo-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Visual Design"</a>
+                                <a href="/systems-thinking" class="text-gray-300 hover:text-teal-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Systems Thinking"</a>
                             </div>
                         </div>
                     </div>
