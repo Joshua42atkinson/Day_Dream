@@ -1,5 +1,6 @@
 # Rust artifacts
 /target/
+frontend/dist/
 
 # Ignore all .env files
 .env

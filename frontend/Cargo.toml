@@ -6,6 +6,10 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[[bin]]
+name = "dev-server"
+path = "src/main.rs"
+
 [dependencies]
 # Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
 leptos = { version = "0.6", features = ["csr"] }
