@@ -1,13 +1,19 @@
-use axum::{http::StatusCode, Json, Extension};
+use axum::{http::StatusCode, Json, extract::State};
 use sqlx::{PgPool, Row};
 use common::{Dilemma, Archetype, DilemmaChoice};
 use std::collections::HashMap;
+use crate::AppState;
 
 pub async fn get_dilemmas(
-    Extension(pool): Extension<PgPool>,
+    State(app_state): State<AppState>,
 ) -> Result<Json<Vec<Dilemma>>, (StatusCode, String)> {
+    let pool = match app_state.pool {
+        Some(ref p) => p,
+        None => return Ok(Json(Vec::new())),
+    };
+
     let dilemma_rows = match sqlx::query("SELECT id, title, dilemma_text FROM dilemmas")
-        .fetch_all(&pool)
+        .fetch_all(pool)
         .await
     {
         Ok(rows) => rows,
@@ -20,7 +26,7 @@ pub async fn get_dilemmas(
     };
 
     let choice_rows = match sqlx::query("SELECT id, dilemma_id, choice_text FROM dilemma_choices")
-        .fetch_all(&pool)
+        .fetch_all(pool)
         .await
     {
         Ok(rows) => rows,
@@ -56,10 +62,15 @@ pub async fn get_dilemmas(
 }
 
 pub async fn get_archetypes(
-    Extension(pool): Extension<PgPool>,
+    State(app_state): State<AppState>,
 ) -> Result<Json<Vec<Archetype>>, (StatusCode, String)> {
+    let pool = match app_state.pool {
+        Some(ref p) => p,
+        None => return Ok(Json(Vec::new())),
+    };
+
     let rows = match sqlx::query("SELECT id, name, description FROM archetypes")
-        .fetch_all(&pool)
+        .fetch_all(pool)
         .await {
             Ok(rows) => rows,
             Err(e) => {
@@ -83,22 +94,24 @@ pub async fn get_archetypes(
 
 use common::{QuizSubmission, PlayerCharacter};
 use crate::domain::persona_logic::calculate_archetype;
+use crate::domain::player::get_simulated_character;
 use tokio::sync::oneshot;
 
 pub async fn submit_quiz(
-    Extension(pool): Extension<PgPool>,
-    Extension(tx): Extension<tokio::sync::mpsc::Sender<(String, oneshot::Sender<PlayerCharacter>)>>,
+    State(app_state): State<AppState>,
     Json(submission): Json<QuizSubmission>,
 ) -> Result<Json<PlayerCharacter>, (StatusCode, String)> {
-    let result = calculate_archetype(&pool, &submission).await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e))?;
+    if let Some(pool) = app_state.pool {
+        let result = calculate_archetype(&pool, &submission).await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e))?;
 
-    let (one_tx, one_rx) = oneshot::channel();
-    // This is a bit of a hack to pass the data through the command channel.
-    // A better solution would be to have a dedicated message type.
-    let command = format!("set_archetype {} {}", result.primary_archetype.id, serde_json::to_string(&result.stats).unwrap());
-    tx.send((command, one_tx)).await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+        let (one_tx, one_rx) = oneshot::channel();
+        let command = format!("set_archetype {} {}", result.primary_archetype.id, serde_json::to_string(&result.stats).unwrap());
+        app_state.tx.send((command, one_tx)).await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    let updated_player = one_rx.await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-
-    Ok(Json(updated_player))
+        let updated_player = one_rx.await.map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+        Ok(Json(updated_player))
+    } else {
+        // In simulation mode, just return the simulated character.
+        Ok(Json(get_simulated_character()))
+    }
 }

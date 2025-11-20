@@ -13,8 +13,12 @@ pub async fn get_context_inventory(
     State(app_state): State<AppState>,
     Path(tag): Path<String>,
 ) -> Result<Json<Vec<VocabWord>>> {
-    let words = VaamService::get_words_for_context(&app_state.pool, &tag).await?;
-    Ok(Json(words))
+    if let Some(pool) = app_state.pool {
+        let words = VaamService::get_words_for_context(&pool, &tag).await?;
+        Ok(Json(words))
+    } else {
+        Ok(Json(Vec::new()))
+    }
 }
 
 /// POST /api/vaam/log
@@ -24,6 +28,10 @@ pub async fn log_word_usage(
     State(app_state): State<AppState>,
     Json(payload): Json<WordUsageRequest>,
 ) -> Result<Json<bool>> {
-    let mastered_just_now = VaamService::log_usage(&app_state.pool, payload).await?;
-    Ok(Json(mastered_just_now))
+    if let Some(pool) = app_state.pool {
+        let mastered_just_now = VaamService::log_usage(&pool, payload).await?;
+        Ok(Json(mastered_just_now))
+    } else {
+        Ok(Json(false))
+    }
 }
