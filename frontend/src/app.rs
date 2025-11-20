@@ -4,7 +4,10 @@ use leptos_router::*;
 use crate::pages::home::Home;
 use crate::pages::daydream::Daydream;
 use crate::pages::design::Design;
-use crate::pages::systems_thinking::SystemsThinkingPage;
+use crate::pages::evaluation::Evaluation;
+use crate::pages::foundations::Foundations;
+use crate::pages::planning::Planning;
+
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -14,8 +17,10 @@ pub fn App() -> impl IntoView {
                 <Routes>
                     <Route path="/" view=Home/>
                     <Route path="/daydream" view=Daydream/>
+                    <Route path="/foundations" view=Foundations/>
+                    <Route path="/planning" view=Planning/>
                     <Route path="/design" view=Design/>
-                    <Route path="/systems-thinking" view=SystemsThinkingPage/>
+                    <Route path="/evaluation" view=Evaluation/>
                     <Route path="/*any" view=|| view! { <div class="text-center p-10">"Page Not Found"</div> }/>
                 </Routes>
             </Layout>
@@ -49,8 +54,10 @@ fn Layout(children: Children) -> impl IntoView {
                             <div class="ml-10 flex items-baseline space-x-4">
                                 <a href="/" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Home"</a>
                                 <a href="/daydream" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Daydream Initiative"</a>
-                                <a href="/design" class="text-gray-300 hover:text-indigo-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Visual Design"</a>
-                                <a href="/systems-thinking" class="text-gray-300 hover:text-teal-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Systems Thinking"</a>
+                                <a href="/foundations" class="text-gray-300 hover:text-indigo-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Foundations"</a>
+                                <a href="/planning" class="text-gray-300 hover:text-rose-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Planning"</a>
+                                <a href="/design" class="text-gray-300 hover:text-pink-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Design"</a>
+                                <a href="/evaluation" class="text-gray-300 hover:text-teal-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Evaluation"</a>
                             </div>
                         </div>
                     </div>

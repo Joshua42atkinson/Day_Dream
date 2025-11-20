@@ -1,4 +1,6 @@
 pub mod home;
 pub mod daydream;
 pub mod design;
-pub mod systems_thinking;
+pub mod evaluation;
+pub mod foundations;
+pub mod planning;
