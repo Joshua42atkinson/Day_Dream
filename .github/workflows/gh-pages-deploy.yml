@@ -1,0 +1,64 @@
+# File:.github/workflows/gh-pages-deploy.yml
+
+name: Release to Github Pages (WASM)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # Required for committing the built files
+  pages: write    # Required for the GitHub Pages deployment
+  id-token: write # Required for secure deployment authentication
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  Github-Pages-Release:
+    name: Build & Deploy Rust WASM App
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Rust Nightly Toolchain and WASM target
+      - name: Install nightly Rust & WASM Target
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: clippy, rustfmt
+      - name: Add WASM target
+        run: rustup target add wasm32-unknown-unknown
+
+      # Step 3: Install Trunk Bundler
+      - name: Install Trunk (WASM Bundler)
+        run: cargo install trunk --locked
+
+      # Step 4: Run Trunk Build with Path Correction
+      # NOTE: This is the critical step that resolves the blank screen issue
+      - name: Build WASM App (Trunk Build)
+        working-directory: ./frontend
+        run: trunk build --release --public-url /Day_Dream/
+
+      # Step 5: Setup GitHub Pages Deployment
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      # Step 6: Deploy Built Files to gh-pages branch
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/dist
+          publish_branch: gh-pages
+          force_orphan: true # Recommended for clean gh-pages history
