@@ -2,6 +2,8 @@
 // between your `backend` server and your `frontend` UI.
 // This is the "common language" they both speak.
 
+pub mod reflection;
+
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use once_cell::sync::Lazy; // For loading static data

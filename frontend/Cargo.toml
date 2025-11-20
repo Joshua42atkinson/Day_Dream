@@ -21,6 +21,36 @@ log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
 gloo-net = { version = "0.6.0", features = ["json"] }
+chrono = { version = "0.4.31", features = ["serde"] }
+common = { path = "../common", features = ["ssr"] }
+
+[features]
+ssr = [
+  "leptos/ssr",
+  "leptos_router/ssr",
+  "dep:leptos_axum",
+  "dep:tokio",
+  "dep:sqlx",
+  "dep:axum"
+]
+
+[dependencies.leptos_axum]
+version = "0.6"
+optional = true
+
+[dependencies.tokio]
+version = "1"
+features = ["full"]
+optional = true
+
+[dependencies.sqlx]
+version = "0.8.0"
+features = ["runtime-tokio-rustls", "postgres", "chrono"]
+optional = true
+
+[dependencies.axum]
+version = "0.7.5"
+optional = true
 
 [profile.release]
 codegen-units = 1
