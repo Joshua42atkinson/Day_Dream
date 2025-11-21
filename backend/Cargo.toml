@@ -10,7 +10,7 @@ frontend = { path = "../frontend" }
 
 
 # Web Server framework
-axum = "0.7"
+axum = "*"
 # The runtime for our server
 tokio = { version = "1", features = ["full"] }
 
@@ -20,33 +20,26 @@ serde_json = "1.0"
 thiserror = "1.0"
 tracing = "0.1"
 
-# --- (IMPROVEMENT) CORS ---
-# This is new. It allows our frontend (on 127.0.0.1:3000)
-# to make requests to our backend (on 127.0.0.1:3001).
-tower-http = { version = "0.5", features = ["cors"] }
+# --- CORS ---
+tower-http = { version = "*", features = ["cors"] }
 
-# --- (IMPROVEMENT) Leptos Imports ---
-# We add these so the backend can understand
-# and serve Leptos's "server functions".
-leptos = { version = "0.6.9", features = ["ssr"] }
-leptos_axum = "0.6.9"
+# --- Leptos Imports ---
+leptos = { version = "*", features = ["ssr"] }
+leptos_axum = "*"
 
 # State Management (as per your docs)
-bevy = { version = "0.14" }
-bevy_ecs = { version = "0.14", optional = true } # Optional for now
+bevy = "*"
+bevy_ecs = "*"
+bevy_defer = "*"
 
 # Database (as per your docs)
-sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
+sqlx = { version = "*", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
 dotenvy = "0.15"
 uuid = { version = "1.8", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "*", features = ["serde"] }
 
 # Vector DB (as per your docs)
-lancedb = { version = "0.6", optional = true }
-
-# AI Orchestration (as per your docs)
-swarms-rs = { version = "0.1.5", optional = true }
-rig-core = { version = "0.1", optional = true }
-
-# GPU (as per your docs)
-rocm-rs = { version = "0.4.2", optional = true }
+lancedb = "*"
+swarms-rs = "*"
+rig-core = "*"
+rocm-rs = "*"
