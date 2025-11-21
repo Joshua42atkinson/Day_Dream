@@ -6,56 +6,28 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
-[[bin]]
-name = "dev-server"
-path = "src/main.rs"
-
 [dependencies]
-# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
-leptos = { version = "0.6", features = ["csr"] }
-# Routing for handling your Portfolio/Foundations/Design pages
-leptos_router = { version = "0.6", features = ["csr"] }
-# Logging for debugging
-console_log = "1"
-log = "0.4"
+# Core Framework - Pinned to 0.8.12 for stability
+leptos = { version = "0.8.0-rc3" }
+leptos_router = { version = "0.8.0-rc3" }
+leptos_meta = { version = "0.8.0-rc3" }
 serde = { version = "1.0", features = ["derive"] }
-console_error_panic_hook = "0.1.7"
-gloo-net = { version = "0.6.0", features = ["json"] }
-chrono = { version = "0.4.31", features = ["serde"] }
-common = { path = "../common", features = ["ssr"] }
+wasm-bindgen = "0.2.93"
 
-[features]
-ssr = [
-  "leptos/ssr",
-  "leptos_router/ssr",
-  "dep:leptos_axum",
-  "dep:tokio",
-  "dep:sqlx",
-  "dep:axum"
-]
+# Server-Side Rendering (SSR) Dependencies
+[dependencies.axum]
+version = "0.8.7"
+optional = true
 
 [dependencies.leptos_axum]
-version = "0.6"
+version = "0.8.0-rc3"
 optional = true
 
 [dependencies.tokio]
-version = "1"
+version = "1.37"
 features = ["full"]
 optional = true
 
-[dependencies.sqlx]
-version = "0.8.0"
-features = ["runtime-tokio-rustls", "postgres", "chrono"]
-optional = true
-
-[dependencies.axum]
-version = "0.7.5"
-optional = true
-
-[profile.release]
-codegen-units = 1
-lto = true
-opt-level = 'z' # Optimize for size (WASM)
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
-# Fixes compilation error for WASM by providing a JS-based randomness source
+# Fixes WASM runtime error by using browser's JS-based randomness source
 getrandom = { version = "0.2", features = ["js"] }
