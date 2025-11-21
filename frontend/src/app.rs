@@ -7,6 +7,7 @@ use crate::pages::design::Design;
 use crate::pages::evaluation::Evaluation;
 use crate::pages::foundations::Foundations;
 use crate::pages::planning::Planning;
+use crate::pages::systems_thinking::SystemsThinkingPage;
 
 
 #[component]
@@ -21,6 +22,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/planning" view=Planning/>
                     <Route path="/design" view=Design/>
                     <Route path="/evaluation" view=Evaluation/>
+                    <Route path="/systems-thinking" view=SystemsThinkingPage/>
                     <Route path="/*any" view=|| view! { <div class="text-center p-10">"Page Not Found"</div> }/>
                 </Routes>
             </Layout>
@@ -58,6 +60,7 @@ fn Layout(children: Children) -> impl IntoView {
                                 <a href="/planning" class="text-gray-300 hover:text-rose-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Planning"</a>
                                 <a href="/design" class="text-gray-300 hover:text-pink-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Design"</a>
                                 <a href="/evaluation" class="text-gray-300 hover:text-teal-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Evaluation"</a>
+                                <a href="/systems-thinking" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Systems Thinking"</a>
                             </div>
                         </div>
                     </div>

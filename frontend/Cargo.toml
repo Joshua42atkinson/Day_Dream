@@ -11,17 +11,16 @@ name = "dev-server"
 path = "src/main.rs"
 
 [dependencies]
-# Core Leptos framework with CSR (Client-Side Rendering) for a static site feel
-leptos = { version = "0.6", features = ["csr"] }
-# Routing for handling your Portfolio/Foundations/Design pages
-leptos_router = { version = "0.6", features = ["csr"] }
+# Pinned to match the highest stable 0.6.x version
+leptos = { version = "*", features = ["csr"] }
+leptos_router = { version = "*", features = ["csr"] }
 # Logging for debugging
 console_log = "1"
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
-gloo-net = { version = "0.6.0", features = ["json"] }
-chrono = { version = "0.4.31", features = ["serde"] }
+gloo-net = { version = "*", features = ["json"] }
+chrono = { version = "*", features = ["serde"] }
 common = { path = "../common", features = ["ssr"] }
 
 [features]
@@ -35,7 +34,7 @@ ssr = [
 ]
 
 [dependencies.leptos_axum]
-version = "0.6"
+version = "*"
 optional = true
 
 [dependencies.tokio]
@@ -44,18 +43,19 @@ features = ["full"]
 optional = true
 
 [dependencies.sqlx]
-version = "0.8.0"
+version = "*"
 features = ["runtime-tokio-rustls", "postgres", "chrono"]
 optional = true
 
 [dependencies.axum]
-version = "0.7.5"
+version = "*"
 optional = true
 
 [profile.release]
 codegen-units = 1
 lto = true
 opt-level = 'z' # Optimize for size (WASM)
+
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
-# Fixes compilation error for WASM by providing a JS-based randomness source
+# Fixes WASM runtime error by using browser's JS-based randomness source
 getrandom = { version = "0.2", features = ["js"] }

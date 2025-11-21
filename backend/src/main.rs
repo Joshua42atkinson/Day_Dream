@@ -14,6 +14,7 @@ mod handlers;
 mod routes;
 mod domain;
 mod error;
+mod game;
 
 pub use error::{AppError, Result};
 use domain::game_logic::process_command;
