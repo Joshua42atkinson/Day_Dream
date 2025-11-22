@@ -1,6 +1,7 @@
-# The Daydream Initiative
+Daydream: LDT Research Sandbox
+A Purdue University Master's Capstone Project
 
-Welcome to the Daydream Initiative, a "Creator's Sandbox" for Instructional Designers to build narrative-driven, AI-powered learning experiences. This project is a full-stack web application built entirely in Rust, using Leptos for the frontend and Axum for the backend.
+Daydream is a next-generation instructional design platform and "creator's sandbox" designed to empower educators to build narrative-driven Intelligent Tutoring Systems (ITS) without coding expertise. Developed as a capstone artifact for the Purdue Learning Design and Technology (LDT) program, it utilizes a high-performance Rust/WASM architecture (Axum, Leptos, Bevy) and integrates "Privacy-by-Design" principles to ensure compliance with student data privacy standards.
 
 ## Quickstart
 
