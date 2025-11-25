@@ -1,8 +1,9 @@
-use leptos::*;
-use crate::components::glass_panel::GlassPanel;
 use crate::components::artifact_card::ArtifactCard;
-use crate::models::{Artifact, PlayerCommand, GameTurn};
+use crate::components::glass_panel::GlassPanel;
+use crate::models::{Artifact, GameTurn, PlayerCommand};
 use gloo_net::http::Request;
+use leptos::prelude::*;
+use leptos::task::spawn_local;
 
 #[component]
 pub fn Daydream() -> impl IntoView {
@@ -98,7 +99,9 @@ pub fn Daydream() -> impl IntoView {
 
 #[component]
 fn GameTerminal() -> impl IntoView {
-    let (history, set_history) = create_signal(vec!["Welcome to the Daydream Initiative terminal.".to_string()]);
+    let (history, set_history) = create_signal(vec![
+        "Welcome to the Daydream Initiative terminal.".to_string(),
+    ]);
     let (command, set_command) = create_signal(String::new());
 
     let send_command = move |_| {
@@ -119,17 +122,20 @@ fn GameTerminal() -> impl IntoView {
                 match response {
                     Ok(resp) => {
                         if resp.ok() {
-                            let game_turn: GameTurn = resp.json().await.expect("Failed to parse response.");
+                            let game_turn: GameTurn =
+                                resp.json().await.expect("Failed to parse response.");
                             set_history.update(|h| h.push(game_turn.ai_narrative));
                             if let Some(msg) = game_turn.system_message {
                                 set_history.update(|h| h.push(format!("[SYSTEM] {}", msg)));
                             }
                         } else {
-                            set_history.update(|h| h.push(format!("Error: {}", resp.status_text())));
+                            set_history
+                                .update(|h| h.push(format!("Error: {}", resp.status_text())));
                         }
                     }
                     Err(_) => {
-                        set_history.update(|h| h.push("Error: Could not reach backend.".to_string()));
+                        set_history
+                            .update(|h| h.push("Error: Could not reach backend.".to_string()));
                     }
                 }
             });

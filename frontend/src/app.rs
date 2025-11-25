@@ -1,29 +1,31 @@
-use leptos::*;
-use leptos_router::*;
+use leptos::prelude::*;
+use leptos_meta::*;
+use leptos_router::{
+    components::{Route, Router, Routes},
+    *,
+};
 
-use crate::pages::home::Home;
 use crate::pages::daydream::Daydream;
 use crate::pages::design::Design;
 use crate::pages::evaluation::Evaluation;
 use crate::pages::foundations::Foundations;
+use crate::pages::home::Home;
 use crate::pages::planning::Planning;
 use crate::pages::systems_thinking::SystemsThinkingPage;
-
 
 #[component]
 pub fn App() -> impl IntoView {
     view! {
         <Router>
             <Layout>
-                <Routes>
-                    <Route path="/" view=Home/>
-                    <Route path="/daydream" view=Daydream/>
-                    <Route path="/foundations" view=Foundations/>
-                    <Route path="/planning" view=Planning/>
-                    <Route path="/design" view=Design/>
-                    <Route path="/evaluation" view=Evaluation/>
-                    <Route path="/systems-thinking" view=SystemsThinkingPage/>
-                    <Route path="/*any" view=|| view! { <div class="text-center p-10">"Page Not Found"</div> }/>
+                <Routes fallback=|| view! { "Page Not Found" }>
+                    <Route path=path!("/") view=Home/>
+                    <Route path=path!("/daydream") view=Daydream/>
+                    <Route path=path!("/foundations") view=Foundations/>
+                    <Route path=path!("/planning") view=Planning/>
+                    <Route path=path!("/design") view=Design/>
+                    <Route path=path!("/evaluation") view=Evaluation/>
+                    <Route path=path!("/systems-thinking") view=SystemsThinkingPage/>
                 </Routes>
             </Layout>
         </Router>
@@ -32,11 +34,17 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn Layout(children: Children) -> impl IntoView {
-    let (_is_menu_open, _set_is_menu_open) = create_signal(false);
+    let (_is_menu_open, _set_is_menu_open) = signal(false);
 
     view! {
         <div class="relative min-h-screen font-inter overflow-hidden selection:bg-cyan-500 selection:text-white">
-            // ... (Keep Aurora Background div identical to previous step) ...
+            // Aurora Background
+            <div class="fixed inset-0 z-0 bg-slate-900">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-black"></div>
+                <div class="absolute inset-0 bg-[url('/noise.svg')] opacity-20 mix-blend-soft-light"></div>
+            </div>
+
+            // Animated Blobs
             <div class="fixed inset-0 z-0 pointer-events-none">
                 <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
                 <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>

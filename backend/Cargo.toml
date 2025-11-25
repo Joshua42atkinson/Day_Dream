@@ -39,7 +39,7 @@ uuid = { version = "1.8", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 
 # Vector DB (as per your docs)
-lancedb = { version = "0.6.0" } # Pinned version, compatible with Bevy 0.14
-swarms-rs = { version = "0.1.9" }
-rig-core = { version = "0.1" }
-rocm-rs = { version = "0.4.2" }
+# lancedb = { version = "0.6.0" } # Pinned version, compatible with Bevy 0.14
+# swarms-rs = { version = "0.1.9" }
+# rig-core = { version = "0.1" }
+# rocm-rs = { version = "0.4.2" }

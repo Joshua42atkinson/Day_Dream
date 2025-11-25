@@ -2,11 +2,12 @@
 // between your `backend` server and your `frontend` UI.
 // This is the "common language" they both speak.
 
+pub mod expert;
 pub mod reflection;
 
-use serde::{Serialize, Deserialize};
-use std::collections::{HashMap, HashSet};
-use once_cell::sync::Lazy; // For loading static data
+use once_cell::sync::Lazy;
+use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet}; // For loading static data
 
 // --- Data Structures from quests.py ---
 // These are direct Rust translations of your Python quest data.
@@ -21,11 +22,11 @@ pub struct QuestReward {
     #[serde(default)]
     pub details: Option<String>,
     #[serde(default)]
-    pub name: Option<String>,    // For items
+    pub name: Option<String>, // For items
     #[serde(default)]
     pub target: Option<String>, // For relationships
     #[serde(default)]
-    pub change: Option<i32>,    // For relationships
+    pub change: Option<i32>, // For relationships
     #[serde(default)]
     pub set_flag: Option<HashMap<String, bool>>, // For info type
     #[serde(default)]
@@ -156,7 +157,7 @@ pub struct PlayerCharacter {
     pub backstory: String,
     pub abilities: Vec<String>,
     pub aspects: Vec<String>,
-    pub inventory: Vec<String>, // From FS_INVENTORY
+    pub inventory: Vec<String>,             // From FS_INVENTORY
     pub quest_flags: HashMap<String, bool>, // From FS_QUEST_FLAGS
     pub current_location: String,
     pub current_quest_id: Option<String>,
@@ -165,7 +166,7 @@ pub struct PlayerCharacter {
     pub current_step_description: String,
     pub fate_points: i32,
     pub report_summaries: Vec<ReportSummary>,
-    
+
     // --- Persona Engine Fields ---
     #[serde(default)]
     pub primary_archetype_id: Option<i32>,
@@ -242,9 +243,9 @@ pub struct PlayerProfile {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct GameTurn {
-    pub player_command: String, // The command the player sent
-    pub ai_narrative: String,   // The AI's response
-    pub system_message: Option<String>, // e.g., "Quest Completed!"
+    pub player_command: String,             // The command the player sent
+    pub ai_narrative: String,               // The AI's response
+    pub system_message: Option<String>,     // e.g., "Quest Completed!"
     pub updated_character: PlayerCharacter, // The *new* state
 }
 
@@ -270,11 +271,47 @@ pub static CHARACTER_TEMPLATES: Lazy<Vec<CharacterTemplate>> = Lazy::new(|| {
 #[cfg(feature = "ssr")]
 pub static RACE_DATA_MAP: Lazy<HashMap<String, RaceData>> = Lazy::new(|| {
     let mut m = HashMap::new();
-    m.insert("Sasquatch".to_string(), RaceData { abilities: vec!["Natural Armor".to_string(), "Cannot Wear Armor".to_string()], fate_point_mod: 0 });
-    m.insert("Leprechaun".to_string(), RaceData { abilities: vec!["Fortunate Find".to_string()], fate_point_mod: 0 });
-    m.insert("Android".to_string(), RaceData { abilities: vec!["Integrated Systems".to_string(), "Memory Limit".to_string()], fate_point_mod: -1 });
-    m.insert("Opossuman".to_string(), RaceData { abilities: vec!["Pack Tactics".to_string(), "Fierce Loyalty".to_string()], fate_point_mod: 0 });
-    m.insert("Tortisian".to_string(), RaceData { abilities: vec!["Artistic Shell".to_string(), "Second Brain".to_string()], fate_point_mod: 0 });
-    m.insert("Slime".to_string(), RaceData { abilities: vec!["Absorb Magic".to_string(), "Shapechange".to_string()], fate_point_mod: 0 });
+    m.insert(
+        "Sasquatch".to_string(),
+        RaceData {
+            abilities: vec!["Natural Armor".to_string(), "Cannot Wear Armor".to_string()],
+            fate_point_mod: 0,
+        },
+    );
+    m.insert(
+        "Leprechaun".to_string(),
+        RaceData {
+            abilities: vec!["Fortunate Find".to_string()],
+            fate_point_mod: 0,
+        },
+    );
+    m.insert(
+        "Android".to_string(),
+        RaceData {
+            abilities: vec!["Integrated Systems".to_string(), "Memory Limit".to_string()],
+            fate_point_mod: -1,
+        },
+    );
+    m.insert(
+        "Opossuman".to_string(),
+        RaceData {
+            abilities: vec!["Pack Tactics".to_string(), "Fierce Loyalty".to_string()],
+            fate_point_mod: 0,
+        },
+    );
+    m.insert(
+        "Tortisian".to_string(),
+        RaceData {
+            abilities: vec!["Artistic Shell".to_string(), "Second Brain".to_string()],
+            fate_point_mod: 0,
+        },
+    );
+    m.insert(
+        "Slime".to_string(),
+        RaceData {
+            abilities: vec!["Absorb Magic".to_string(), "Shapechange".to_string()],
+            fate_point_mod: 0,
+        },
+    );
     m
 });

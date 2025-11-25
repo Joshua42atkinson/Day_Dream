@@ -1,5 +1,8 @@
-use chrono::Utc;
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "ssr")]
+use chrono::Utc;
+#[cfg(feature = "ssr")]
 use sqlx::PgPool;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -9,6 +12,7 @@ pub struct ReflectionEntry {
     pub reflection_text: String,
 }
 
+#[cfg(feature = "ssr")]
 pub async fn save_reflection_entry(
     pool: &PgPool,
     user_id: i64,

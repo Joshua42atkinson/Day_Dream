@@ -1,0 +1,10 @@
+error: failed to select a version for `leptos`.
+    ... required by package `common v0.1.0 (C:\Users\Trinity\Documents\daydream\Day_Dream\common)`
+    ... which satisfies path dependency `common` (locked to 0.1.0) of package `frontend v0.1.0 (C:\Users\Trinity\Documents\daydream\Day_Dream\frontend)`
+versions that meet the requirements `^0.8.0-rc3` (locked to 0.8.12) are: 0.8.12
+
+package `common` depends on `leptos` with feature `serde` but `leptos` does not have that feature.
+ A required dependency with that name exists, but only optional dependencies can be used as features.
+
+
+failed to select a version for `leptos` which could resolve this conflict

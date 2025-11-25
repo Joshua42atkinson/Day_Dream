@@ -1,0 +1,1998 @@
+﻿cargo : warning: unused 
+import: 
+`once_cell::sync::Lazy`
+At line:1 char:1
++ cargo check -p frontend 
+2>&1 | Out-File -Encoding 
+utf8 check_log_6.tx ...
++ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (warni  
+  ng: unused...ll::sync::   
+ Lazy`:String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+ --> common\src\lib.rs:8:5
+  |
+8 | use 
+once_cell::sync::Lazy;
+  |     
+^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: `common` (lib) 
+generated 1 warning (run 
+`cargo fix --lib -p common` 
+to apply 1 suggestion)
+    Checking frontend 
+v0.1.0 (C:\Users\Trinity\Doc
+uments\daydream\Day_Dream\fr
+ontend)
+warning: unused import: 
+`leptos_meta::*`
+ --> frontend\src\app.rs:2:5
+  |
+2 | use leptos_meta::*;
+  |     ^^^^^^^^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unexpected `cfg` 
+condition value: `ssr`
+ --> frontend\src\components
+\reflection_form.rs:3:7
+  |
+3 | #[cfg(feature = "ssr")]
+  |       ^^^^^^^^^^^^^^^
+  |
+  = note: expected values 
+for `feature` are: `axum`, 
+`leptos_axum`, and `tokio`
+  = help: consider adding 
+`ssr` as a feature in 
+`Cargo.toml`
+  = note: see <https://doc.r
+ust-lang.org/nightly/rustc/c
+heck-cfg/cargo-specifics.htm
+l> for more information 
+about checking conditional 
+configuration
+  = note: 
+`#[warn(unexpected_cfgs)]` 
+on by default
+
+warning: unexpected `cfg` 
+condition value: `ssr`
+ --> frontend\src\components
+\reflection_form.rs:6:7
+  |
+6 | #[cfg(feature = "ssr")]
+  |       ^^^^^^^^^^^^^^^
+  |
+  = note: expected values 
+for `feature` are: `axum`, 
+`leptos_axum`, and `tokio`
+  = help: consider adding 
+`ssr` as a feature in 
+`Cargo.toml`
+  = note: see <https://doc.r
+ust-lang.org/nightly/rustc/c
+heck-cfg/cargo-specifics.htm
+l> for more information 
+about checking conditional 
+configuration
+
+warning: unused import: 
+`leptos::*`
+ --> frontend\src\components
+\reflection_form.rs:1:5
+  |
+1 | use leptos::*;
+  |     ^^^^^^^^^
+
+warning: unused import: `cra
+te::components::glass_panel:
+:GlassPanel`
+ --> frontend\src\pages\foun
+dations.rs:4:5
+  |
+4 | use crate::components::g
+lass_panel::GlassPanel; // 
+Ensure GlassPanel is 
+imported if needed by the 
+page itself
+  |     ^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `cra
+te::components::glass_panel:
+:GlassPanel`
+ --> frontend\src\pages\plan
+ning.rs:5:5
+  |
+5 | use crate::components::g
+lass_panel::GlassPanel; // 
+Ensure GlassPanel is 
+imported if needed by the 
+page itself
+  |     ^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unexpected `cfg` 
+condition value: `ssr`
+ --> frontend\src\server_fun
+ctions.rs:3:7
+  |
+3 | #[cfg(feature = "ssr")]
+  |       ^^^^^^^^^^^^^^^
+  |
+  = note: expected values 
+for `feature` are: `axum`, 
+`leptos_axum`, and `tokio`
+  = help: consider adding 
+`ssr` as a feature in 
+`Cargo.toml`
+  = note: see <https://doc.r
+ust-lang.org/nightly/rustc/c
+heck-cfg/cargo-specifics.htm
+l> for more information 
+about checking conditional 
+configuration
+
+warning: unused import: 
+`leptos::*`
+ --> frontend\src\server_fun
+ctions.rs:1:5
+  |
+1 | use leptos::*;
+  |     ^^^^^^^^^
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+  --> frontend\src\component
+s\authoring\node_canvas.rs:1
+5:36
+   |
+15 |     let (dragging, 
+set_dragging) = create_signa
+l::<Option<(String, f64, 
+f64)>>(None);
+   |                        
+            ^^^^^^^^^^^^^
+   |
+   = note: 
+`#[warn(deprecated)]` on by 
+default
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+  --> frontend\src\pages\aut
+horing.rs:11:30
+   |
+11 |     let (nodes, 
+set_nodes) = create_signal(V
+ec::<StoryNode>::new());
+   |                        
+      ^^^^^^^^^^^^^
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+  --> frontend\src\pages\aut
+horing.rs:12:42
+   |
+12 |     let (connections, 
+set_connections) = create_si
+gnal(Vec::<Connection>::new(
+));
+   |                        
+                  
+^^^^^^^^^^^^^
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+  --> frontend\src\pages\aut
+horing.rs:13:46
+   |
+13 |     let 
+(selected_node, 
+set_selected_node) = create_
+signal::<Option<StoryNode>>(
+None);
+   |                        
+                      
+^^^^^^^^^^^^^
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+   --> frontend\src\pages\da
+ydream.rs:102:34
+    |
+102 |     let (history, 
+set_history) = 
+create_signal(vec![
+    |                       
+           ^^^^^^^^^^^^^
+
+warning: use of deprecated 
+function `leptos::prelude::c
+reate_signal`: This 
+function is being renamed 
+to `signal()` to conform to 
+Rust idioms.
+   --> frontend\src\pages\da
+ydream.rs:105:34
+    |
+105 |     let (command, 
+set_command) = create_signal
+(String::new());
+    |                       
+           ^^^^^^^^^^^^^
+
+warning: use of deprecated 
+method `leptos_router::compo
+nents::RoutesPropsBuilder::<
+Defs, FallbackFn, Fallback, 
+((), __transition, 
+__children)>::build`: 
+Missing required field 
+fallback
+  --> 
+frontend\src\app.rs:19:5
+   |
+19 | /     view! {
+20 | |         <Router>
+21 | |             <Layout>
+22 | |                 
+<Routes>
+...  |
+34 | |         </Router>
+35 | |     }
+   | |_____^
+   |
+   = note: this warning 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+
+error[E0061]: this method 
+takes 1 argument but 0 
+arguments were supplied
+   --> 
+frontend\src\app.rs:19:5
+    |
+ 19 | /     view! {
+ 20 | |         <Router>
+ 21 | |             <Layout>
+ 22 | |                 
+<Routes>
+...   |
+ 34 | |         </Router>
+ 35 | |     }
+    | |_____^ argument #1 
+of type `RoutesPropsBuilder_
+Error_Missing_required_field
+_fallback` is missing
+    |
+note: method defined here
+   --> C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\leptos_
+router-0.8.9\src\components.
+rs:218:1
+    |
+218 | 
+#[component(transparent)]
+    | 
+^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: this error 
+originates in the macro 
+`view` which comes from the 
+expansion of the derive 
+macro `::leptos::typed_build
+er_macro::TypedBuilder` (in 
+Nightly builds, run with -Z 
+macro-backtrace for more 
+info)
+
+error[E0308]: `match` arms 
+have incompatible types
+  --> frontend\src\component
+s\artifact_card.rs:45:25
+   |
+36 |               {move || 
+match &artifact.link {
+   |                        
+-------------------- 
+`match` arms have 
+incompatible types
+37 |                   
+Some(url) => view! {
+   |  ______________________
+________-
+38 | |                     
+<div class="p-4 border-t 
+border-white/5 bg-white/5 
+mt-auto">
+39 | |                      
+   <a href=url.clone() 
+target="_blank" class="flex 
+items-center justify-center 
+w-full text-sm 
+font-semibold text-cya...
+40 | |                      
+       
+{artifact.link_text.clone()}
+...  |
+43 | |                     
+</div>
+44 | |                 
+}.into_view(),
+   | |______________________
+_______- this is found to 
+be of type `leptos::prelude:
+:View<leptos::prelude::View<
+leptos::html::HtmlElement<le
+ptos::html::Div, 
+(Class<&str>,), (leptos::htm
+l::HtmlElement<leptos::html:
+:A, (Class<&str>, 
+Attr<Href, 
+std::string::String>, 
+Attr<Target, &str>), 
+((std::string::String, lepto
+s::tachys::html::InertElemen
+t),)>,)>>>`
+45 |                   None 
+=> view! {}.into_view()
+   |                        
+   ^^^^^^^^^^^^^^^^^^^^ 
+expected 
+`View<View<HtmlElement<Div, 
+..., ...>>>`, found 
+`View<()>`
+   |
+   = note: expected struct 
+`View<View<HtmlElement<Div, 
+(Class<&str>,), (...,)>>>`
+              found struct 
+`leptos::prelude::View<()>`
+   = note: the full name 
+for the type has been 
+written to 'C:\Users\Trinity
+\Documents\daydream\Day_Drea
+m\target\debug\deps\frontend
+-c4ba24d0517efd58.long-type-
+16736087676608954406.txt'
+   = note: consider using 
+`--verbose` to print the 
+full type name to the 
+console
+
+error[E0599]: the method 
+`with` exists for struct `le
+ptos::prelude::WriteSignal<V
+ec<StoryNode>>`, but its 
+trait bounds were not 
+satisfied
+  --> frontend\src\component
+s\authoring\node_canvas.rs:2
+3:19
+   |
+23 |         
+set_nodes.with(|nodes| {
+   |         ----------^^^^ 
+method cannot be called on `
+leptos::prelude::WriteSignal
+<Vec<StoryNode>>` due to 
+unsatisfied trait bounds
+   |
+  ::: C:\Users\Trinity\.carg
+o\registry\src\index.crates.
+io-1949cf8c6b5b557f\reactive
+_graph-0.2.9\src\signal\writ
+e.rs:55:1
+   |
+55 | pub struct 
+WriteSignal<T, S = 
+SyncStorage> {
+   | -----------------------
+------------------- doesn't 
+satisfy `_: Read` or `_: 
+With`
+   |
+   = note: the following 
+trait bounds were not 
+satisfied:
+           `leptos::prelude:
+:WriteSignal<Vec<StoryNode>>
+: leptos::prelude::Read`
+           which is 
+required by `leptos::prelude
+::WriteSignal<Vec<StoryNode>
+>: leptos::prelude::With`
+
+error[E0308]: `if` and 
+`else` have incompatible 
+types
+  --> frontend\src\component
+s\authoring\node_canvas.rs:8
+3:29
+   |
+67 | /                      
+    if let (Some(from), 
+Some(to)) = (from, to) {
+68 | |                      
+        // Calculate center 
+points (assuming node width 
+~192px (w-48), height ~80px)
+69 | |                      
+        let x1 = from.x + 
+192.0; // Right side of 
+'from'
+70 | |                      
+        let y1 = from.y + 
+40.0;  // Middle of 'from'
+...  |
+79 | |/                     
+        view! {
+80 | ||                     
+            <path d=d 
+stroke="#06b6d4" 
+stroke-width="2" 
+fill="none" />
+81 | ||                     
+        }
+   | ||_____________________
+________- expected because 
+of this
+82 | |                      
+    } else {
+83 | |                      
+        view! { <g></g> }
+   | |                      
+        ^^^^^^^^^^^^^^^^^ 
+expected 
+`View<HtmlElement<Path, 
+..., ()>>`, found 
+`View<HtmlElement<G, (), 
+()>>`
+84 | |                      
+    }
+   | |______________________
+____- `if` and `else` have 
+incompatible types
+   |
+   = note: expected struct 
+`View<HtmlElement<Path, 
+(CustomAttr<&str, String>, 
+..., ..., ...), ()>>`
+              found struct `
+leptos::prelude::View<leptos
+::html::HtmlElement<leptos::
+svg::G, (), _>>`
+   = note: the full name 
+for the type has been 
+written to 'C:\Users\Trinity
+\Documents\daydream\Day_Drea
+m\target\debug\deps\frontend
+-c4ba24d0517efd58.long-type-
+5958933796658618176.txt'
+   = note: consider using 
+`--verbose` to print the 
+full type name to the 
+console
+   = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+
+error[E0277]: the trait 
+bound 
+`Callback<MouseEvent>: From<
+{closure@node_canvas.rs:100:
+42}>` is not satisfied
+   --> frontend\src\componen
+ts\authoring\node_canvas.rs:
+97:21
+    |
+ 97 | /                     
+view! {
+ 98 | |                     
+    <StoryNode
+ 99 | |                     
+        node=node
+100 | |                     
+        on_mousedown=move 
+|e: MouseEvent| 
+on_mousedown(e, id.clone(), 
+x, y)
+    | |                     
+        ------------ -------
+----------------------------
+------------------- this 
+tail expression is of type `
+{closure@node_canvas.rs:100:
+42}`
+    | |                     
+        |
+    | |                     
+        required by a bound 
+introduced by this call
+101 | |                     
+    />
+102 | |                     
+}
+    | 
+|_____________________^ 
+unsatisfied trait bound
+    |
+    = help: the trait `From<
+{closure@frontend\src\compon
+ents\authoring\node_canvas.r
+s:100:42: 100:62}>` is not 
+implemented for `leptos::pre
+lude::Callback<MouseEvent>`
+    = help: the following 
+other types implement trait 
+`From<T>`:
+              leptos::prelud
+e::Callback<(), Out>
+              leptos::prelud
+e::Callback<(P1, P2), Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3), 
+Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3, 
+P4), Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3, 
+P4, P5), Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3, 
+P4, P5, P6), Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3, 
+P4, P5, P6, P7), Out>
+              leptos::prelud
+e::Callback<(P1, P2, P3, 
+P4, P5, P6, P7, P8), Out>
+            and 5 others
+    = note: required for `{c
+losure@frontend\src\componen
+ts\authoring\node_canvas.rs:
+100:42: 100:62}` to 
+implement `Into<leptos::prel
+ude::Callback<MouseEvent>>`
+note: required by a bound 
+in `StoryNodePropsBuilder::<
+(__node, ())>::on_mousedown`
+   --> frontend\src\componen
+ts\authoring\story_node.rs:5
+:1
+    |
+  5 | #[component]
+    | ^^^^^^^^^^^^ required 
+by this bound in `StoryNodeP
+ropsBuilder::<(__node, 
+())>::on_mousedown`
+...
+  8 |     #[prop(into)] 
+on_mousedown: Callback<web_s
+ys::MouseEvent>,
+    |                   
+------------ required by a 
+bound in this associated 
+function
+    = note: the full name 
+for the type has been 
+written to 'C:\Users\Trinity
+\Documents\daydream\Day_Drea
+m\target\debug\deps\frontend
+-c4ba24d0517efd58.long-type-
+1183146718080749982.txt'
+    = note: consider using 
+`--verbose` to print the 
+full type name to the 
+console
+    = note: this error 
+originates in the derive 
+macro `::leptos::typed_build
+er_macro::TypedBuilder` (in 
+Nightly builds, run with -Z 
+macro-backtrace for more 
+info)
+
+error[E0308]: `match` arms 
+have incompatible types
+  --> frontend\src\component
+s\authoring\property_editor.
+rs:66:25
+   |
+14 |               {move || 
+match selected_node.get() {
+   |                        
+------------------------- 
+`match` arms have 
+incompatible types
+15 |                   
+Some(node) => view! {
+   |  ______________________
+_________-
+16 | |                     
+<div class="space-y-4">
+17 | |                      
+   <div>
+18 | |                      
+       <label class="block 
+text-sm font-medium 
+text-gray-400 mb-1">"Node 
+ID"</label>
+...  |
+33 | |                      
+           on:input=move 
+|e| {
+   | |                      
+                    
+-------- one of the 
+expected closures
+...  |
+45 | |                      
+           on:input=move 
+|e| {
+   | |                      
+                    
+-------- one of the 
+expected closures
+...  |
+59 | |                      
+           on:click=move 
+|_| 
+set_selected_node.set(None)
+   | |                      
+                    
+-------- one of the 
+expected closures
+...  |
+64 | |                     
+</div>
+65 | |                 
+}.into_view(),
+   | |______________________
+_______- this is found to 
+be of type `leptos::prelude:
+:View<leptos::prelude::View<
+leptos::html::HtmlElement<le
+ptos::html::Div, 
+(Class<&str>,), ((leptos::ht
+ml::HtmlElement<leptos::html
+::Div, (), ((leptos::tachys:
+:html::InertElement, leptos:
+:html::HtmlElement<Input, 
+(Class<&str>, Attr<Type, 
+&str>, 
+Attr<leptos::attr::Value, 
+std::string::String>, Attr<l
+eptos::attr::Disabled, 
+bool>), ()>),)>, leptos::htm
+l::HtmlElement<leptos::html:
+:Div, (), ((leptos::tachys::
+html::InertElement, leptos::
+html::HtmlElement<Input, 
+(Class<&str>, Attr<Type, 
+&str>, 
+Attr<leptos::attr::Value, 
+std::string::String>, 
+On<input, {closure@frontend\
+src\components\authoring\pro
+perty_editor.rs:33:42: 
+33:50}>), ()>),)>, leptos::h
+tml::HtmlElement<leptos::htm
+l::Div, (), ((leptos::tachys
+::html::InertElement, leptos
+::html::HtmlElement<Textarea
+, (Class<&str>, On<input, {c
+losure@frontend\src\componen
+ts\authoring\property_editor
+.rs:45:42: 45:50}>), (std::s
+tring::String,)>),)>, leptos
+::html::HtmlElement<leptos::
+html::Div, (Class<&str>,), (
+(leptos::tachys::html::Inert
+Element, leptos::html::HtmlE
+lement<Button, 
+(Class<&str>, On<click, {clo
+sure@frontend\src\components
+\authoring\property_editor.r
+s:59:42: 59:50}>), 
+(&str,)>),)>),)>>>`
+66 |                   None 
+=> view! {
+   |  
+_________________________^
+67 | |                     
+<div class="text-gray-500 
+italic text-center mt-10">
+68 | |                      
+   "Select a node to edit 
+its properties."
+69 | |                     
+</div>
+70 | |                 
+}.into_view()
+   | |______________________
+_______^ expected `(..., 
+..., ..., ...)`, found 
+`&str`
+   |
+   = note: expected struct 
+`View<View<HtmlElement<Div, 
+(Class<&str>,), ((..., ..., 
+..., ...),)>>>`
+              found struct `
+leptos::prelude::View<leptos
+::prelude::View<leptos::html
+::HtmlElement<_, 
+(Class<&_>,), (&str,)>>>`
+   = note: the full name 
+for the type has been 
+written to 'C:\Users\Trinity
+\Documents\daydream\Day_Drea
+m\target\debug\deps\frontend
+-c4ba24d0517efd58.long-type-
+3398497194079266194.txt'
+   = note: consider using 
+`--verbose` to print the 
+full type name to the 
+console
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\design_process.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+  8 | |             <div 
+class="border-l-4 
+border-purple-500 pl-6 py-4 
+mb-8">
+  9 | |                 <h2 
+class="text-4xl 
+font-extrabold text-white tr
+acking-tight">"Instructional
+ Design Process"</h2>
+...   |
+ 98 | |         </div>
+ 99 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Div, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\design_process.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+  8 | |             <div 
+class="border-l-4 
+border-purple-500 pl-6 py-4 
+mb-8">
+  9 | |                 <h2 
+class="text-4xl 
+font-extrabold text-white tr
+acking-tight">"Instructional
+ Design Process"</h2>
+...   |
+ 98 | |         </div>
+ 99 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::P, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::P, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\design_process.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+  8 | |             <div 
+class="border-l-4 
+border-purple-500 pl-6 py-4 
+mb-8">
+  9 | |                 <h2 
+class="text-4xl 
+font-extrabold text-white tr
+acking-tight">"Instructional
+ Design Process"</h2>
+...   |
+ 98 | |         </div>
+ 99 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Span, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Span, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\ethical_legal.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-emerald-500 pl-6 
+py-4 mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"Ethical & 
+Legal Architecture"</h2>
+...   |
+ 83 | | </div>
+ 84 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\formative_eval.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+  8 | |             <div 
+class="border-l-4 
+border-teal-500 pl-6 py-4 
+mb-8">
+  9 | |                 <h2 
+class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"The 
+Ethical Self-Audit"</h2>
+...   |
+ 73 | |         </div>
+ 74 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Div, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\formative_eval.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+  8 | |             <div 
+class="border-l-4 
+border-teal-500 pl-6 py-4 
+mb-8">
+  9 | |                 <h2 
+class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"The 
+Ethical Self-Audit"</h2>
+...   |
+ 73 | |         </div>
+ 74 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::P, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::P, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\learner_analysis.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-rose-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"Learner 
+Analysis"</h2>
+...   |
+ 71 | | </div>
+ 72 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\motivational_design.rs:5:
+1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-pink-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white tr
+acking-tight">"Motivational 
+Design"</h2>
+...   |
+ 70 | | </div>
+ 71 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\systems_thinking.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-blue-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"Systems 
+Thinking in ID"</h2>
+...   |
+ 69 | | </div>
+ 70 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\tech_analysis.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-violet-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"Strategic 
+Tech Analysis"</h2>
+...   |
+ 68 | | </div>
+ 69 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\tech_skills.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-cyan-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white 
+tracking-tight">"The 
+Learning Systems 
+Architect"</h2>
+...   |
+ 67 | | </div>
+ 68 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\theoretical_synthesis.rs:
+5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="space-y-12 
+animate-fade-in relative">
+  7 | | <div 
+class="border-l-4 
+border-indigo-500 pl-6 py-4 
+mb-8">
+  8 | | <h2 class="text-4xl 
+font-extrabold text-white tr
+acking-tight">"Theoretical 
+Synthesis"</h2>
+...   |
+ 71 | | </div>
+ 72 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\componen
+ts\visual_design.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="space-y-12 
+animate-fade-in relative">
+...   |
+ 96 | |         </div>
+ 97 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Div, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0308]: mismatched 
+types
+  --> frontend\src\pages\aut
+horing.rs:89:35
+   |
+89 |                     
+selected_node=selected_node
+   |                        
+           ^^^^^^^^^^^^^ 
+expected `Signal<Option<Stor
+yNode>>`, found `ReadSignal<
+Option<StoryNode>>`
+   |
+   = note: expected struct `
+leptos::prelude::Signal<std:
+:option::Option<StoryNode>>`
+              found struct `
+leptos::prelude::ReadSignal<
+std::option::Option<StoryNod
+e>>`
+help: call `Into::into` on 
+this expression to convert `
+leptos::prelude::ReadSignal<
+std::option::Option<StoryNod
+e>>` into `leptos::prelude::
+Signal<std::option::Option<S
+toryNode>>`
+   |
+89 |                     sel
+ected_node=selected_node.int
+o()
+   |                        
+                        
++++++++
+
+error[E0308]: mismatched 
+types
+  --> frontend\src\pages\aut
+horing.rs:91:29
+   |
+15 |     let on_save_node = 
+move |updated_node: 
+StoryNode| {
+   |                        
+----------------------------
+-- the found closure
+...
+91 |                     
+on_save=on_save_node
+   |                        
+     ^^^^^^^^^^^^ expected 
+`Callback<StoryNode>`, 
+found closure
+   |
+   = note: expected struct `
+leptos::prelude::Callback<St
+oryNode>`
+             found closure `
+{closure@frontend\src\pages\
+authoring.rs:15:24: 15:54}`
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\de
+sign.rs:8:1
+    |
+  8 |   view! {
+    |  _^
+  9 | | <div 
+class="max-w-5xl mx-auto 
+w-full space-y-20 
+animate-fade-in p-6">
+ 10 | | <div 
+class="text-center 
+space-y-6">
+ 11 | | <h1 class="text-4xl 
+font-bold 
+text-white">"Design & 
+Development"</h1>
+...   |
+ 21 | | </div>
+ 22 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\ev
+aluation.rs:5:1
+    |
+  5 |   view! {
+    |  _^
+  6 | | <div 
+class="max-w-5xl mx-auto 
+w-full space-y-20 
+animate-fade-in p-6">
+  7 | | <div 
+class="text-center 
+space-y-6">
+  8 | | <h1 class="text-4xl 
+font-bold 
+text-white">"Evaluation & 
+Implementation"</h1>
+...   |
+ 12 | | </div>
+ 13 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\fo
+undations.rs:7:1
+    |
+  7 |   view! {
+    |  _^
+  8 | | <div 
+class="max-w-5xl mx-auto 
+w-full space-y-20 
+animate-fade-in p-6">
+  9 | | <div 
+class="text-center 
+space-y-6">
+ 10 | | <h1 class="text-4xl 
+font-bold 
+text-white">"Professional 
+Foundations"</h1>
+...   |
+ 16 | | </div>
+ 17 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\ho
+me.rs:6:5
+    |
+  6 |       view! {
+    |  _____^
+  7 | |         <div 
+class="max-w-5xl mx-auto 
+w-full space-y-10 
+animate-fade-in p-6">
+...   |
+ 65 | |         </div>
+ 66 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Div, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\pl
+anning.rs:8:1
+    |
+  8 |   view! {
+    |  _^
+  9 | | <div 
+class="max-w-5xl mx-auto 
+w-full space-y-20 
+animate-fade-in p-6">
+ 10 | | <div 
+class="text-center 
+space-y-6">
+ 11 | | <h1 class="text-4xl 
+font-bold 
+text-white">"Planning & 
+Analysis"</h1>
+...   |
+ 19 | | </div>
+ 20 | | }
+    | |_^ method not found 
+in `leptos::html::HtmlElemen
+t<leptos::html::Div, (), 
+()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+error[E0599]: no method 
+named `child` found for 
+struct `leptos::html::HtmlEl
+ement<E, At, Ch>` in the 
+current scope
+   --> frontend\src\pages\sy
+stems_thinking.rs:5:5
+    |
+  5 |       view! {
+    |  _____^
+  6 | |         <div 
+class="p-4 text-white">
+  7 | |             
+"Systems Thinking Page - 
+Under Construction"
+  8 | |         </div>
+  9 | |     }
+    | |_____^ method not 
+found in `leptos::html::Html
+Element<leptos::html::Div, 
+(), ()>`
+    |
+   ::: C:\Users\Trinity\.car
+go\registry\src\index.crates
+.io-1949cf8c6b5b557f\tachys-
+0.2.10\src\html\element\mod.
+rs:273:8
+    |
+273 |       fn child(self, 
+child: NewChild) -> 
+Self::Output;
+    |          ----- the 
+method is available for `lep
+tos::html::HtmlElement<lepto
+s::html::Div, (), ()>` here
+    |
+    = help: items from 
+traits can only be used if 
+the trait is in scope
+    = note: this error 
+originates in the macro 
+`view` (in Nightly builds, 
+run with -Z macro-backtrace 
+for more info)
+help: trait `ElementChild` 
+which provides `child` is 
+implemented but not in 
+scope; perhaps you want to 
+import it
+    |
+  1 + use leptos::prelude::E
+lementChild;
+    |
+
+Some errors have detailed 
+explanations: E0061, E0277, 
+E0308, E0599.
+For more information about 
+an error, try `rustc 
+--explain E0061`.
+warning: `frontend` (lib) 
+generated 15 warnings
+error: could not compile 
+`frontend` (lib) due to 27 
+previous errors; 15 
+warnings emitted

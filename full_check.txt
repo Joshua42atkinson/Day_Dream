@@ -1,0 +1,40 @@
+﻿cargo :     Checking 
+frontend v0.1.0 (C:\Users\Tr
+inity\Documents\daydream\Day
+_Dream\frontend)
+At line:1 char:1
++ cargo check --workspace 
+2>&1 | Out-File -Encoding 
+utf8 full_check.txt
++ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (    C  
+  hecking fr...Dream\fron   
+ tend):String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+error: unexpected closing 
+delimiter: `}`
+  --> frontend\src\component
+s\design_process.rs:92:5
+   |
+80 |                        
+     {"'"}
+   |                        
+     -   - ...matches this 
+closing brace
+   |                        
+     |
+   |                        
+     this opening brace...
+...
+92 |     }
+   |     ^ unexpected 
+closing delimiter
+
+error: could not compile 
+`frontend` (lib) due to 1 
+previous error

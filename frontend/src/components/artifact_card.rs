@@ -1,5 +1,5 @@
-use leptos::*;
 use crate::models::Artifact;
+use leptos::prelude::*;
 
 #[component]
 pub fn ArtifactCard(artifact: Artifact) -> impl IntoView {
@@ -41,8 +41,8 @@ pub fn ArtifactCard(artifact: Artifact) -> impl IntoView {
                             <span class="ml-2">"→"</span>
                         </a>
                     </div>
-                }.into_view(),
-                None => view! {}.into_view()
+                }.into_any(),
+                None => view! {}.into_any()
             }}
         </div>
     }
