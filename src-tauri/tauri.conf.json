@@ -7,7 +7,7 @@
     "frontendDist": "../target/site",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "trunk serve",
-    "beforeBuildCommand": "trunk build --release"
+    "beforeBuildCommand": ""
   },
   "app": {
     "windows": [
