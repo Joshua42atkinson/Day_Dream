@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 
 #[cfg(feature = "ssr")]
 #[server(SaveReflection, "/api")]

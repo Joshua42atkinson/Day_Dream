@@ -99,10 +99,10 @@ pub fn Daydream() -> impl IntoView {
 
 #[component]
 fn GameTerminal() -> impl IntoView {
-    let (history, set_history) = create_signal(vec![
-        "Welcome to the Daydream Initiative terminal.".to_string(),
+    let (history, set_history) = signal(vec![
+        "Welcome to the Daydream Initiative terminal.".to_string()
     ]);
-    let (command, set_command) = create_signal(String::new());
+    let (command, set_command) = signal(String::new());
 
     let send_command = move |_| {
         let cmd = command.get_untracked();

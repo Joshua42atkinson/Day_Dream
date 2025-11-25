@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::prelude::ElementChild;
 use crate::components::design_process::DesignProcessChallenge;
 use crate::components::motivational_design::MotivationalDesignChallenge;
 use crate::components::tech_skills::TechSkillsChallenge;

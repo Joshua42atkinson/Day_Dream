@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 
 #[cfg(feature = "ssr")]
 use crate::server_functions::save_reflection;
@@ -10,9 +10,7 @@ pub fn ReflectionForm() -> impl IntoView {
         let user_id = 100;
         let challenge_name = "Systems Thinking".to_string();
         let reflection_text_owned = reflection_text.clone();
-        async move {
-            save_reflection(user_id, challenge_name, reflection_text_owned).await
-        }
+        async move { save_reflection(user_id, challenge_name, reflection_text_owned).await }
     });
 
     let reflection_text = create_rw_signal(String::new());

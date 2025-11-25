@@ -1,5 +1,4 @@
 pub mod artifact_card;
-pub mod authoring;
 pub mod design_process;
 pub mod ethical_legal;
 pub mod formative_eval;

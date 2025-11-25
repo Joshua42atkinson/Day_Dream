@@ -1,0 +1,268 @@
+﻿cargo : warning: 
+unused import: `once_
+cell::sync::Lazy`
+At line:1 char:1
++ cargo check -p 
+frontend 2>&1 | 
+Out-File -Encoding 
+utf8 final_check.tx 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (warning   
+ : unused...ll::s    
+ync::Lazy`:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ --> 
+common\src\lib.rs:8:5
+  |
+8 | use once_cell::sy
+nc::Lazy;
+  |     
+^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unu
+sed_imports)]` (part 
+of 
+`#[warn(unused)]`) 
+on by default
+
+warning: `common` 
+(lib) generated 1 
+warning (run `cargo 
+fix --lib -p common` 
+to apply 1 
+suggestion)
+    Checking 
+frontend v0.1.0 (C:\U
+sers\Trinity\Document
+s\daydream\Day_Dream\
+frontend)
+error[E0583]: file 
+not found for module 
+`api_expert`
+ --> frontend\src\lib
+.rs:1:1
+  |
+1 | pub mod 
+api_expert;
+  | 
+^^^^^^^^^^^^^^^^^^^
+  |
+  = help: to create 
+the module 
+`api_expert`, create 
+file "frontend\src\ap
+i_expert.rs" or "fron
+tend\src\api_expert\m
+od.rs"
+  = note: if there 
+is a `mod 
+api_expert` 
+elsewhere in the 
+crate already, 
+import it with `use 
+crate::...` instead
+
+error[E0583]: file 
+not found for module 
+`authoring`
+ --> frontend\src\com
+ponents\mod.rs:2:1
+  |
+2 | pub mod 
+authoring;
+  | 
+^^^^^^^^^^^^^^^^^^
+  |
+  = help: to create 
+the module 
+`authoring`, create 
+file "frontend\src\co
+mponents\authoring.rs
+" or "frontend\src\co
+mponents\authoring\mo
+d.rs"
+  = note: if there 
+is a `mod authoring` 
+elsewhere in the 
+crate already, 
+import it with `use 
+crate::...` instead
+
+error: expected one 
+of `::`, `;`, or 
+`as`, found 
+`ThinkingChallenge`
+ --> frontend\src\pag
+es\foundations.rs:4:5
+0
+  |
+4 | use crate::compon
+ents::systems_thinkin
+g::Systems 
+ThinkingChallenge;
+  |                  
+                     
+           
+^^^^^^^^^^^^^^^^^ 
+expected one of 
+`::`, `;`, or `as`
+
+warning: unexpected 
+`cfg` condition 
+value: `ssr`
+ --> frontend\src\com
+ponents\reflection_fo
+rm.rs:3:7
+  |
+3 | #[cfg(feature = 
+"ssr")]
+  |       
+^^^^^^^^^^^^^^^
+  |
+  = note: expected 
+values for `feature` 
+are: `axum`, 
+`leptos_axum`, and 
+`tokio`
+  = help: consider 
+adding `ssr` as a 
+feature in 
+`Cargo.toml`
+  = note: see <https:
+//doc.rust-lang.org/n
+ightly/rustc/check-cf
+g/cargo-specifics.htm
+l> for more 
+information about 
+checking conditional 
+configuration
+  = note: `#[warn(une
+xpected_cfgs)]` on 
+by default
+
+warning: unexpected 
+`cfg` condition 
+value: `ssr`
+ --> frontend\src\com
+ponents\reflection_fo
+rm.rs:6:7
+  |
+6 | #[cfg(feature = 
+"ssr")]
+  |       
+^^^^^^^^^^^^^^^
+  |
+  = note: expected 
+values for `feature` 
+are: `axum`, 
+`leptos_axum`, and 
+`tokio`
+  = help: consider 
+adding `ssr` as a 
+feature in 
+`Cargo.toml`
+  = note: see <https:
+//doc.rust-lang.org/n
+ightly/rustc/check-cf
+g/cargo-specifics.htm
+l> for more 
+information about 
+checking conditional 
+configuration
+
+warning: unused 
+import: 
+`leptos::prelude::*`
+ --> frontend\src\com
+ponents\reflection_fo
+rm.rs:1:5
+  |
+1 | use 
+leptos::prelude::*;
+  |     
+^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unu
+sed_imports)]` (part 
+of 
+`#[warn(unused)]`) 
+on by default
+
+warning: unused 
+import: `crate::compo
+nents::glass_panel::G
+lassPanel`
+ --> frontend\src\pag
+es\planning.rs:6:5
+  |
+6 | use crate::compon
+ents::glass_panel::Gl
+assPanel; // Ensure 
+GlassPanel is 
+imported if needed 
+by the page itself
+  |     ^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^
+
+warning: unexpected 
+`cfg` condition 
+value: `ssr`
+ --> frontend\src\ser
+ver_functions.rs:3:7
+  |
+3 | #[cfg(feature = 
+"ssr")]
+  |       
+^^^^^^^^^^^^^^^
+  |
+  = note: expected 
+values for `feature` 
+are: `axum`, 
+`leptos_axum`, and 
+`tokio`
+  = help: consider 
+adding `ssr` as a 
+feature in 
+`Cargo.toml`
+  = note: see <https:
+//doc.rust-lang.org/n
+ightly/rustc/check-cf
+g/cargo-specifics.htm
+l> for more 
+information about 
+checking conditional 
+configuration
+
+warning: unused 
+import: 
+`leptos::prelude::*`
+ --> frontend\src\ser
+ver_functions.rs:1:5
+  |
+1 | use 
+leptos::prelude::*;
+  |     
+^^^^^^^^^^^^^^^^^^
+
+For more information 
+about this error, 
+try `rustc --explain 
+E0583`.
+warning: `frontend` 
+(lib) generated 6 
+warnings
+error: could not 
+compile `frontend` 
+(lib) due to 3 
+previous errors; 6 
+warnings emitted

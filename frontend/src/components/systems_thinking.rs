@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::prelude::ElementChild;
 use crate::components::glass_panel::GlassPanel;
 #[component]
 pub fn SystemsThinkingChallenge() -> impl IntoView {
