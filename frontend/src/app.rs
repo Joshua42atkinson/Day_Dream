@@ -1,17 +1,13 @@
 use leptos::prelude::*;
-
 use leptos_router::{
     components::{Route, Router, Routes},
     *,
 };
 
 use crate::pages::daydream::Daydream;
-use crate::pages::design::Design;
-use crate::pages::evaluation::Evaluation;
-use crate::pages::foundations::Foundations;
 use crate::pages::home::Home;
-use crate::pages::planning::Planning;
-use crate::pages::systems_thinking::SystemsThinkingPage;
+use crate::pages::not_found::NotFound;
+use crate::pages::research_dashboard::ResearchDashboard;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -20,12 +16,9 @@ pub fn App() -> impl IntoView {
             <Layout>
                 <Routes fallback=|| view! { "Page Not Found" }>
                     <Route path=path!("/") view=Home/>
-                    <Route path=path!("/daydream") view=Daydream/>
-                    <Route path=path!("/foundations") view=Foundations/>
-                    <Route path=path!("/planning") view=Planning/>
-                    <Route path=path!("/design") view=Design/>
-                    <Route path=path!("/evaluation") view=Evaluation/>
-                    <Route path=path!("/systems-thinking") view=SystemsThinkingPage/>
+                    <Route path=path!("/game") view=Daydream/>
+                    <Route path=path!("/research") view=ResearchDashboard/>
+                    <Route path=path!("/:any") view=NotFound/>
                 </Routes>
             </Layout>
         </Router>
@@ -63,12 +56,8 @@ fn Layout(children: Children) -> impl IntoView {
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
                                 <a href="/" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Home"</a>
-                                <a href="/daydream" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Daydream Initiative"</a>
-                                <a href="/foundations" class="text-gray-300 hover:text-indigo-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Foundations"</a>
-                                <a href="/planning" class="text-gray-300 hover:text-rose-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Planning"</a>
-                                <a href="/design" class="text-gray-300 hover:text-pink-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Design"</a>
-                                <a href="/evaluation" class="text-gray-300 hover:text-teal-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Evaluation"</a>
-                                <a href="/systems-thinking" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Systems Thinking"</a>
+                                <a href="/game" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Play Game"</a>
+                                <a href="/research" class="text-gray-300 hover:text-green-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Research Lab"</a>
                             </div>
                         </div>
                     </div>

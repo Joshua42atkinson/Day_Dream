@@ -9,35 +9,16 @@ use common::{
 use std::collections::HashMap;
 
 pub async fn handle_submit_command(
-    State(app_state): State<AppState>,
+    State(_app_state): State<AppState>,
     Json(payload): Json<PlayerCommand>,
 ) -> Result<Json<GameTurn>> {
-    let command = payload.command_text.clone();
-
-    // Use bevy_defer to run the command on the Bevy thread
-    let updated_character = app_state
-        .async_world
-        .run(move |world| process_command(world, command))
-        .await
-        .map_err(|_| AppError::InternalServerError)?;
-
-    let (ai_narrative, system_message) =
-        if payload.current_character.current_step_id != updated_character.current_step_id {
-            (
-                updated_character.current_step_description.clone(),
-                Some("Quest step advanced.".to_string()),
-            )
-        } else {
-            (
-                "Your command has been processed, but nothing seems to have changed.".to_string(),
-                None,
-            )
-        };
+    // Mock implementation while AsyncWorld is disabled
+    let updated_character = get_simulated_character();
 
     let game_turn = GameTurn {
         player_command: payload.command_text,
-        ai_narrative,
-        system_message,
+        ai_narrative: "Simulation mode: AsyncWorld disabled.".to_string(),
+        system_message: None,
         updated_character,
     };
 

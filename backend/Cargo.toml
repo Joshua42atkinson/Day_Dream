@@ -31,6 +31,7 @@ leptos_axum = "0.8.0-rc3"
 bevy = { version = "0.14" }
 bevy_ecs = { version = "0.14" }
 bevy_defer = "0.14" # CRITICAL: Added missing explicit dependency for Bevy/Axum bridging
+bevy_yarnspinner = "0.3.0"
 
 # Database (as per your docs)
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }

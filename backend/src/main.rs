@@ -1,12 +1,13 @@
 use axum::{extract::FromRef, Extension, Router};
-use bevy::prelude::{App as BevyApp, MinimalPlugins, Update, World};
-use bevy_defer::{AsyncPlugin, AsyncWorld};
+use bevy::prelude::{App as BevyApp, MinimalPlugins, Name, Update};
 use common::PlayerCharacter;
 use frontend::app::App;
-use leptos::{get_configuration, logging, LeptosOptions};
+use leptos::config::get_configuration;
+use leptos::prelude::*;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::env;
+use std::sync::{Arc, RwLock};
 use std::thread;
 use tokio::sync::oneshot;
 use tower_http::cors::{Any, CorsLayer};
@@ -17,21 +18,25 @@ mod game;
 mod handlers;
 mod routes;
 
-pub use error::{AppError, Result};
-// use domain::game_logic::process_command;
 use domain::player::get_simulated_character;
-// use routes::ai::ai_routes;
+pub use error::{AppError, Result};
 use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
-// use routes::vaam::vaam_routes;
+use routes::research::research_routes;
+
+use crate::game::components::*;
+use crate::game::systems::*;
+
+use bevy_yarnspinner::prelude::*;
 
 // Define a shared application state
 #[derive(Clone)]
 pub struct AppState {
     pub leptos_options: LeptosOptions,
     pub pool: Option<PgPool>,
-    pub async_world: AsyncWorld,
+    pub shared_research_log: Arc<RwLock<ResearchLog>>,
+    pub shared_virtues: Arc<RwLock<VirtueTopology>>,
 }
 
 // Implement FromRef<AppState> for LeptosOptions
@@ -50,38 +55,76 @@ impl FromRef<AppState> for PgPool {
     }
 }
 
-fn run_bevy_app(tx: oneshot::Sender<AsyncWorld>) {
+fn run_bevy_app(shared_log: Arc<RwLock<ResearchLog>>, shared_virtues: Arc<RwLock<VirtueTopology>>) {
     let mut app = BevyApp::new();
     app.add_plugins(MinimalPlugins);
-    app.add_plugins(AsyncPlugin::default_settings());
+    app.add_plugins(YarnSpinnerPlugin::new());
+
+    // Insert Shared Resources
+    app.insert_resource(SharedResearchLogResource(shared_log));
+    app.insert_resource(SharedVirtuesResource(shared_virtues));
+
+    // Register Systems
+    app.add_systems(
+        Update,
+        (
+            update_virtue_topology,
+            monitor_cognitive_load,
+            log_research_events,
+            sync_yarn_to_story_progress,
+            sync_ecs_to_shared,
+        ),
+    );
 
     let simulated_player = get_simulated_character();
-    app.world_mut().spawn(simulated_player);
 
-    let async_world = app.world().resource::<AsyncWorld>().clone();
-    let _ = tx.send(async_world);
+    // Spawn StudentBundle
+    app.world_mut().spawn(StudentBundle {
+        name: Name::new(simulated_player.name),
+        persona: Persona {
+            archetype: Archetype::Novice,
+            shadow_trait: "None".to_string(),
+            projective_dissonance: 0.0,
+        },
+        virtue_topology: VirtueTopology::default(),
+        cognitive_load: CognitiveLoad::default(),
+        story_progress: StoryProgress {
+            current_quest_id: simulated_player.current_quest_id,
+            current_step_id: simulated_player.current_step_id,
+            current_step_description: simulated_player.current_step_description,
+            history: Vec::new(),
+            inventory: simulated_player.inventory,
+            quest_flags: simulated_player.quest_flags,
+            learned_vocab: simulated_player.learned_vocab,
+        },
+        research_log: ResearchLog::default(),
+        level: Level(1),
+        xp: Experience(0),
+    });
 
     app.run();
 }
 
 #[tokio::main]
 async fn main() {
-    logging::log!("Starting Daydream Backend Server...");
+    println!("Starting Daydream Backend Server...");
 
-    let (tx, rx) = oneshot::channel();
+    let shared_research_log = Arc::new(RwLock::new(ResearchLog::default()));
+    let shared_virtues = Arc::new(RwLock::new(VirtueTopology::default()));
 
-    thread::spawn(move || run_bevy_app(tx));
+    let log_clone = shared_research_log.clone();
+    let virtues_clone = shared_virtues.clone();
 
-    let async_world = rx.await.expect("Failed to get AsyncWorld from Bevy");
+    thread::spawn(move || run_bevy_app(log_clone, virtues_clone));
 
-    let conf = get_configuration(None).await.unwrap();
+    let conf = get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
     let addr = leptos_options.site_addr.clone();
     let routes = generate_route_list(App);
 
     let pool = match env::var("DATABASE_URL") {
         Ok(database_url) => {
-            logging::log!("DATABASE_URL found, connecting to the database...");
+            println!("DATABASE_URL found, connecting to the database...");
             Some(
                 PgPoolOptions::new()
                     .max_connections(5)
@@ -91,9 +134,7 @@ async fn main() {
             )
         }
         Err(_) => {
-            logging::log!(
-                "WARN: DATABASE_URL not found. Running in SIMULATION MODE - No Database."
-            );
+            println!("WARN: DATABASE_URL not found. Running in SIMULATION MODE - No Database.");
             None
         }
     };
@@ -102,7 +143,8 @@ async fn main() {
     let app_state = AppState {
         leptos_options,
         pool,
-        async_world,
+        shared_research_log,
+        shared_virtues,
     };
 
     let cors = CorsLayer::new()
@@ -113,14 +155,12 @@ async fn main() {
     let app = Router::new()
         .merge(player_routes(&app_state))
         .merge(persona_routes(&app_state))
-        .merge(vaam_routes(&app_state))
-        .merge(ai_routes(&app_state))
         .merge(expert_routes(&app_state))
-        .leptos_routes(&app_state, routes, App)
+        .merge(research_routes(&app_state))
         .layer(cors)
         .with_state(app_state);
 
-    logging::log!("Backend listening on http://{}", &addr);
+    println!("Backend listening on http://{}", &addr);
     axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
         .await
         .unwrap();

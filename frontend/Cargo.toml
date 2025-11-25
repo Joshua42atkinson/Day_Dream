@@ -8,7 +8,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # Core Framework - Pinned to 0.8.12 for stability
-leptos = { version = "0.8.0-rc3" }
+leptos = { version = "0.8.0-rc3", features = ["nightly"] }
 leptos_router = { version = "0.8.0-rc3" }
 leptos_meta = { version = "0.8.0-rc3" }
 serde = { version = "1.0", features = ["derive"] }
@@ -16,14 +16,16 @@ wasm-bindgen = "0.2.93"
 gloo-net = "0.5"
 serde_json = "1.0"
 common = { path = "../common" }
-web-sys = { version = "0.3", features = ["MouseEvent", "Element", "SvgElement", "DomRect"] }
+web-sys = { version = "0.3", features = ["MouseEvent", "Element", "SvgElement", "DomRect", "HtmlFormElement", "FormData", "Event"] }
 console_error_panic_hook = "0.1"
 console_log = "1.0"
 log = "0.4"
+reqwest = { version = "0.12", features = ["json"] }
+wasm-bindgen-futures = "0.4"
 
 # Server-Side Rendering (SSR) Dependencies
 [dependencies.axum]
-version = "0.8.7"
+version = "0.7"
 optional = true
 
 [dependencies.leptos_axum]
@@ -38,3 +40,14 @@ optional = true
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
 # Fixes WASM runtime error by using browser's JS-based randomness source
 getrandom = { version = "0.2", features = ["js"] }
+
+[features]
+hydrate = ["leptos/hydrate"]
+ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+]

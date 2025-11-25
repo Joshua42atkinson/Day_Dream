@@ -1,14 +1,20 @@
-use leptos::*;
 use common::Dilemma;
+use leptos::*;
 
 #[component]
 pub fn PersonaQuiz() -> impl IntoView {
-    let dilemmas = create_resource(|| (), |_| async move {
-        match reqwest::get("http://127.0.0.1:3000/api/dilemmas").await {
-            Ok(response) => response.json::<Vec<Dilemma>>().await.map_err(|e| e.to_string()),
-            Err(e) => Err(e.to_string()),
-        }
-    });
+    let dilemmas = create_resource(
+        || (),
+        |_| async move {
+            match reqwest::get("http://192.168.2.141:3000/api/dilemmas").await {
+                Ok(response) => response
+                    .json::<Vec<Dilemma>>()
+                    .await
+                    .map_err(|e| e.to_string()),
+                Err(e) => Err(e.to_string()),
+            }
+        },
+    );
 
     view! {
         <div>

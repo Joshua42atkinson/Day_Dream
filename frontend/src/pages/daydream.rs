@@ -2,8 +2,10 @@ use crate::components::artifact_card::ArtifactCard;
 use crate::components::glass_panel::GlassPanel;
 use crate::models::{Artifact, GameTurn, PlayerCommand};
 use gloo_net::http::Request;
+use leptos::ev::SubmitEvent;
 use leptos::prelude::*;
 use leptos::task::spawn_local;
+use wasm_bindgen::JsCast;
 
 #[component]
 pub fn Daydream() -> impl IntoView {
@@ -100,46 +102,27 @@ pub fn Daydream() -> impl IntoView {
 #[component]
 fn GameTerminal() -> impl IntoView {
     let (history, set_history) = signal(vec![
-        "Welcome to the Daydream Initiative terminal.".to_string()
+        "Welcome to the Daydream Initiative terminal.".to_string(),
+        "Type your command and press Send.".to_string(),
     ]);
-    let (command, set_command) = signal(String::new());
 
-    let send_command = move |_| {
-        let cmd = command.get_untracked();
-        if !cmd.is_empty() {
-            set_history.update(|h| h.push(format!("> {}", cmd)));
-            let cmd_clone = cmd.clone();
-            spawn_local(async move {
-                let command_payload = PlayerCommand {
-                    command_text: cmd_clone,
-                };
-                let response = Request::post("/api/submit_command")
-                    .json(&command_payload)
-                    .expect("Failed to build request.")
-                    .send()
-                    .await;
-
-                match response {
-                    Ok(resp) => {
-                        if resp.ok() {
-                            let game_turn: GameTurn =
-                                resp.json().await.expect("Failed to parse response.");
-                            set_history.update(|h| h.push(game_turn.ai_narrative));
-                            if let Some(msg) = game_turn.system_message {
-                                set_history.update(|h| h.push(format!("[SYSTEM] {}", msg)));
-                            }
-                        } else {
-                            set_history
-                                .update(|h| h.push(format!("Error: {}", resp.status_text())));
-                        }
-                    }
-                    Err(_) => {
-                        set_history
-                            .update(|h| h.push("Error: Could not reach backend.".to_string()));
+    let send_command = move |ev: SubmitEvent| {
+        ev.prevent_default();
+        let target = ev.target().unwrap();
+        let form = target.dyn_into::<web_sys::HtmlFormElement>().ok();
+        if let Some(form) = form {
+            let form_data = web_sys::FormData::new_with_form(&form).ok();
+            if let Some(data) = form_data {
+                if let Some(cmd) = data.get("command").as_string() {
+                    if !cmd.is_empty() {
+                        set_history.update(|h| h.push(format!("> {}", cmd)));
+                        set_history.update(|h| {
+                            h.push("[Command received - backend integration pending]".to_string())
+                        });
+                        form.reset();
                     }
                 }
-            });
-            set_command.set(String::new());
+            }
         }
     };
 
@@ -154,21 +137,22 @@ fn GameTerminal() -> impl IntoView {
                     />
                 </div>
                 <div class="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
-                    <div class="flex items-center gap-4">
-                        <input
-                            type="text"
-                            class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400"
-                            placeholder="Type your command..."
-                            on:input=move |ev| set_command.set(event_target_value(&ev))
-                            prop:value=command
-                        />
-                        <button
-                            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-bold"
-                            on:click=send_command
-                        >
-                            "Send"
-                        </button>
-                    </div>
+                    <form on:submit=send_command>
+                        <div class="flex items-center gap-4">
+                            <input
+                                type="text"
+                                name="command"
+                                class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400"
+                                placeholder="Type your command..."
+                            />
+                            <button
+                                type="submit"
+                                class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-bold"
+                            >
+                                "Send"
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </GlassPanel>
