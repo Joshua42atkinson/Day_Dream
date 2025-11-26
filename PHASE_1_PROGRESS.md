@@ -51,6 +51,11 @@ Create a stable, private authoring tool that synthesizes Twine (node-based) and 
 - **Status**: ✅ Completed
 - **Details**: Upgraded connection lines to smooth Bezier curves.
 
+### 6. Deployment (Single Executable)
+
+- **Status**: ✅ Completed
+- **Details**: Implemented `rust-embed` to bundle frontend assets into the backend binary. Created `build_release.ps1` for one-click build.
+
 ## Next Steps
 
 1. **Canvas Navigation**: Implement Zoom and Pan functionality for the NodeCanvas.

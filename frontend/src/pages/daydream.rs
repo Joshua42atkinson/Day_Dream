@@ -1,12 +1,11 @@
 use crate::components::artifact_card::ArtifactCard;
 use crate::components::glass_panel::GlassPanel;
-use crate::models::{Artifact, GameTurn, PlayerCommand};
-use gloo_net::http::Request;
+use crate::components::loading_spinner::LoadingSpinner;
+use crate::components::message_suggestions::MessageSuggestions;
+use crate::models::Artifact;
 use leptos::ev::SubmitEvent;
 use leptos::prelude::*;
 use leptos::task::spawn_local;
-use uuid::Uuid;
-use wasm_bindgen::JsCast;
 
 #[component]
 pub fn Daydream() -> impl IntoView {
@@ -88,11 +87,20 @@ pub fn Daydream() -> impl IntoView {
                 </div>
             </div>
 
-            // Game Terminal Section
+            // AI Mirror Terminal Section
             <div class="space-y-8">
                 <div class="flex items-center gap-4">
-                    <h2 class="text-3xl font-bold text-white">"Game Terminal"</h2>
+                    <h2 class="text-3xl font-bold text-white">"AI Mirror Terminal"</h2>
                     <div class="h-px flex-grow bg-white/10"></div>
+                    <button
+                        on:click=move |_| { /* TODO: show help */ }
+                        class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/50 transition-all duration-200 flex items-center gap-2 text-sm text-slate-300 hover:text-white"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        "Help"
+                    </button>
                 </div>
                 <GameTerminal />
             </div>
@@ -103,26 +111,38 @@ pub fn Daydream() -> impl IntoView {
 #[component]
 fn GameTerminal() -> impl IntoView {
     let (history, set_history) = signal(vec![
-        "Welcome to the Daydream Initiative terminal.".to_string(),
-        "Initializing connection to AI Mirror...".to_string(),
+        "💡 Welcome to the AI Mirror - Your Socratic Reflection Partner".to_string(),
+        "ℹ️  The AI asks questions instead of giving answers, helping you reflect deeply."
+            .to_string(),
+        "🔌 Initializing connection...".to_string(),
     ]);
     let (input_value, set_input_value) = signal(String::new());
     let (session_id, set_session_id) = signal(None::<uuid::Uuid>);
+    let (is_loading, set_is_loading) = signal(false);
+    let (show_suggestions, set_show_suggestions) = signal(true);
 
     // Initialize session on mount
     spawn_local(async move {
         match crate::api::create_session().await {
             Ok(id) => {
                 set_session_id.set(Some(id));
-                set_history
-                    .update(|h| h.push("Connection established. Session ID assigned.".to_string()));
-                set_history.update(|h| h.push("System: Ready for input.".to_string()));
+                set_history.update(|h| {
+                    h.push("✅ Connection established. Ready for reflection.".to_string())
+                });
             }
             Err(e) => {
-                set_history.update(|h| h.push(format!("Error connecting to backend: {}", e)));
+                set_history.update(|h| {
+                    h.push(format!("❌ Error: {}", e));
+                    h.push("💡 Tip: Make sure the backend is running with 'cargo run' in the backend directory.".to_string());
+                });
             }
         }
     });
+
+    let handle_suggestion = move |text: String| {
+        set_input_value.set(text);
+        set_show_suggestions.set(false);
+    };
 
     let send_command = move |ev: SubmitEvent| {
         ev.prevent_default();
@@ -131,8 +151,12 @@ fn GameTerminal() -> impl IntoView {
             return;
         }
 
+        // Hide suggestions after first message
+        set_show_suggestions.set(false);
+        set_is_loading.set(true);
+
         // Optimistic update
-        set_history.update(|h| h.push(format!("> {}", msg)));
+        set_history.update(|h| h.push(format!("You: {}", msg)));
         set_input_value.set(String::new());
 
         spawn_local(async move {
@@ -147,48 +171,91 @@ fn GameTerminal() -> impl IntoView {
 
                 match crate::api::send_message(req).await {
                     Ok(res) => {
-                        set_history.update(|h| h.push(format!("AI: {}", res.ai_response)));
+                        set_history
+                            .update(|h| h.push(format!("🤖 AI Mirror: {}", res.ai_response)));
                     }
                     Err(e) => {
-                        set_history.update(|h| h.push(format!("Error sending message: {}", e)));
+                        set_history.update(|h| {
+                            h.push(format!("❌ Error: {}", e));
+                            h.push("💡 Troubleshooting: Check that PostgreSQL is running and the backend is connected.".to_string());
+                        });
                     }
                 }
             } else {
-                set_history.update(|h| h.push("Error: No active session.".to_string()));
+                set_history.update(|h| {
+                    h.push("❌ Error: No active session. Try refreshing the page.".to_string())
+                });
             }
+            set_is_loading.set(false);
         });
     };
 
     view! {
-        <GlassPanel>
-            <div class="flex flex-col h-96">
-                <div class="flex-grow overflow-y-auto bg-black/50 p-4 rounded-t-lg font-mono text-sm text-green-400 space-y-2">
-                    <For
-                        each=move || history.get().into_iter().enumerate()
-                        key=|(index, _)| *index
-                        children=move |(_, line)| view! { <p>{line}</p> }
-                    />
-                </div>
-                <div class="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
-                    <form on:submit=send_command>
-                        <div class="flex items-center gap-4">
-                            <input
-                                type="text"
-                                prop:value=move || input_value.get()
-                                on:input=move |ev| set_input_value.set(event_target_value(&ev))
-                                class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400"
-                                placeholder="Type your command..."
-                            />
-                            <button
-                                type="submit"
-                                class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-bold"
-                            >
-                                "Send"
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="space-y-4">
+            // Connection status
+            <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+                <div class=move || {
+                    if session_id.get().is_some() {
+                        "w-2 h-2 bg-green-400 rounded-full animate-pulse"
+                    } else {
+                        "w-2 h-2 bg-yellow-400 rounded-full animate-pulse"
+                    }
+                }></div>
+                <span class="text-sm text-slate-300">
+                    {move || if session_id.get().is_some() {
+                        "Connected • Session Active"
+                    } else {
+                        "Connecting..."
+                    }}
+                </span>
             </div>
-        </GlassPanel>
+
+            <GlassPanel>
+                <div class="flex flex-col h-96">
+                    <div class="flex-grow overflow-y-auto bg-black/50 p-4 rounded-t-lg font-mono text-sm text-green-400 space-y-2">
+                        <For
+                            each=move || history.get().into_iter().enumerate()
+                            key=|(index, _)| *index
+                            children=move |(_, line)| view! { <p>{line}</p> }
+                        />
+                        // Loading indicator
+                        <Show when=move || is_loading.get()>
+                            <div class="flex items-center gap-2 text-cyan-400">
+                                <LoadingSpinner message="AI is thinking...".to_string() size="sm".to_string()/>
+                            </div>
+                        </Show>
+                    </div>
+                    <div class="flex-shrink-0 p-4 bg-black/30 rounded-b-lg">
+                        <form on:submit=send_command>
+                            <div class="flex items-center gap-4">
+                                <input
+                                    type="text"
+                                    prop:value=move || input_value.get()
+                                    on:input=move |ev| set_input_value.set(event_target_value(&ev))
+                                    class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400 placeholder:text-slate-500"
+                                    placeholder="Share your thoughts, reflections, or questions..."
+                                    disabled=move || is_loading.get()
+                                />
+                                <button
+                                    type="submit"
+                                    class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg text-white font-bold transition-all"
+                                    disabled=move || is_loading.get()
+                                >
+                                    {move || if is_loading.get() { "..." } else { "Send" }}
+                                </button>
+                            </div>
+                            <div class="mt-2 text-xs text-slate-500">
+                                "💡 Tip: Press Ctrl+Enter to send • The AI will ask reflective questions to help you think deeper"
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </GlassPanel>
+
+            // Message suggestions (show when no messages yet)
+            <Show when=move || show_suggestions.get()>
+                <MessageSuggestions on_select=Callback::new(handle_suggestion)/>
+            </Show>
+        </div>
     }
 }

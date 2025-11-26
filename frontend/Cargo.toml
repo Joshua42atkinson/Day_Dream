@@ -8,7 +8,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # Core Framework - Pinned to 0.8.12 for stability
-leptos = { version = "0.8.0-rc3", features = ["nightly"] }
+leptos = { version = "0.8.0-rc3", features = ["nightly", "csr"] }
 leptos_router = { version = "0.8.0-rc3" }
 leptos_meta = { version = "0.8.0-rc3" }
 serde = { version = "1.0", features = ["derive"] }
