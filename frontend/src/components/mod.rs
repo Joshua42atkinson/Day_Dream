@@ -1,13 +1,3 @@
 pub mod artifact_card;
-pub mod design_process;
-pub mod ethical_legal;
-pub mod formative_eval;
 pub mod glass_panel;
-pub mod learner_analysis;
-pub mod motivational_design;
 pub mod reflection_form;
-pub mod systems_thinking;
-pub mod tech_analysis;
-pub mod tech_skills;
-pub mod theoretical_synthesis;
-pub mod visual_design;

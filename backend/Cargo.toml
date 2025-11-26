@@ -8,39 +8,46 @@ edition = "2021"
 common = { path = "../common", features = ["ssr"] }
 frontend = { path = "../frontend" }
 
-
 # Web Server framework
-axum = "0.7.5" # Pinned version
-# The runtime for our server
+axum = "0.7.5"
+tower-http = { version = "0.5", features = ["cors"] }
+
+# Async runtime
 tokio = { version = "1", features = ["full"] }
+futures = "0.3"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
 tracing = "0.1"
+anyhow = "1.0"
 
-# --- CORS ---
-tower-http = { version = "0.5", features = ["cors"] }
-
-# --- Leptos Imports ---
+# Leptos SSR
 leptos = { version = "0.8.0-rc3", features = ["ssr"] }
 leptos_axum = "0.8.0-rc3"
 
-# State Management (as per your docs)
+# State Management
 bevy = { version = "0.14" }
 bevy_ecs = { version = "0.14" }
-bevy_defer = "0.14" # CRITICAL: Added missing explicit dependency for Bevy/Axum bridging
+bevy_defer = "0.14"
 bevy_yarnspinner = "0.3.0"
 
-# Database (as per your docs)
+# Database
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
 dotenvy = "0.15"
 uuid = { version = "1.8", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 
-# Vector DB (as per your docs)
-# lancedb = { version = "0.6.0" } # Pinned version, compatible with Bevy 0.14
-# swarms-rs = { version = "0.1.9" }
-# rig-core = { version = "0.1" }
-# rocm-rs = { version = "0.4.2" }
+# AI/LLM - Local inference via Candle
+candle-core = "0.8.0"
+candle-nn = "0.8.0"
+candle-transformers = "0.8.0"
+tokenizers = "0.19"
+
+# Caching and concurrency
+lru = "0.12"
+dashmap = "5"
+
+# Logging
+log = "0.4"

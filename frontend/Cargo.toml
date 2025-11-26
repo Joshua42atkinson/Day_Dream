@@ -22,6 +22,7 @@ console_log = "1.0"
 log = "0.4"
 reqwest = { version = "0.12", features = ["json"] }
 wasm-bindgen-futures = "0.4"
+uuid = { version = "1.18.1", features = ["v4", "serde", "js"] }
 
 # Server-Side Rendering (SSR) Dependencies
 [dependencies.axum]
@@ -51,3 +52,7 @@ ssr = [
     "leptos_meta/ssr",
     "leptos_router/ssr",
 ]
+
+[[bin]]
+name = "frontend_bin"
+path = "src/main.rs"

@@ -19,15 +19,20 @@ pub struct WordUsageRequest {
     pub context_used: String,
 }
 
-use sqlx::PgPool;
-use crate::Result; // Our custom error alias
+use crate::Result;
+use sqlx::PgPool; // Our custom error alias
 
 pub struct VaamService;
 
 impl VaamService {
     /// Fetch words relevant to the current game scene.
     /// e.g., If player enters "Throne Room", fetch "Implore", "Beseech", "Sovereignty".
-    pub async fn get_words_for_context(pool: &PgPool, context_tag: &str) -> Result<Vec<VocabWord>> {
+    pub async fn get_words_for_context(
+        _pool: &PgPool,
+        _context_tag: &str,
+    ) -> Result<Vec<VocabWord>> {
+        // SIMULATION MODE: Database disabled
+        /*
         let words = sqlx::query_as!(
             VocabWord,
             "SELECT id, word, definition, context_tag, complexity_tier
@@ -39,10 +44,14 @@ impl VaamService {
         .await?;
 
         Ok(words)
+        */
+        Ok(Vec::new())
     }
 
     /// The Core Loop: Log usage -> Check Threshold -> Grant Mastery.
-    pub async fn log_usage(pool: &PgPool, req: WordUsageRequest) -> Result<bool> {
+    pub async fn log_usage(_pool: &PgPool, _req: WordUsageRequest) -> Result<bool> {
+        // SIMULATION MODE: Database disabled
+        /*
         // 1. Log the usage event
         // Note: We use a transaction to ensure data integrity
         let mut tx = pool.begin().await?;
@@ -75,5 +84,7 @@ impl VaamService {
         tx.commit().await?;
 
         Ok(record.is_mastered)
+        */
+        Ok(false)
     }
 }

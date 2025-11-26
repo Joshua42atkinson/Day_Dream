@@ -12,6 +12,7 @@ use std::thread;
 use tokio::sync::oneshot;
 use tower_http::cors::{Any, CorsLayer};
 
+mod ai;
 mod domain;
 mod error;
 mod game;
@@ -20,6 +21,7 @@ mod routes;
 
 use domain::player::get_simulated_character;
 pub use error::{AppError, Result};
+use routes::ai_mirror::ai_mirror_routes;
 use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
@@ -58,6 +60,7 @@ impl FromRef<AppState> for PgPool {
 fn run_bevy_app(shared_log: Arc<RwLock<ResearchLog>>, shared_virtues: Arc<RwLock<VirtueTopology>>) {
     let mut app = BevyApp::new();
     app.add_plugins(MinimalPlugins);
+    app.add_plugins(bevy::asset::AssetPlugin::default());
     app.add_plugins(YarnSpinnerPlugin::new());
 
     // Insert Shared Resources
@@ -157,6 +160,7 @@ async fn main() {
         .merge(persona_routes(&app_state))
         .merge(expert_routes(&app_state))
         .merge(research_routes(&app_state))
+        .nest("/api/ai-mirror", ai_mirror_routes())
         .layer(cors)
         .with_state(app_state);
 

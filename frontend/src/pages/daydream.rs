@@ -5,6 +5,7 @@ use gloo_net::http::Request;
 use leptos::ev::SubmitEvent;
 use leptos::prelude::*;
 use leptos::task::spawn_local;
+use uuid::Uuid;
 use wasm_bindgen::JsCast;
 
 #[component]
@@ -103,27 +104,59 @@ pub fn Daydream() -> impl IntoView {
 fn GameTerminal() -> impl IntoView {
     let (history, set_history) = signal(vec![
         "Welcome to the Daydream Initiative terminal.".to_string(),
-        "Type your command and press Send.".to_string(),
+        "Initializing connection to AI Mirror...".to_string(),
     ]);
+    let (input_value, set_input_value) = signal(String::new());
+    let (session_id, set_session_id) = signal(None::<uuid::Uuid>);
+
+    // Initialize session on mount
+    spawn_local(async move {
+        match crate::api::create_session().await {
+            Ok(id) => {
+                set_session_id.set(Some(id));
+                set_history
+                    .update(|h| h.push("Connection established. Session ID assigned.".to_string()));
+                set_history.update(|h| h.push("System: Ready for input.".to_string()));
+            }
+            Err(e) => {
+                set_history.update(|h| h.push(format!("Error connecting to backend: {}", e)));
+            }
+        }
+    });
 
     let send_command = move |ev: SubmitEvent| {
         ev.prevent_default();
-        let target = ev.target().unwrap();
-        let form = target.dyn_into::<web_sys::HtmlFormElement>().ok();
-        if let Some(form) = form {
-            let form_data = web_sys::FormData::new_with_form(&form).ok();
-            if let Some(data) = form_data {
-                if let Some(cmd) = data.get("command").as_string() {
-                    if !cmd.is_empty() {
-                        set_history.update(|h| h.push(format!("> {}", cmd)));
-                        set_history.update(|h| {
-                            h.push("[Command received - backend integration pending]".to_string())
-                        });
-                        form.reset();
+        let msg = input_value.get();
+        if msg.trim().is_empty() {
+            return;
+        }
+
+        // Optimistic update
+        set_history.update(|h| h.push(format!("> {}", msg)));
+        set_input_value.set(String::new());
+
+        spawn_local(async move {
+            if let Some(sid) = session_id.get() {
+                let req = crate::api::SendMessageRequest {
+                    session_id: sid,
+                    user_id: 1, // Hardcoded for MVP
+                    message: msg,
+                    archetype: None,
+                    focus_area: None,
+                };
+
+                match crate::api::send_message(req).await {
+                    Ok(res) => {
+                        set_history.update(|h| h.push(format!("AI: {}", res.ai_response)));
+                    }
+                    Err(e) => {
+                        set_history.update(|h| h.push(format!("Error sending message: {}", e)));
                     }
                 }
+            } else {
+                set_history.update(|h| h.push("Error: No active session.".to_string()));
             }
-        }
+        });
     };
 
     view! {
@@ -141,7 +174,8 @@ fn GameTerminal() -> impl IntoView {
                         <div class="flex items-center gap-4">
                             <input
                                 type="text"
-                                name="command"
+                                prop:value=move || input_value.get()
+                                on:input=move |ev| set_input_value.set(event_target_value(&ev))
                                 class="flex-grow bg-transparent border-b border-purple-500/50 text-white focus:outline-none focus:border-purple-400"
                                 placeholder="Type your command..."
                             />

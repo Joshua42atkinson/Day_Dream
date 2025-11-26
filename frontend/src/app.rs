@@ -5,28 +5,18 @@ use leptos_router::{
 };
 
 use crate::pages::daydream::Daydream;
-use crate::pages::home::Home;
 use crate::pages::not_found::NotFound;
 use crate::pages::research_dashboard::ResearchDashboard;
 
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <Router>
-            <Layout>
-                <Routes fallback=|| view! { "Page Not Found" }>
-                    <Route path=path!("/") view=Home/>
-                    <Route path=path!("/game") view=Daydream/>
-                    <Route path=path!("/research") view=ResearchDashboard/>
-                    <Route path=path!("/:any") view=NotFound/>
-                </Routes>
-            </Layout>
-        </Router>
+        <Layout/>
     }
 }
 
 #[component]
-fn Layout(children: Children) -> impl IntoView {
+fn Layout() -> impl IntoView {
     let (_is_menu_open, _set_is_menu_open) = signal(false);
 
     view! {
@@ -48,25 +38,30 @@ fn Layout(children: Children) -> impl IntoView {
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between h-16">
                         <div class="flex-shrink-0">
-                            <a href="/" class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
-                                "LDT Portfolio"
+                            <a href="/" class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-500">
+                                "Daydream Engine"
                             </a>
                         </div>
 
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
-                                <a href="/" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Home"</a>
-                                <a href="/game" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Play Game"</a>
-                                <a href="/research" class="text-gray-300 hover:text-green-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Research Lab"</a>
+                                <a href="/" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Sandbox"</a>
+                                <a href="/research" class="text-gray-300 hover:text-green-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Research Logs"</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {children()}
-            </div>
+            <main class="relative z-10">
+                <Router>
+                    <Routes fallback=|| view! { "Page Not Found" }>
+                        <Route path=path!("/") view=Daydream/>
+                        <Route path=path!("/research") view=ResearchDashboard/>
+                        <Route path=path!("/*any") view=NotFound/>
+                    </Routes>
+                </Router>
+            </main>
         </div>
     }
 }
