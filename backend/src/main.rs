@@ -1,10 +1,10 @@
-use axum::{extract::FromRef, Extension, Router};
+use axum::{extract::FromRef, response::IntoResponse, Extension, Router};
 use bevy::prelude::{App as BevyApp, MinimalPlugins, Name, Update};
 use common::PlayerCharacter;
-use frontend::app::App;
+// use frontend::app::App; // Unused in SPA mode
 use leptos::config::get_configuration;
 use leptos::prelude::*;
-use leptos_axum::{generate_route_list, LeptosRoutes};
+// use leptos_axum::{generate_route_list, LeptosRoutes}; // Unused in SPA mode
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::env;
 use std::sync::{Arc, RwLock};
