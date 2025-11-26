@@ -213,12 +213,12 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     CLOSURE_DTORS.register(real, state, state);
     return real;
 }
-function wasm_bindgen__convert__closures_____invoke__h8b493616a414138e(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h8b493616a414138e(arg0, arg1, arg2);
-}
-
 function wasm_bindgen__convert__closures_____invoke__hc47fd5fe5f8cdd5b(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__hc47fd5fe5f8cdd5b(arg0, arg1, arg2);
+}
+
+function wasm_bindgen__convert__closures_____invoke__h8b493616a414138e(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h8b493616a414138e(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__he3b8f22b07cbcc39(arg0, arg1) {
