@@ -69,3 +69,37 @@ pub async fn send_message(req: SendMessageRequest) -> Result<SendMessageResponse
         Err(format!("Failed to send message: {}", res.status()))
     }
 }
+
+// --- Expert Module API ---
+
+use common::expert::StoryGraph;
+
+pub async fn get_graph() -> Result<StoryGraph, String> {
+    let res = gloo_net::http::Request::get("http://localhost:3000/api/expert/graph")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if res.ok() {
+        let graph: StoryGraph = res.json().await.map_err(|e| e.to_string())?;
+        Ok(graph)
+    } else {
+        Err(format!("Failed to fetch graph: {}", res.status()))
+    }
+}
+
+pub async fn save_graph(graph: StoryGraph) -> Result<StoryGraph, String> {
+    let res = gloo_net::http::Request::post("http://localhost:3000/api/expert/graph")
+        .json(&graph)
+        .map_err(|e| e.to_string())?
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if res.ok() {
+        let saved_graph: StoryGraph = res.json().await.map_err(|e| e.to_string())?;
+        Ok(saved_graph)
+    } else {
+        Err(format!("Failed to save graph: {}", res.status()))
+    }
+}

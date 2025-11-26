@@ -18,6 +18,7 @@ mod error;
 mod game;
 mod handlers;
 mod routes;
+mod static_assets; // [NEW]
 
 use domain::player::get_simulated_character;
 pub use error::{AppError, Result};
@@ -26,6 +27,7 @@ use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
 use routes::research::research_routes;
+use static_assets::Assets; // [NEW]
 
 use crate::game::components::*;
 use crate::game::systems::*;
@@ -108,6 +110,35 @@ fn run_bevy_app(shared_log: Arc<RwLock<ResearchLog>>, shared_virtues: Arc<RwLock
     app.run();
 }
 
+// [NEW] Handler for static assets
+async fn static_handler(uri: axum::http::Uri) -> impl axum::response::IntoResponse {
+    let mut path = uri.path().trim_start_matches('/').to_string();
+
+    if path.is_empty() {
+        path = "index.html".to_string();
+    }
+
+    match Assets::get(&path) {
+        Some(content) => {
+            let mime = mime_guess::from_path(path).first_or_octet_stream();
+            (
+                [(axum::http::header::CONTENT_TYPE, mime.as_ref())],
+                content.data,
+            )
+                .into_response()
+        }
+        None => {
+            if path.contains('.') {
+                return axum::http::StatusCode::NOT_FOUND.into_response();
+            }
+            // Fallback to index.html for SPA routing
+            static_handler(axum::http::Uri::from_static("/index.html"))
+                .await
+                .into_response()
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() {
     println!("Starting Daydream Backend Server...");
@@ -123,7 +154,7 @@ async fn main() {
     let conf = get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
     let addr = leptos_options.site_addr.clone();
-    let routes = generate_route_list(App);
+    // let routes = generate_route_list(App); // Not used in SPA mode
 
     let pool = match env::var("DATABASE_URL") {
         Ok(database_url) => {
@@ -161,6 +192,8 @@ async fn main() {
         .merge(expert_routes(&app_state))
         .merge(research_routes(&app_state))
         .nest("/api/ai-mirror", ai_mirror_routes())
+        // [NEW] Serve static assets for all other routes
+        .fallback(static_handler)
         .layer(cors)
         .with_state(app_state);
 

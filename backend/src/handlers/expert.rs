@@ -7,7 +7,16 @@ pub async fn get_graph(State(app_state): State<AppState>) -> Result<Json<StoryGr
     // Check if we are in simulation mode (no DB)
     let pool = match app_state.pool {
         Some(pool) => pool,
-        None => return Err(AppError::InternalServerError), // Or handle gracefully
+        None => {
+            // Return a default graph in simulation mode
+            let default_graph = StoryGraph {
+                id: "demo_graph".to_string(),
+                title: "Simulation Story".to_string(),
+                nodes: vec![],
+                connections: vec![],
+            };
+            return Ok(Json(default_graph));
+        }
     };
 
     // Fetch the graph (hardcoded ID for now, similar to mock)
@@ -50,7 +59,10 @@ pub async fn save_graph(
 ) -> Result<Json<StoryGraph>> {
     let pool = match app_state.pool {
         Some(pool) => pool,
-        None => return Err(AppError::InternalServerError),
+        None => {
+            // Mock save in simulation mode
+            return Ok(Json(payload));
+        }
     };
 
     let nodes_json = serde_json::to_value(&payload.nodes).unwrap();
