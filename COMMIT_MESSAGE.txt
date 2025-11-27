@@ -1,12 +1,6 @@
-feat(authoring): polish UI, graph management, and single-exe deployment
+chore: fix compilation warnings and clean up code
 
-- Added "Add Node" button to toolbar.
-- Added "Delete Node" button to Property Editor.
-- Upgraded connection lines to Bezier curves with arrowheads.
-- Added grid background pattern to NodeCanvas.
-- Fixed backend 500 error when running without database (Simulation Mode).
-- Fixed frontend build errors related to Action Send bounds.
-- Implemented Single Executable deployment:
-    - Added `rust-embed` to backend to bundle frontend assets.
-    - Updated `main.rs` to serve static assets with SPA fallback.
-    - Created `build_release.ps1` automation script.
+- Fixed dead_code warning for ActivePanel::None variant in dispatcher_console.rs
+- Fixed unused import warning for once_cell::sync::Lazy in common/src/lib.rs
+- Moved Lazy import to cfg(feature = "ssr") block where it's actually used
+- Both backend and frontend now compile cleanly with only minor deprecation warnings

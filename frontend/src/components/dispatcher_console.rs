@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 
 #[derive(Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 enum ActivePanel {
     None,
     Yard,

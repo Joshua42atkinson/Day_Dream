@@ -5,9 +5,11 @@
 pub mod expert;
 pub mod reflection;
 
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet}; // For loading static data
+
+#[cfg(feature = "ssr")]
+use once_cell::sync::Lazy;
 
 // --- Data Structures from quests.py ---
 // These are direct Rust translations of your Python quest data.
