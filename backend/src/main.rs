@@ -27,11 +27,11 @@ use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
 use routes::research::research_routes;
-use routes::weigh_station_routes::weigh_station_routes; // [NEW]
+// use routes::weigh_station_routes::weigh_station_routes; // [NEW] - Disabled until Llama model is available
 use static_assets::Assets; // [NEW]
 
-use crate::ai::llm::llama_engine::{Llama3Model, ModelConfig};
-use crate::handlers::weigh_station::WeighStation; // [NEW] // [NEW]
+// use crate::ai::llm::llama_engine::{Llama3Model, ModelConfig}; // Disabled
+// use crate::handlers::weigh_station::WeighStation; // [NEW] // [NEW] - Disabled
 
 use crate::game::components::*;
 use crate::game::systems::*;
@@ -52,7 +52,7 @@ pub struct AppState {
     pub socratic_engine: Arc<tokio::sync::RwLock<SocraticEngine>>,
     pub model_manager: Arc<tokio::sync::Mutex<crate::services::model_manager::ModelManager>>,
     pub pete_assistant: Arc<crate::services::pete::PeteAssistant>,
-    pub weigh_station: Arc<tokio::sync::Mutex<WeighStation>>, // [NEW]
+    // pub weigh_station: Arc<tokio::sync::Mutex<WeighStation>>, // [NEW] - Disabled
 }
 
 // Implement FromRef<AppState> for LeptosOptions
@@ -244,15 +244,15 @@ async fn main() {
         crate::services::pete::PeteAssistant::new().expect("Failed to initialize PeteAssistant"),
     );
 
-    // Initialize Weigh Station
-    println!("Loading Llama 3.2 Model for Weigh Station...");
-    let llama_config = ModelConfig::default();
-    let llama_model = Llama3Model::load(llama_config).expect("Failed to load Llama 3.2 model");
+    // Initialize Weigh Station - DISABLED until Llama model is downloaded
+    // println!("Loading Llama 3.2 Model for Weigh Station...");
+    // let llama_config = ModelConfig::default();
+    // let llama_model = Llama3Model::load(llama_config).expect("Failed to load Llama 3.2 model");
 
-    let weigh_station = Arc::new(tokio::sync::Mutex::new(WeighStation::new(
-        pool.clone().expect("Database required for Weigh Station"),
-        llama_model,
-    )));
+    // let weigh_station = Arc::new(tokio::sync::Mutex::new(WeighStation::new(
+    //     pool.clone().expect("Database required for Weigh Station"),
+    //     llama_model,
+    // )));
 
     // Create the application state
     let app_state = AppState {
@@ -265,7 +265,7 @@ async fn main() {
         socratic_engine,
         model_manager,
         pete_assistant,
-        weigh_station,
+        // weigh_station, // Disabled
     };
 
     // Create Model App State
@@ -290,7 +290,7 @@ async fn main() {
             "/api/models",
             crate::routes::model_routes::model_routes().with_state(model_app_state),
         ) // [NEW]
-        .nest("/api/weigh_station", weigh_station_routes()) // [NEW]
+        // .nest("/api/weigh_station", weigh_station_routes()) // [NEW] - Disabled
         .layer(cors)
         .with_state(app_state) // Apply state BEFORE fallback
         .fallback(static_handler); // Fallback LAST so it doesn't catch API routes

@@ -7,4 +7,4 @@ pub mod research;
 // pub mod vaam;
 pub mod model_routes;
 pub mod pete; // [NEW]
-pub mod weigh_station_routes;
+              // pub mod weigh_station_routes; // Disabled until Llama model is available

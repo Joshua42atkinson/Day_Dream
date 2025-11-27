@@ -20,7 +20,7 @@ CREATE TABLE vocabulary_bank (
 -- 2. The Train Car: A container for a specific lesson
 CREATE TABLE train_cars (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    node_id UUID REFERENCES story_nodes(id), -- Linked to the Graph
+    node_id TEXT NOT NULL, -- Linked to the Graph (using TEXT for now)
     
     learning_objective TEXT NOT NULL,
     max_capacity INTEGER DEFAULT 100,    -- If cargo > 100, Train won't move
