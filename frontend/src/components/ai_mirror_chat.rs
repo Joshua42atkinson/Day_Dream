@@ -1,7 +1,6 @@
 use leptos::prelude::*;
 use leptos::task::spawn_local;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 struct Message {
@@ -12,34 +11,18 @@ struct Message {
 
 #[component]
 pub fn AiMirrorChat() -> impl IntoView {
-    let (session_id, set_session_id) = signal(None::<Uuid>);
     let (messages, set_messages) = signal(Vec::<Message>::new());
     let (input, set_input) = signal(String::new());
     let (is_loading, set_is_loading) = signal(false);
     let (error, set_error) = signal(None::<String>);
 
-    // Create new session on mount
-    Effect::new(move |_| {
-        if session_id.get().is_none() {
-            spawn_local(async move {
-                match create_session().await {
-                    Ok(sid) => set_session_id.set(Some(sid)),
-                    Err(e) => set_error.set(Some(format!("Failed to create session: {}", e))),
-                }
-            });
-        }
-    });
+    // No session creation needed for now
 
     let send_message_action = move || {
         let msg = input.get().trim().to_string();
         if msg.is_empty() {
             return;
         }
-
-        let sid = match session_id.get() {
-            Some(id) => id,
-            None => return,
-        };
 
         set_is_loading.set(true);
         set_error.set(None);
@@ -56,7 +39,7 @@ pub fn AiMirrorChat() -> impl IntoView {
         set_input.set(String::new());
 
         spawn_local(async move {
-            match send_ai_message(sid, msg, 1).await {
+            match send_ai_message(msg).await {
                 Ok(response) => {
                     set_messages.update(|msgs| {
                         msgs.push(Message {
@@ -74,16 +57,9 @@ pub fn AiMirrorChat() -> impl IntoView {
 
     let new_conversation = move |_| {
         set_messages.set(Vec::new());
-        set_session_id.set(None);
         set_input.set(String::new());
         set_error.set(None);
-
-        spawn_local(async move {
-            match create_session().await {
-                Ok(sid) => set_session_id.set(Some(sid)),
-                Err(e) => set_error.set(Some(format!("Failed to create session: {}", e))),
-            }
-        });
+        // No session to reset
     };
 
     view! {
@@ -204,70 +180,50 @@ fn get_current_time() -> String {
     format!("{:02}:{:02}", now.get_hours(), now.get_minutes())
 }
 
-async fn create_session() -> Result<Uuid, String> {
-    let response =
-        gloo_net::http::Request::post("http://localhost:3000/api/ai-mirror/create-session")
-            .send()
-            .await
-            .map_err(|e| format!("Request failed: {}", e))?;
-
-    if !response.ok() {
-        return Err(format!("Server error: {}", response.status()));
-    }
-
-    #[derive(Deserialize)]
-    struct CreateSessionResponse {
-        session_id: Uuid,
-    }
-
-    let data: CreateSessionResponse = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse response: {}", e))?;
-
-    Ok(data.session_id)
-}
-
-async fn send_ai_message(
-    session_id: Uuid,
-    message: String,
-    user_id: i64,
-) -> Result<String, String> {
+async fn send_ai_message(message: String) -> Result<String, String> {
     #[derive(Serialize)]
-    struct SendMessageRequest {
-        session_id: Uuid,
-        user_id: i64,
+    struct ChatRequest {
         message: String,
     }
 
     #[derive(Deserialize)]
-    struct SendMessageResponse {
-        ai_response: String,
+    struct ChatResponseWrapper {
+        status: String,
+        data: Option<SocraticResponseData>,
+        message: Option<String>,
     }
 
-    let request_body = SendMessageRequest {
-        session_id,
-        user_id,
-        message,
-    };
+    #[derive(Deserialize)]
+    struct SocraticResponseData {
+        text: String,
+    }
 
-    let response =
-        gloo_net::http::Request::post("http://localhost:3000/api/ai-mirror/send-message")
-            .header("Content-Type", "application/json")
-            .json(&request_body)
-            .map_err(|e| format!("Failed to serialize request: {}", e))?
-            .send()
-            .await
-            .map_err(|e| format!("Request failed: {}", e))?;
+    let request_body = ChatRequest { message };
+
+    let response = gloo_net::http::Request::post("http://localhost:3000/api/pete/chat")
+        .header("Content-Type", "application/json")
+        .json(&request_body)
+        .map_err(|e| format!("Failed to serialize request: {}", e))?
+        .send()
+        .await
+        .map_err(|e| format!("Request failed: {}", e))?;
 
     if !response.ok() {
         return Err(format!("Server error: {}", response.status()));
     }
 
-    let data: SendMessageResponse = response
+    let data: ChatResponseWrapper = response
         .json()
         .await
         .map_err(|e| format!("Failed to parse response: {}", e))?;
 
-    Ok(data.ai_response)
+    if data.status == "success" {
+        if let Some(inner) = data.data {
+            Ok(inner.text)
+        } else {
+            Err("No data in response".to_string())
+        }
+    } else {
+        Err(data.message.unwrap_or_else(|| "Unknown error".to_string()))
+    }
 }

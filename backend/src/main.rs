@@ -18,8 +18,10 @@ mod handlers;
 mod plugins; // Plugin registry and implementations
 mod routes;
 mod services; // Model Manager and Pete AI
+mod state;
 mod static_assets;
 
+use crate::state::AppState;
 use domain::player::get_simulated_character;
 pub use error::{AppError, Result};
 use routes::ai_mirror::ai_mirror_routes;
@@ -40,42 +42,14 @@ use bevy_yarnspinner::prelude::*;
 
 use crate::ai::{conversation_memory::ConversationMemory, socratic_engine::SocraticEngine};
 
-// Define a shared application state
-#[derive(Clone)]
-pub struct AppState {
-    pub leptos_options: LeptosOptions,
-    pub pool: Option<PgPool>,
-    pub shared_research_log: Arc<RwLock<ResearchLog>>,
-    pub shared_virtues: Arc<RwLock<VirtueTopology>>,
-    pub gemma_server: Arc<crate::ai::llm::gemma_server::Gemma27BServer>,
-    pub conversation_memory: Arc<ConversationMemory>,
-    pub socratic_engine: Arc<tokio::sync::RwLock<SocraticEngine>>,
-    pub model_manager: Arc<tokio::sync::Mutex<crate::services::model_manager::ModelManager>>,
-    pub pete_assistant: Arc<crate::services::pete::PeteAssistant>,
-    // pub weigh_station: Arc<tokio::sync::Mutex<WeighStation>>, // [NEW] - Disabled
-}
-
-// Implement FromRef<AppState> for LeptosOptions
-impl FromRef<AppState> for LeptosOptions {
-    fn from_ref(state: &AppState) -> Self {
-        state.leptos_options.clone()
-    }
-}
-
-// Implement FromRef<AppState> for PgPool
-impl FromRef<AppState> for PgPool {
-    fn from_ref(state: &AppState) -> Self {
-        state.pool.clone().expect(
-            "Database pool not available. This handler should not be reachable in simulation mode.",
-        )
-    }
-}
-
 fn run_bevy_app(
     shared_log: Arc<RwLock<ResearchLog>>,
     shared_virtues: Arc<RwLock<VirtueTopology>>,
+    shared_physics: SharedPhysicsResource, // [NEW]
     download_inbox: DownloadCommandInbox,
     download_state: SharedDownloadStateResource,
+    pete_command_inbox: PeteCommandInbox,
+    pete_response_outbox: PeteResponseOutbox,
 ) {
     let mut app = BevyApp::new();
     app.add_plugins(MinimalPlugins);
@@ -87,12 +61,17 @@ fn run_bevy_app(
     app.add_event::<PlayWhistleEvent>();
     app.add_event::<StartDownloadEvent>();
     app.add_event::<DownloadProgressEvent>();
+    app.add_event::<AskPeteEvent>(); // [NEW]
+    app.add_event::<PeteResponseEvent>(); // [NEW]
 
     // Insert Shared Resources
     app.insert_resource(SharedResearchLogResource(shared_log));
     app.insert_resource(SharedVirtuesResource(shared_virtues));
+    app.insert_resource(shared_physics); // [NEW]
     app.insert_resource(download_inbox);
     app.insert_resource(download_state);
+    app.insert_resource(pete_command_inbox.clone());
+    app.insert_resource(pete_response_outbox.clone());
 
     // Register Systems
     app.add_systems(
@@ -106,7 +85,11 @@ fn run_bevy_app(
             whistle_system,
             download_manager_system,
             progress_update_system,
-            sync_inbox_to_events, // [NEW]
+            sync_inbox_to_events,
+            calculate_train_velocity,
+            sync_pete_bridge,
+            track_student_miles,
+            sync_physics_to_shared, // [NEW]
         ),
     );
 
@@ -132,6 +115,10 @@ fn run_bevy_app(
             learned_vocab: simulated_player.learned_vocab,
         },
         research_log: ResearchLog::default(),
+        mass: Mass(10.0),                 // Default mass (Cargo Weight)
+        engine_power: EnginePower(100.0), // Default power (Willpower)
+        velocity: TrainVelocity(0.0),     // Starts stationary
+        miles: StudentMiles::default(),   // [NEW]
         level: Level(1),
         xp: Experience(0),
     });
@@ -187,12 +174,32 @@ async fn main() {
     let download_inbox = DownloadCommandInbox(Arc::new(RwLock::new(Vec::new())));
     let download_state = SharedDownloadStateResource(Arc::new(RwLock::new(None)));
 
+    // Initialize Pete Resources
+    let pete_command_inbox = PeteCommandInbox(Arc::new(RwLock::new(Vec::new())));
+    let pete_response_outbox = PeteResponseOutbox(Arc::new(RwLock::new(Vec::new())));
+
+    // Initialize Shared Physics Resource
+    let shared_physics = SharedPhysicsResource(Arc::new(RwLock::new(PhysicsState::default())));
+
     let log_clone = shared_research_log.clone();
     let virtues_clone = shared_virtues.clone();
     let inbox_clone = download_inbox.clone();
     let state_clone = download_state.clone();
+    let pete_inbox_clone = pete_command_inbox.clone();
+    let pete_outbox_clone = pete_response_outbox.clone();
+    let physics_clone = shared_physics.clone(); // [NEW]
 
-    thread::spawn(move || run_bevy_app(log_clone, virtues_clone, inbox_clone, state_clone));
+    thread::spawn(move || {
+        run_bevy_app(
+            log_clone,
+            virtues_clone,
+            physics_clone, // [NEW]
+            inbox_clone,
+            state_clone,
+            pete_inbox_clone,
+            pete_outbox_clone,
+        )
+    });
 
     let conf = get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
@@ -215,9 +222,20 @@ async fn main() {
         }
     };
 
-    let gemma_server = Arc::new(crate::ai::llm::gemma_server::Gemma27BServer::new(
-        std::path::PathBuf::from("frontend/public/models/gemma-3-27B-it-QAT-Q4_0.gguf"),
-    ));
+    // Initialize Gemma 3 27B with full 128K context for production RAG
+    // Server hardware: 128GB RAM (plenty of headroom!)
+    // Memory allocation:
+    // - Model weights (Q4_0): ~21GB
+    // - KV cache (128K): ~32GB
+    // - Inference overhead: ~3GB
+    // - System/DB: ~4GB
+    // Total: ~60GB (leaves 68GB for concurrent requests & caching)
+    let gemma_server = Arc::new(
+        crate::ai::llm::gemma_server::Gemma27BServer::with_context_length(
+            std::path::PathBuf::from("frontend/public/models/gemma-3-27b-it-Q4_0.gguf"),
+            131072, // Full 128K tokens - maximize RAG quality!
+        ),
+    );
 
     // Initialize AI Mirror components
     let conversation_memory = Arc::new(match pool.as_ref() {
@@ -239,6 +257,23 @@ async fn main() {
         crate::services::model_manager::ModelManager::new()
             .expect("Failed to initialize ModelManager"),
     ));
+
+    // [NEW] Auto-download "pete" model if missing
+    {
+        let mut manager = model_manager.lock().await;
+        if !manager.has_model("pete") {
+            println!("'pete' model not found. Starting automatic download...");
+            let models = crate::services::model_manager::ModelManager::list_available_models();
+            if let Some(pete_def) = models.iter().find(|m| m.alias == "pete") {
+                match manager.download_model(pete_def).await {
+                    Ok(path) => println!("Successfully downloaded 'pete' model to {:?}", path),
+                    Err(e) => eprintln!("Failed to download 'pete' model: {}", e),
+                }
+            }
+        } else {
+            println!("'pete' model found. Ready for inference.");
+        }
+    }
 
     let pete_assistant = Arc::new(
         crate::services::pete::PeteAssistant::new().expect("Failed to initialize PeteAssistant"),
@@ -265,7 +300,10 @@ async fn main() {
         socratic_engine,
         model_manager,
         pete_assistant,
-        // weigh_station, // Disabled
+        pete_command_inbox,   // [NEW]
+        pete_response_outbox, // [NEW]
+        shared_physics,       // [NEW]
+                              // weigh_station, // Disabled
     };
 
     // Create Model App State
@@ -285,11 +323,15 @@ async fn main() {
         .merge(expert_routes(&app_state))
         .merge(research_routes(&app_state))
         .merge(crate::routes::pete::pete_routes(&app_state))
-        .nest("/api/ai-mirror", ai_mirror_routes())
+        .merge(crate::routes::recharge::recharge_routes(&app_state))
+        .merge(crate::routes::simulation::simulation_routes())
+        .merge(ai_mirror_routes())
         .nest(
             "/api/models",
             crate::routes::model_routes::model_routes().with_state(model_app_state),
-        ) // [NEW]
+        )
+        .merge(crate::routes::debug::debug_routes())
+        .merge(crate::routes::knowledge::knowledge_routes())
         // .nest("/api/weigh_station", weigh_station_routes()) // [NEW] - Disabled
         .layer(cors)
         .with_state(app_state) // Apply state BEFORE fallback

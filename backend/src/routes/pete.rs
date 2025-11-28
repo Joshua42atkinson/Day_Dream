@@ -64,12 +64,48 @@ struct ChatRequest {
     message: String,
 }
 
+use crate::game::components::{AskPeteEvent, PeteResponseEvent};
+
 async fn chat_with_pete(
     State(state): State<AppState>,
     Json(payload): Json<ChatRequest>,
 ) -> impl IntoResponse {
-    match state.pete_assistant.answer_question(&payload.message).await {
-        Ok(response) => Json(serde_json::json!({ "status": "success", "data": response })),
+    // 1. Construct Event
+    let ask_event = AskPeteEvent {
+        content: payload.message.clone(),
+        context: "Direct Chat".to_string(), // TODO: Get actual context if possible
+    };
+
+    // 2. Push to Bevy Inbox (so game knows about it)
+    if let Ok(mut inbox) = state.pete_command_inbox.0.write() {
+        inbox.push(ask_event);
+    }
+
+    // 3. Get Response from Socratic Engine
+    // We need to lock the engine to use it
+    let mut engine = state.socratic_engine.write().await;
+
+    // Create a temporary session context
+    // TODO: Retrieve actual session context from DB or Memory
+    let context = crate::ai::socratic_engine::SessionContext {
+        session_id: uuid::Uuid::new_v4(),
+        user_id: 1, // Placeholder
+        archetype: None,
+        focus_area: Some("chat".to_string()),
+    };
+
+    match engine.respond(&payload.message, &context).await {
+        Ok(response) => {
+            // 4. Push Response to Bevy Outbox (so game knows about it)
+            let response_event = PeteResponseEvent {
+                content: response.text.clone(),
+            };
+            if let Ok(mut outbox) = state.pete_response_outbox.0.write() {
+                outbox.push(response_event);
+            }
+
+            Json(serde_json::json!({ "status": "success", "data": response }))
+        }
         Err(e) => Json(serde_json::json!({ "status": "error", "message": e.to_string() })),
     }
 }

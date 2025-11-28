@@ -1,4 +1,6 @@
 use leptos::prelude::*;
+use leptos::task::spawn_local;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, PartialEq)]
 #[allow(dead_code)]
@@ -9,9 +11,41 @@ enum ActivePanel {
     Comm,
 }
 
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+struct PhysicsState {
+    pub mass: f32,
+    pub power: f32,
+    pub velocity: f32,
+    pub miles: f32,
+}
+
 #[component]
 pub fn DispatcherConsole(children: Children) -> impl IntoView {
-    let (active_panel, set_active_panel) = create_signal(ActivePanel::Yard);
+    let (active_panel, set_active_panel) = signal(ActivePanel::Yard);
+    let (physics_state, set_physics_state) = signal(PhysicsState::default());
+    let (is_active, set_is_active) = signal(true);
+
+    // Poll simulation state
+    Effect::new(move |_| {
+        spawn_local(async move {
+            while is_active.get() {
+                if let Ok(response) =
+                    gloo_net::http::Request::get("http://localhost:3000/api/simulation/state")
+                        .send()
+                        .await
+                {
+                    if let Ok(state) = response.json::<PhysicsState>().await {
+                        set_physics_state.set(state);
+                    }
+                }
+                gloo_timers::future::sleep(std::time::Duration::from_millis(100)).await;
+            }
+        });
+
+        on_cleanup(move || {
+            set_is_active.set(false);
+        });
+    });
 
     view! {
         <div class="dispatcher-grid">
@@ -69,16 +103,31 @@ pub fn DispatcherConsole(children: Children) -> impl IntoView {
                     class:-translate-x-full=move || active_panel.get() != ActivePanel::Comm
                 >
                     <h2 class="text-metallic-gold text-2xl mb-4">"MENTOR COMM"</h2>
-                    <p class="text-steam-white">"Communication Uplink with Pete"</p>
-                    // Add Comm content here
+                    <p class="text-steam-white mb-4">"Communication Uplink with Pete"</p>
+                    <crate::components::ai_mirror_chat::AiMirrorChat />
                 </div>
             </main>
 
             // 4. THE INSPECTION PIT (Right/Bottom Panel)
-            <aside class="grid-properties text-steam-white">
-                <h3 class="text-metallic-gold text-lg mb-4 border-b border-old-gold pb-2">"CARGO MANIFEST"</h3>
-                <div class="data-readout font-mono text-sm">
-                    "Select a node to inspect payload."
+            <aside class="grid-properties text-steam-white p-4 overflow-hidden">
+                <h3 class="text-metallic-gold text-lg mb-4 border-b border-old-gold pb-2">"TELEMETRY"</h3>
+                <div class="grid grid-cols-2 gap-4 font-mono text-sm">
+                    <div class="flex flex-col">
+                        <span class="text-purdue-gold/50 text-xs">"VELOCITY"</span>
+                        <span class="text-xl text-gauge-green">{move || format!("{:.2} m/s", physics_state.get().velocity)}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-purdue-gold/50 text-xs">"DISTANCE"</span>
+                        <span class="text-xl text-steam-white">{move || format!("{:.2} mi", physics_state.get().miles)}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-purdue-gold/50 text-xs">"LOAD (MASS)"</span>
+                        <span class="text-xl text-signal-red">{move || format!("{:.2} kg", physics_state.get().mass)}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-purdue-gold/50 text-xs">"WILL (POWER)"</span>
+                        <span class="text-xl text-purdue-prime">{move || format!("{:.2} kW", physics_state.get().power)}</span>
+                    </div>
                 </div>
             </aside>
         </div>

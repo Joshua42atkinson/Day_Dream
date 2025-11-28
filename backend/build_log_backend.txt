@@ -1,0 +1,22 @@
+﻿cargo :     Finished 
+`dev` profile 
+[unoptimized + 
+debuginfo] target(s) 
+in 1.04s
+At line:1 char:1
++ cargo check 2>&1 | 
+Out-File -Encoding 
+utf8 
+build_log_backend.txt
++ ~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (    Fin   
+ ished `d...get(s    
+) in 1.04s:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 

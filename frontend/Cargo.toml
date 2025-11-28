@@ -18,7 +18,13 @@ gloo-net = "0.5"
 serde_json = "1.0"
 gloo-timers = { version = "0.3", features = ["futures"] }
 common = { path = "../common" }
-web-sys = { version = "0.3", features = ["MouseEvent", "Element", "SvgElement", "DomRect", "HtmlFormElement", "FormData", "Event"] }
+web-sys = { version = "0.3", features = [
+    "MouseEvent", "Element", "SvgElement", "DomRect", "HtmlFormElement", "FormData", "Event",
+    # WebGPU Support for Client-Side AI
+    "console", "Window", "Performance", "Gpu", "GpuDevice", "GpuAdapter", "GpuQueue", 
+    "GpuBuffer", "GpuCommandEncoder", "GpuComputePipeline", "GpuBindGroup", "GpuBindGroupLayout",
+    "GpuPipelineLayout", "GpuShaderModule", "Navigator", "Storage"
+] }
 console_error_panic_hook = "0.1"
 console_log = "1.0"
 log = "0.4"

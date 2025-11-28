@@ -11,3 +11,4 @@ pub mod downloader;
 pub mod model_manager;
 pub mod model_registry; // [NEW]
 pub mod pete; // [NEW]
+pub mod weigh_station;

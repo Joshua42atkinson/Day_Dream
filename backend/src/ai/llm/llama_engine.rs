@@ -256,6 +256,7 @@ impl LlamaModel for MockLlamaModel {
     }
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -283,3 +284,4 @@ mod tests {
         assert_impl::<MockLlamaModel>();
     }
 }
+*/

@@ -40,6 +40,7 @@ bevy_yarnspinner = "0.3.0"
 
 # Database
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
+pgvector = { version = "0.4" }  # Vector similarity search for RAG
 dotenvy = "0.15"
 uuid = { version = "1.8", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
@@ -49,6 +50,7 @@ candle-core = "0.8.0"
 candle-nn = "0.8.0"
 candle-transformers = "0.8.0"
 tokenizers = "0.19"
+ort = { version = "2.0.0-rc.9", features = ["load-dynamic"] } # [FIX] Explicitly add ort to fix linking issues
 
 # Pete AI Assistant (NEW)
 hf-hub = "0.3"              # HuggingFace model downloads

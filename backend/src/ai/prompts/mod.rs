@@ -1,8 +1,9 @@
 use super::conversation_memory::{Speaker, Turn};
 use super::socratic_engine::SessionContext;
+use serde::{Deserialize, Serialize};
 
 /// Strategies for Socratic prompting
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PromptStrategy {
     Scaffolding, // User is stuck → Ask leading question
     Deepening,   // Superficial response → "What do you mean by...?"

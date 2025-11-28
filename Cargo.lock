@@ -344,6 +344,8 @@ dependencies = [
  "log",
  "lru",
  "mime_guess",
+ "ort",
+ "pgvector",
  "qdrant-client",
  "reqwest",
  "rust-embed",
@@ -7099,6 +7101,7 @@ version = "2.0.0-rc.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fa7e49bd669d32d7bc2a15ec540a527e7764aec722a45467814005725bcd721"
 dependencies = [
+ "libloading 0.8.9",
  "ndarray",
  "ort-sys",
  "smallvec 2.0.0-alpha.10",
@@ -7237,6 +7240,12 @@ dependencies = [
  "serde",
  "serde_derive",
 ]
+
+[[package]]
+name = "pgvector"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc58e2d255979a31caa7cabfa7aac654af0354220719ab7a68520ae7a91e8c0b"
 
 [[package]]
 name = "pin-project"

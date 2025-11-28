@@ -236,3 +236,79 @@ pub fn progress_update_system(
         }
     }
 }
+
+// [NEW] Physics System: Calculate Train Velocity based on Mass and Power
+pub fn calculate_train_velocity(
+    mut query: Query<(&mut TrainVelocity, &Mass, &EnginePower, &mut CognitiveLoad)>,
+) {
+    for (mut velocity, mass, power, mut load) in query.iter_mut() {
+        // Physics: Velocity = Power / Mass
+        // Ensure mass is at least 1.0 to avoid division by zero
+        let effective_mass = mass.0.max(1.0);
+        velocity.0 = power.0 / effective_mass;
+
+        // Pedagogical Link: If Velocity drops below threshold, increase Extraneous Load
+        // This simulates "The Drag" of too much content
+        if velocity.0 < 5.0 {
+            // Arbitrary threshold for "slow"
+            // Increase extraneous load slightly
+            load.extraneous = (load.extraneous + 0.001).min(1.0);
+        }
+    }
+}
+
+// [NEW] System to bridge Bevy Events <-> Shared Resources for Pete AI
+pub fn sync_pete_bridge(
+    mut ask_events: EventReader<AskPeteEvent>,
+    mut response_writer: EventWriter<PeteResponseEvent>,
+    command_inbox: Res<PeteCommandInbox>,
+    response_outbox: Res<PeteResponseOutbox>,
+) {
+    // 1. Sync Outbound Commands (Bevy -> Axum/Tokio)
+    if !ask_events.is_empty() {
+        if let Ok(mut inbox) = command_inbox.0.write() {
+            for event in ask_events.read() {
+                info!("Sending AskPeteEvent to Inbox: {}", event.content);
+                inbox.push(event.clone());
+            }
+        }
+    }
+
+    // 2. Sync Inbound Responses (Axum/Tokio -> Bevy)
+    if let Ok(mut outbox) = response_outbox.0.write() {
+        if !outbox.is_empty() {
+            for response in outbox.drain(..) {
+                info!("Received Pete Response: {}", response.content);
+                response_writer.send(response);
+            }
+        }
+    }
+}
+
+// [NEW] System to track student miles
+pub fn track_student_miles(mut query: Query<(&TrainVelocity, &mut StudentMiles)>, time: Res<Time>) {
+    for (velocity, mut miles) in query.iter_mut() {
+        // Simple simulation: velocity (units/sec) * time (sec) = distance (units)
+        // We treat units as "miles" for simplicity
+        let distance = velocity.0 * time.delta_seconds();
+        if distance > 0.0 {
+            miles.total_miles += distance;
+            // info!("Miles Traveled: {:.2} (Total: {:.2})", distance, miles.total_miles);
+        }
+    }
+}
+
+// [NEW] System to sync Physics State to Shared Resource (for Axum)
+pub fn sync_physics_to_shared(
+    query: Query<(&Mass, &EnginePower, &TrainVelocity, &StudentMiles)>,
+    shared_physics: Res<crate::game::components::SharedPhysicsResource>,
+) {
+    if let Ok((mass, power, velocity, miles)) = query.get_single() {
+        if let Ok(mut guard) = shared_physics.0.write() {
+            guard.mass = mass.0;
+            guard.power = power.0;
+            guard.velocity = velocity.0;
+            guard.miles = miles.total_miles;
+        }
+    }
+}

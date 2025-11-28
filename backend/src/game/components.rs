@@ -9,6 +9,17 @@ pub struct SharedResearchLogResource(pub Arc<RwLock<ResearchLog>>);
 #[derive(Resource)]
 pub struct SharedVirtuesResource(pub Arc<RwLock<VirtueTopology>>);
 
+#[derive(Resource, Clone)]
+pub struct SharedPhysicsResource(pub Arc<RwLock<PhysicsState>>);
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct PhysicsState {
+    pub mass: f32,
+    pub power: f32,
+    pub velocity: f32,
+    pub miles: f32,
+}
+
 use serde::{Deserialize, Serialize};
 
 // --- Core Identity Components ---
@@ -118,6 +129,26 @@ pub struct ResearchEvent {
     pub data: String,       // JSON payload
 }
 
+// --- Physics / Pedagogical Components ---
+
+#[derive(Component, Reflect, Default, Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[reflect(Component)]
+pub struct Mass(pub f32); // Represents Cognitive Load Weight
+
+#[derive(Component, Reflect, Default, Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[reflect(Component)]
+pub struct EnginePower(pub f32); // Represents Executive Function / Willpower
+
+#[derive(Component, Reflect, Default, Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[reflect(Component)]
+pub struct TrainVelocity(pub f32); // Represents Learning Speed
+
+#[derive(Component, Default, Reflect)]
+#[reflect(Component)]
+pub struct StudentMiles {
+    pub total_miles: f32,
+}
+
 // The Bundle used to spawn a new student entity
 #[derive(Bundle)]
 pub struct StudentBundle {
@@ -126,6 +157,10 @@ pub struct StudentBundle {
     pub cognitive_load: CognitiveLoad,
     pub story_progress: StoryProgress,
     pub research_log: ResearchLog,
+    pub mass: Mass,
+    pub engine_power: EnginePower,
+    pub velocity: TrainVelocity,
+    pub miles: StudentMiles, // [NEW]
     pub name: Name,
     pub level: Level,
     pub xp: Experience,
@@ -153,3 +188,22 @@ pub struct SharedDownloadStateResource(pub Arc<RwLock<Option<DownloadProgressEve
 
 #[derive(Resource, Clone)]
 pub struct DownloadCommandInbox(pub Arc<RwLock<Vec<StartDownloadEvent>>>);
+
+// --- Pete AI Events & Resources ---
+
+#[derive(Event, Debug, Clone)]
+pub struct AskPeteEvent {
+    pub content: String,
+    pub context: String, // e.g., current node content
+}
+
+#[derive(Event, Debug, Clone)]
+pub struct PeteResponseEvent {
+    pub content: String,
+}
+
+#[derive(Resource, Clone)]
+pub struct PeteCommandInbox(pub Arc<RwLock<Vec<AskPeteEvent>>>);
+
+#[derive(Resource, Clone)]
+pub struct PeteResponseOutbox(pub Arc<RwLock<Vec<PeteResponseEvent>>>);

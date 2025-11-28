@@ -2,11 +2,12 @@ use super::conversation_memory::{ConversationMemory, Speaker, Turn};
 use super::prompts::PromptStrategy;
 use anyhow::Result;
 use chrono::Utc;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
 
 /// Response from the Socratic engine
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SocraticResponse {
     pub text: String,
     pub strategy_used: PromptStrategy,
