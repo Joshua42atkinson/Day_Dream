@@ -1,7 +1,7 @@
-use leptos::*;
-use leptos_router::*;
 use crate::api::submit_reflection; // Import the ServerFn
-use leptos::form::ActionForm;      // CRITICAL IMPORT: The fix for E0425
+use leptos::form::ActionForm;
+use leptos::prelude::*;
+use leptos_router::*; // CRITICAL IMPORT: The fix for E0425
 
 #[component]
 pub fn SystemsThinkingPage() -> impl IntoView {

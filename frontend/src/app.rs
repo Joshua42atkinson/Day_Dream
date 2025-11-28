@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use leptos_router::{
-    components::{Route, Router, Routes},
+    components::{ParentRoute, Route, Router, Routes},
     *,
 };
 
@@ -24,9 +24,11 @@ pub fn App() -> impl IntoView {
                     // === TRAIN YARD ARCHITECTURE ===
 
                     // Instructor Mode: The Train Yard (IDE for curriculum authoring)
-                    <Route path=path!("/yard") view=move || view! { <TrainYardLayout/> }/>
-                    <Route path=path!("/yard/weigh-station") view=move || view! { <WeighStation/> }/>
-                    <Route path=path!("/yard/library") view=move || view! { <KnowledgeLibrary/> }/>
+                    <ParentRoute path=path!("/yard") view=TrainYardLayout>
+                        <Route path=path!("") view=move || view! { <crate::components::authoring::node_canvas::NodeCanvas/> }/>
+                        // <Route path=path!("/weigh-station") view=move || view! { <WeighStation/> }/>
+                        <Route path=path!("/library") view=move || view! { <KnowledgeLibrary/> }/>
+                    </ParentRoute>
 
                     // Student Mode: The Journey (Immersive learning experience)
                     <Route path=path!("/journey/:quest_id") view=EngineCabLayout/>

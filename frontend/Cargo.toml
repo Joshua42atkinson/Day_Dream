@@ -39,9 +39,9 @@ anyhow = "1.0"
 
 # AI Dependencies - Using custom WASM tokenizer
 candle-core = { version = "0.8.0", features = [] }
-candle-nn = { version = "0.8.0", features = [] }
-candle-transformers = { version = "0.8.0", features = [] }
-# tokenizers = REMOVED - using custom WASM-compatible implementation in src/ai/tokenizer
+candle-nn = "0.8.0"
+candle-transformers = { version = "0.8.0", features = [] } # Tried "gemma" but might not exist, sticking to default for now
+# tokenizers = { version = "0.15", default-features = false, features = ["onig"] }
 rand = { version = "0.8", features = ["small_rng"] }
 
 # Server-Side Rendering (SSR) Dependencies

@@ -1,5 +1,5 @@
-use leptos::*;
 use crate::components::glass_panel::GlassPanel;
+use leptos::prelude::*;
 
 #[component]
 pub fn VisualDesignChallenge() -> impl IntoView {

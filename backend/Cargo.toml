@@ -50,7 +50,7 @@ candle-core = "0.8.0"
 candle-nn = "0.8.0"
 candle-transformers = "0.8.0"
 tokenizers = "0.19"
-ort = { version = "2.0.0-rc.9", features = ["load-dynamic"] } # [FIX] Explicitly add ort to fix linking issues
+ort = { version = "2.0.0-rc.9", features = ["load-dynamic", "cuda"] } # [FIX] Explicitly add ort to fix linking issues, added cuda for potential GPU support on backend if available, though load-dynamic is key.
 
 # Pete AI Assistant (NEW)
 hf-hub = "0.3"              # HuggingFace model downloads

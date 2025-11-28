@@ -31,6 +31,15 @@ pub struct StoryNodeData {
     pub node_type: NodeType,
     pub position: Position,
     pub content: NodeContent,
+
+    // --- The Antigravity Updates ---
+    /// The "Stage Directions" for the Client-Side AI (Gemma)
+    #[serde(default)]
+    pub context_prompt: String,
+
+    /// The "Grading Rubric" for the Server-Side AI (Llama)
+    #[serde(default)]
+    pub completion_criteria: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
