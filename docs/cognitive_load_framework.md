@@ -41,8 +41,8 @@ This document details the specific mapping between Sweller's Cognitive Load Theo
 #### The Solution in Ask Pete
 
 * **The Vocabulary Quest:** This is where the magic happens. To manage the "Intrinsic Load" (the heavy words in the car), the student enters the Sandbox.
-* **Burning Fuel:** The student isn't just staring at a flashcard (which is low effort). They are engaging in a Story/Quest. They have to explore the "Garden" of the node and use the vocabulary words in a sentence or narrative context to solve a problem.
-* **Momentum:** By using the words in a story (GameLit), the student effectively "burns the fuel" (Germane Load). This process effectively "lightens" the cargo. Once they have used the words in context, the heavy "Unknown Vocabulary" transforms into lighter "Mastered Knowledge," allowing the engine to pull the car to the next node.
+* **Burning Coal:** The student isn't just staring at a flashcard (which is low effort). They are engaging in a Story/Quest. They have to explore the "Garden" of the node and use the vocabulary words in a sentence or narrative context to solve a problem. This consumes **Coal** (Compute Tokens).
+* **Generating Steam:** By using the words in a story (GameLit), the student effectively "burns the Coal" (Germane Load) to generate **Steam**. This process effectively "lightens" the cargo. Once they have used the words in context, the heavy "Unknown Vocabulary" transforms into lighter "Mastered Knowledge," allowing the engine to pull the car to the next node.
 
 ### Summary for the Instructional Designer
 

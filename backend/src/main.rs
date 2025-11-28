@@ -10,6 +10,7 @@ use std::thread;
 use tower_http::cors::{Any, CorsLayer};
 
 mod ai;
+mod antigravity;
 mod core; // Plugin system traits
 mod domain;
 mod error;
@@ -29,11 +30,11 @@ use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
 use routes::research::research_routes;
-// use routes::weigh_station_routes::weigh_station_routes; // [NEW] - Disabled until Llama model is available
+use routes::weigh_station_routes::weigh_station_routes; // [NEW] - Enabled
 use static_assets::Assets; // [NEW]
 
-// use crate::ai::llm::llama_engine::{Llama3Model, ModelConfig}; // Disabled
-// use crate::handlers::weigh_station::WeighStation; // [NEW] // [NEW] - Disabled
+use crate::ai::llm::gemma_engine::{GemmaConfigWrapper, GemmaModel}; // Enabled
+use crate::handlers::weigh_station::WeighStation; // [NEW] // [NEW] - Enabled
 
 use crate::game::components::*;
 use crate::game::systems::*;
@@ -203,7 +204,12 @@ async fn main() {
 
     let conf = get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
-    let addr = leptos_options.site_addr.clone();
+    // Cloud Run Support: Override site_addr if PORT env var is set
+    let addr = if let Ok(port) = env::var("PORT") {
+        format!("0.0.0.0:{}", port).parse().unwrap()
+    } else {
+        leptos_options.site_addr.clone()
+    };
 
     let pool = match env::var("DATABASE_URL") {
         Ok(database_url) => {
@@ -222,20 +228,9 @@ async fn main() {
         }
     };
 
-    // Initialize Gemma 3 27B with full 128K context for production RAG
-    // Server hardware: 128GB RAM (plenty of headroom!)
-    // Memory allocation:
-    // - Model weights (Q4_0): ~21GB
-    // - KV cache (128K): ~32GB
-    // - Inference overhead: ~3GB
-    // - System/DB: ~4GB
-    // Total: ~60GB (leaves 68GB for concurrent requests & caching)
-    let gemma_server = Arc::new(
-        crate::ai::llm::gemma_server::Gemma27BServer::with_context_length(
-            std::path::PathBuf::from("frontend/public/models/gemma-3-27b-it-Q4_0.gguf"),
-            131072, // Full 128K tokens - maximize RAG quality!
-        ),
-    );
+    // Initialize Gemini 3 Ultra Client
+    let gemini_config = crate::ai::llm::gemini_client::GeminiConfig::default();
+    let gemini_client = crate::ai::llm::gemini_client::GeminiClient::new(gemini_config);
 
     // Initialize AI Mirror components
     let conversation_memory = Arc::new(match pool.as_ref() {
@@ -247,11 +242,15 @@ async fn main() {
     });
 
     let mut socratic_engine_instance = SocraticEngine::new(conversation_memory.clone());
-    socratic_engine_instance.set_gemma_server(gemma_server.clone());
+    socratic_engine_instance.set_gemini_client(gemini_client);
+
+    // Initialize Antigravity Client (Enterprise Bridge)
+    let antigravity_client = crate::antigravity::AntigravityClient::new();
+    socratic_engine_instance.set_antigravity_client(antigravity_client);
 
     let socratic_engine = Arc::new(tokio::sync::RwLock::new(socratic_engine_instance));
 
-    println!("AI Mirror Socratic Engine initialized and connected to Gemma 27B");
+    println!("AI Mirror Socratic Engine initialized and connected to Gemini 3 Ultra");
 
     let model_manager = Arc::new(tokio::sync::Mutex::new(
         crate::services::model_manager::ModelManager::new()
@@ -279,15 +278,30 @@ async fn main() {
         crate::services::pete::PeteAssistant::new().expect("Failed to initialize PeteAssistant"),
     );
 
-    // Initialize Weigh Station - DISABLED until Llama model is downloaded
-    // println!("Loading Llama 3.2 Model for Weigh Station...");
-    // let llama_config = ModelConfig::default();
-    // let llama_model = Llama3Model::load(llama_config).expect("Failed to load Llama 3.2 model");
-
-    // let weigh_station = Arc::new(tokio::sync::Mutex::new(WeighStation::new(
-    //     pool.clone().expect("Database required for Weigh Station"),
-    //     llama_model,
-    // )));
+    // Initialize Weigh Station
+    println!("Loading Gemma 3 Model for Weigh Station...");
+    let gemma_config = GemmaConfigWrapper::default();
+    let weigh_station = match GemmaModel::load(gemma_config) {
+        Ok(gemma_model) => {
+            println!("✅ Gemma 3 Model Loaded Successfully.");
+            if let Some(db_pool) = pool.clone() {
+                Some(Arc::new(tokio::sync::Mutex::new(WeighStation::new(
+                    db_pool,
+                    gemma_model,
+                ))))
+            } else {
+                println!("⚠️ Database not available, Weigh Station disabled.");
+                None
+            }
+        }
+        Err(e) => {
+            println!(
+                "⚠️ Failed to load Gemma 3 model: {}. Weigh Station disabled.",
+                e
+            );
+            None
+        }
+    };
 
     // Create the application state
     let app_state = AppState {
@@ -295,7 +309,7 @@ async fn main() {
         pool,
         shared_research_log,
         shared_virtues,
-        gemma_server,
+        // gemma_server,
         conversation_memory,
         socratic_engine,
         model_manager,
@@ -303,7 +317,7 @@ async fn main() {
         pete_command_inbox,   // [NEW]
         pete_response_outbox, // [NEW]
         shared_physics,       // [NEW]
-                              // weigh_station, // Disabled
+        weigh_station,        // Enabled
     };
 
     // Create Model App State
@@ -330,9 +344,9 @@ async fn main() {
             "/api/models",
             crate::routes::model_routes::model_routes().with_state(model_app_state),
         )
-        .merge(crate::routes::debug::debug_routes())
+        // .merge(crate::routes::debug::debug_routes())
         .merge(crate::routes::knowledge::knowledge_routes())
-        // .nest("/api/weigh_station", weigh_station_routes()) // [NEW] - Disabled
+        .nest("/api/weigh_station", weigh_station_routes()) // [NEW] - Enabled
         .layer(cors)
         .with_state(app_state) // Apply state BEFORE fallback
         .fallback(static_handler); // Fallback LAST so it doesn't catch API routes

@@ -1,4 +1,4 @@
-use crate::ai::SessionContext;
+use crate::ai::socratic_engine::SessionContext;
 use crate::AppState;
 use axum::{extract::State, http::StatusCode, Json};
 use serde::{Deserialize, Serialize};

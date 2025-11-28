@@ -1,3 +1,0 @@
-error: no matching package named `frontend` found
-location searched: C:\Users\Trinity\Documents\daydream\Day_Dream\frontend
-required by package `ask_pete_backend v0.1.0 (C:\Users\Trinity\Documents\daydream\Day_Dream\backend)`

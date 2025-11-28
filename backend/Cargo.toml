@@ -19,7 +19,7 @@ futures = "0.3"
 futures-util = "0.3" # [NEW] For stream handling
 
 # HTTP Client
-reqwest = { version = "0.12", features = ["stream", "rustls-tls"] } # [NEW] For async downloads
+reqwest = { version = "0.12", features = ["stream", "rustls-tls", "json"] } # [NEW] For async downloads and API calls
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -43,14 +43,18 @@ sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uui
 pgvector = { version = "0.4" }  # Vector similarity search for RAG
 dotenvy = "0.15"
 uuid = { version = "1.8", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "=0.4.38", features = ["serde"] }
 
-# AI/LLM - Local inference via Candle
+# AI/LLM - Local inference via Candle (Gemma 3)
 candle-core = "0.8.0"
 candle-nn = "0.8.0"
 candle-transformers = "0.8.0"
 tokenizers = "0.19"
-ort = { version = "2.0.0-rc.9", features = ["load-dynamic", "cuda"] } # [FIX] Explicitly add ort to fix linking issues, added cuda for potential GPU support on backend if available, though load-dynamic is key.
+ort = { version = "2.0.0-rc.9", features = ["load-dynamic", "cuda"] } 
+
+# Local Vector DB (The "Brain" Storage)
+# lancedb = "0.4" # Requires PROTOC installed
+
 
 # Pete AI Assistant (NEW)
 hf-hub = "0.3"              # HuggingFace model downloads

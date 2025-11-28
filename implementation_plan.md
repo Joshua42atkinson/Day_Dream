@@ -1,55 +1,59 @@
-# Implementation Plan - Pete AI Assistant & Model Manager
+# Implementation Plan - Hybrid Sovereign Architecture
 
 ## Goal
 
-Fix compilation errors, implement the Model Manager for downloading AI models, connect the Pete AI assistant, and update branding.
+Transform "Ask Pete" into a "Hybrid Sovereign" platform by integrating Google's Gemma 3 for local inference and Antigravity for enterprise-grade scaling, while implementing the "Coal" (Compute) & "Steam" (Mastery) economic model.
 
 ## User Review Required
 >
 > [!IMPORTANT]
-> The build is currently broken due to `ort` (ONNX Runtime) or related dependencies. We might need to adjust features or install system dependencies.
+> **Gemma 3 Integration**: We are replacing the generic Llama implementation with Gemma 3. This requires verifying that `candle-transformers` supports the specific Gemma 3 architecture (or using a compatible fallback like Gemma 2 until explicit support is confirmed).
+> **Compute Token Scarcity**: We are introducing "Coal" as a consumable resource for AI inference. This is a significant gameplay change.
 
 ## Proposed Changes
 
-### Build Fixes
+### Phase 1: Gemma 3 Core (Local Sovereignty)
 
-- Investigate and resolve `ort` / `fastembed` compilation errors.
-- Ensure all new dependencies in `backend/Cargo.toml` are compatible.
+#### [MODIFY] [backend/Cargo.toml](file:///backend/Cargo.toml)
 
-### Model Manager
+- Ensure `candle-transformers` and `hf-hub` are configured for Gemma 3.
+- Add `burn` or specific `ort` features if needed for optimized inference.
 
-#### [NEW] [backend/src/model_manager.rs](file:///c:/Users/Trinity/Documents/daydream/Day_Dream/backend/src/model_manager.rs)
+#### [MODIFY] [backend/src/ai/llm/mod.rs](file:///backend/src/ai/llm/mod.rs)
 
-- Implement `ModelManager` struct.
-- Use `hf-hub` to download models (e.g., Gemma 1B, embedding models).
-- Handle caching and file paths using `dirs`.
+- Refactor `LLMEngine` trait to support Gemma 3 specific tokenization and generation parameters.
 
-### Pete AI Integration
+#### [NEW] [backend/src/ai/llm/gemma_engine.rs](file:///backend/src/ai/llm/gemma_engine.rs)
 
-#### [MODIFY] [backend/src/main.rs](file:///c:/Users/Trinity/Documents/daydream/Day_Dream/backend/src/main.rs)
+- Implement `GemmaEngine` struct using `candle`.
+- Handle model download (2B/7B quantized) via `hf-hub`.
+- Implement "Coal" cost calculation per token.
 
-- Initialize `ModelManager` on startup.
-- Integrate with the existing AI handler.
+#### [MODIFY] [frontend/src/ai/gemma_agent.rs](file:///frontend/src/ai/gemma_agent.rs)
 
-### Branding
+- Implement WebGPU-based inference for Gemma 3 (270M/2B) in the browser.
+- Use `wgpu` and `candle-wasm` for zero-latency, offline capability.
 
-#### [MODIFY] [frontend/index.html](file:///c:/Users/Trinity/Documents/daydream/Day_Dream/frontend/index.html)
+### Phase 2: Antigravity Bridge (Enterprise Scale)
 
-- Update title and meta tags.
+#### [NEW] [backend/src/antigravity/mod.rs](file:///backend/src/antigravity/mod.rs)
 
-#### [MODIFY] [frontend/src/app.rs](file:///c:/Users/Trinity/Documents/daydream/Day_Dream/frontend/src/app.rs)
+- Create the `AntigravityClient` to communicate with the enterprise backend.
+- Implement "Steam" synchronization (uploading verified progress vectors).
 
-- Update UI text/colors to reflect "Pete" branding.
+#### [MODIFY] [backend/src/handlers/weigh_station.rs](file:///backend/src/handlers/weigh_station.rs)
+
+- Update `WeighStation` to act as the gateway between Local (Gemma) and Cloud (Antigravity).
 
 ## Verification Plan
 
 ### Automated Tests
 
-- Run `cargo check` to verify build fixes.
-- Run `cargo test` for the model manager logic.
+- `cargo test` for `GemmaEngine` tokenization and generation.
+- Unit tests for "Coal" deduction logic.
 
 ### Manual Verification
 
-- Launch the app.
-- Verify model download starts/completes.
-- Chat with Pete and verify responses.
+- **Local Inference**: Verify Gemma 3 runs on the student laptop (backend) and browser (frontend) without crashing.
+- **Economic Loop**: Confirm that asking Pete a question consumes "Coal" and answering correctly generates "Steam".
+- **Cloud Sync**: Verify that "Steam" generated locally appears in the Antigravity dashboard (mocked if necessary).

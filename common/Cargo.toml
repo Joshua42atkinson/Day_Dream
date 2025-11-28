@@ -22,7 +22,7 @@ sqlx = { version = "*", features = [ # Pinned version
     "postgres",
     "chrono",
 ], optional = true }
-chrono = { version = "*", features = ["serde"], optional = true }
+chrono = { version = "=0.4.38", features = ["serde"], optional = true }
 
 
 [features]

@@ -22,7 +22,7 @@ The Student is the Train. Their purpose is movement—progression from ignorance
 
 * **The Engine:** The student’s will and intellectual capacity.
 * **The Passengers:** The knowledge, ideas, and experiences the student must acquire.
-* **The Fuel:** The student’s mental energy.
+* **The Fuel (Coal):** The student’s mental energy and compute tokens. Coal is scarce.
 
 #### 2. The Train Yard (The Authoring Tool)
 
@@ -55,7 +55,7 @@ The Instructional Designer attaches **Train Cars** to the student's engine.
 
 * **The Vocabulary Quest:** Each Node offers a "Train Car" containing a vocabulary bank (e.g., 50 words).
 * **Capacity Check:** The train cannot leave the station if the load is too heavy. The student cannot "attach" the car until they have reduced the weight of the ignorance.
-* **The Unloading Process:** To "earn" the car, the student enters the Sandbox. They must engage in a narrative story where they encounter these words. They must use the words in context—storified language—to prove they understand. Only once the words are "light enough" (mastered) can the car be attached, and the train proceed to the next node.
+* **The Unloading Process:** To "earn" the car, the student enters the Sandbox. They must engage in a narrative story where they encounter these words. They must use the words in context—storified language—to prove they understand. This burns **Coal** and generates **Steam** (Mastery). Only once enough Steam is generated can the car be attached, and the train proceed to the next node.
 
 ### IV. The Role of Pete (The AI Teacher for Teachers)
 

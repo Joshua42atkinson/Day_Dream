@@ -13,7 +13,7 @@ pub struct AppState {
     pub pool: Option<PgPool>,
     pub shared_research_log: Arc<RwLock<ResearchLog>>,
     pub shared_virtues: Arc<RwLock<VirtueTopology>>,
-    pub gemma_server: Arc<crate::ai::llm::gemma_server::Gemma27BServer>,
+    // pub gemma_server: Arc<crate::ai::llm::gemma_server::Gemma27BServer>,
     pub conversation_memory: Arc<ConversationMemory>,
     pub socratic_engine: Arc<tokio::sync::RwLock<SocraticEngine>>,
     pub model_manager: Arc<tokio::sync::Mutex<crate::services::model_manager::ModelManager>>,
@@ -21,6 +21,8 @@ pub struct AppState {
     pub pete_command_inbox: PeteCommandInbox,
     pub pete_response_outbox: PeteResponseOutbox,
     pub shared_physics: SharedPhysicsResource,
+    pub weigh_station:
+        Option<Arc<tokio::sync::Mutex<crate::handlers::weigh_station::WeighStation>>>,
 }
 
 impl axum::extract::FromRef<AppState> for LeptosOptions {

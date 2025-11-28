@@ -1,12 +1,17 @@
 // This file defines all the data structures that are shared
-// between your `backend` server and your `frontend` UI.
-// This is the "common language" they both speak.
 
+pub mod economy;
 pub mod expert;
+pub mod mobile;
 pub mod reflection;
 
+pub mod ai;
+pub mod db;
+pub mod models;
+pub mod physics;
+
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet}; // For loading static data
+use std::collections::{HashMap, HashSet};
 
 #[cfg(feature = "ssr")]
 use once_cell::sync::Lazy;

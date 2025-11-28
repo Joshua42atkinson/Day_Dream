@@ -1,5 +1,5 @@
 use crate::api::{get_graph, save_graph};
-use crate::components::authoring::property_editor::PropertyEditor;
+// use crate::components::authoring::property_editor::PropertyEditor;
 use crate::components::authoring::story_node::StoryNodeComponent;
 use crate::components::authoring::template_selector::TemplateSelector;
 use common::expert::{Connection, StoryGraph, StoryNode};
@@ -92,8 +92,6 @@ pub fn NodeCanvas() -> impl IntoView {
 
     let on_mouse_down_canvas = move |ev: web_sys::MouseEvent| {
         // Only pan if clicking on the background (not a node)
-        // Nodes stop propagation, so this should be fine if bubbles is handled
-        // But for now, we assume this fires on bg click
         if ev.button() == 0 || ev.button() == 1 {
             // Left or Middle click
             set_is_panning.set(true);
@@ -120,31 +118,8 @@ pub fn NodeCanvas() -> impl IntoView {
             set_last_mouse_pos.set((mx, my));
         } else if let Some(id) = dragging_id.get() {
             // Dragging a node
-            // We need to update node position based on world coordinates
-            // The offset is also in screen coords? No, offset was calculated relative to node top-left in screen pixels
-            // Let's recalculate: New Node Pos = World Mouse Pos - World Offset
-
-            // Wait, offset was set in on_mousedown. If we zoom/pan while dragging, it gets complex.
-            // Simplified: Just set node center to mouse? Or keep offset.
-            // Let's assume offset is in World Units.
-
             if let Some(node_signal) = nodes.get().iter().find(|n| n.get().id == id) {
                 node_signal.update(|n| {
-                    // We want the node to follow the mouse.
-                    // n.x = wx - offset_x
-                    // But we need to capture offset in world units on mousedown.
-                    // For now, let's just use the delta approach or simple follow.
-                    // Let's use the simple follow with the offset we captured (converted to world).
-
-                    // Actually, let's fix the offset logic in on_mousedown first.
-                    // For now, just setting to wx/wy is "snapping" to mouse.
-                    // Let's use the stored offset (which is currently screen pixels).
-                    // We need to scale the offset?
-
-                    // Better: Calculate delta from last mouse move and apply to node.
-                    // dx_world = dx_screen / scale
-                    // dy_world = dy_screen / scale
-
                     let (lx, ly) = last_mouse_pos.get();
                     let dx = (mx - lx) / view_transform.get().2;
                     let dy = (my - ly) / view_transform.get().2;
@@ -155,7 +130,6 @@ pub fn NodeCanvas() -> impl IntoView {
             }
             set_last_mouse_pos.set((mx, my));
         } else {
-            // Just tracking mouse for other things
             set_last_mouse_pos.set((mx, my));
         }
     };
@@ -174,11 +148,6 @@ pub fn NodeCanvas() -> impl IntoView {
         set_view_transform.update(|t| {
             let old_scale = t.2;
             let new_scale = (old_scale * zoom_factor).clamp(0.1, 5.0);
-
-            // Zoom towards mouse pointer
-            // World = (Screen - Pan) / Scale
-            // Pan = Screen - World * Scale
-            // We want World to stay same at Mouse Pos
 
             let mx = ev.client_x() as f64;
             let my = ev.client_y() as f64;
@@ -433,11 +402,11 @@ pub fn NodeCanvas() -> impl IntoView {
                 }
             }}
 
-            // Property Editor
+            // Inspector (Replaces PropertyEditor)
             {move || selected_node_id.get().and_then(|id| {
                 nodes.get().iter().find(|n| n.get().id == id).cloned().map(|node_signal| {
                     view! {
-                        <PropertyEditor
+                        <crate::components::authoring::inspector::Inspector
                             node=node_signal
                             on_close=move || set_selected_node_id.set(None)
                             on_delete=move || {

@@ -1,4 +1,4 @@
-use crate::ai::llm::{GenerationConfig, Llama3Model};
+use crate::ai::llm::{GemmaModel, GenerationConfig};
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -16,11 +16,11 @@ pub struct WordPhysics {
 
 pub struct WeighStation {
     db: PgPool,
-    llm: Llama3Model,
+    llm: GemmaModel,
 }
 
 impl WeighStation {
-    pub fn new(db: PgPool, llm: Llama3Model) -> Self {
+    pub fn new(db: PgPool, llm: GemmaModel) -> Self {
         Self { db, llm }
     }
 
@@ -80,21 +80,25 @@ impl WeighStation {
     }
 
     async fn store_in_depot(&self, p: &WordPhysics) -> Result<()> {
-        sqlx::query!(
+        sqlx::query(
             r#"
-            INSERT INTO vocabulary_bank 
-            (word, definition, grade_level, tier_level, cognitive_weight, domain_tags)
+            INSERT INTO vocabulary_words 
+            (word, definition, grade_level, tier, weight, tags)
             VALUES ($1, $2, $3, $4, $5, $6)
             ON CONFLICT (word) DO UPDATE 
-            SET cognitive_weight = $5 -- Update weight if it changed
+            SET weight = $5, -- Update weight if it changed
+                definition = $2,
+                grade_level = $3,
+                tier = $4,
+                tags = $6
             "#,
-            p.word,
-            p.definition,
-            p.grade_level,
-            p.tier,
-            p.weight,
-            &p.tags
         )
+        .bind(&p.word)
+        .bind(&p.definition)
+        .bind(p.grade_level)
+        .bind(p.tier)
+        .bind(p.weight)
+        .bind(&p.tags)
         .execute(&self.db)
         .await?;
 

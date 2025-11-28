@@ -21,9 +21,10 @@
 
 ### Key Features
 
-- ✅ **Local-First AI**: Runs Llama 3.2 locally. No cloud data leakage. FERPA compliant.
+- ✅ **Hybrid Sovereign AI**: **Gemma 3** (Local) for privacy + **Gemini 3 Ultra** (Cloud) for reasoning.
+- ✅ **The Coal Economy**: "Compute Token Scarcity" teaches resource management.
 - ✅ **The Weigh Station**: AI analyzes vocabulary words and assigns "Cognitive Weight" (1-100).
-- ✅ **The Sandbox**: A GameLit RPG environment where students "burn fuel" (Germane Load) to master concepts.
+- ✅ **The Sandbox**: A GameLit RPG environment where students "burn Coal" to generate "Steam" (Mastery).
 - ✅ **Open Source**: Apache 2.0 Licensed. Owned by the community, for the community.
 
 ---
@@ -65,7 +66,7 @@
     ```
 
 3. **Download AI Models:**
-    - Download `Llama-3.2-3B-Instruct-Q4_K_M.gguf` from HuggingFace.
+    - Download **Gemma 3** (2B or 270M) from HuggingFace.
     - Place it in `backend/models/`.
 
 4. **Run the Backend:**

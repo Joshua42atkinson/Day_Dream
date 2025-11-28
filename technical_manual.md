@@ -34,8 +34,9 @@ The system is divided into a "Brain" (Backend) and a "Body" (Frontend).
 - **Components:**
   - **Axum:** Web server handling API requests.
   - **Bevy ECS:** Manages the narrative state and game logic.
-  - **Candle:** Local LLM inference (e.g., Gemma 27B).
-  - **PostgreSQL:** Persistent storage for user data and story graphs.
+  - **Gemma 3:** Local LLM inference (2B/270M) via Candle.
+  - **Antigravity:** Enterprise cloud synchronization and vector storage.
+  - **PostgreSQL:** Local persistent storage for user data.
 
 #### The Body (Frontend)
 

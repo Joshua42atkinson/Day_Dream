@@ -7,7 +7,6 @@ frontend/dist/
 **/.env
 
 # Editor configuration
-.vscode/
 .idea/
 
 # OS-specific files

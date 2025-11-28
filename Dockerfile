@@ -44,4 +44,5 @@ COPY --from=builder /app/frontend/dist ./site
 EXPOSE 3000
 
 # Run the backend server
+# Cloud Run will inject PORT env var, which the app now respects.
 CMD ["/app/backend"]
