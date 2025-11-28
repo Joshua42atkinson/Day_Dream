@@ -4,7 +4,6 @@ use crate::components::authoring::story_node::StoryNodeComponent;
 use crate::components::authoring::template_selector::TemplateSelector;
 use common::expert::{Connection, StoryGraph, StoryNode};
 use leptos::prelude::*;
-use wasm_bindgen::JsCast;
 
 #[component]
 pub fn NodeCanvas() -> impl IntoView {
@@ -13,7 +12,7 @@ pub fn NodeCanvas() -> impl IntoView {
     let (graph_meta, set_graph_meta) = signal((String::new(), String::new())); // id, title
     let (dragging_id, set_dragging_id) = signal(None::<String>);
     let (selected_node_id, set_selected_node_id) = signal(None::<String>);
-    let (offset, set_offset) = signal((0.0, 0.0)); // Mouse offset relative to node top-left
+
     let (show_template_selector, set_show_template_selector) = signal(false);
     let navigate = leptos_router::hooks::use_navigate();
 

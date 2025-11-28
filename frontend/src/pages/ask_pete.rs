@@ -167,7 +167,7 @@ fn PeteTerminal() -> impl IntoView {
                                                                 class="group relative w-full p-6 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                                                                 on:click=move |_| handle_choice(target.clone())
                                                             >
-                                                                <div class="absolute inset-0 bg-iron-gray/50 chamfered-corners border-2 border-purdue-gold/20 group-hover:bg-purdue-gold/10 group-hover:border-purdue-gold transition-all shadow-lg group-hover:shadow-purdue-gold/30"></div>
+                                                                <div class="absolute inset-0 bg-iron-gray/50 chamfered-corners border-2 border-purdue-gold/20 group-hover:bg-purdue-gold/10 group-hover:border-purdue-gold transition-all shadow-lg group-hover:shadow-purdue-gold/30 pointer-events-none"></div>
                                                                 <div class="relative flex items-center justify-between">
                                                                     <span class="text-lg font-bold text-steam-white group-hover:text-purdue-prime transition-colors">
                                                                         {title}

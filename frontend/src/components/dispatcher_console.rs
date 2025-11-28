@@ -91,6 +91,7 @@ pub fn DispatcherConsole(children: Children) -> impl IntoView {
                     class="glass-panel absolute top-4 left-4 bottom-4 w-96 transition-transform duration-300 transform z-10 p-6"
                     class:translate-x-0=move || active_panel.get() == ActivePanel::WeighStation
                     class:-translate-x-full=move || active_panel.get() != ActivePanel::WeighStation
+                    class:pointer-events-none=move || active_panel.get() != ActivePanel::WeighStation
                 >
                     <h2 class="text-metallic-gold text-2xl mb-4">"WEIGH STATION"</h2>
                     <p class="text-steam-white">"Vocabulary and Concept Weight Analysis"</p>
@@ -101,6 +102,7 @@ pub fn DispatcherConsole(children: Children) -> impl IntoView {
                     class="glass-panel absolute top-4 left-4 bottom-4 w-96 transition-transform duration-300 transform z-10 p-6"
                     class:translate-x-0=move || active_panel.get() == ActivePanel::Comm
                     class:-translate-x-full=move || active_panel.get() != ActivePanel::Comm
+                    class:pointer-events-none=move || active_panel.get() != ActivePanel::Comm
                 >
                     <h2 class="text-metallic-gold text-2xl mb-4">"MENTOR COMM"</h2>
                     <p class="text-steam-white mb-4">"Communication Uplink with Pete"</p>

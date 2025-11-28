@@ -1,4 +1,3 @@
-
 #[cfg(feature = "ssr")]
 #[server(SaveReflection, "/api")]
 pub async fn save_reflection(

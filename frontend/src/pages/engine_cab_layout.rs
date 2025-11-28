@@ -6,9 +6,7 @@ use leptos_router::hooks::use_params_map;
 #[component]
 pub fn EngineCabLayout() -> impl IntoView {
     let params = use_params_map();
-    let quest_id = move || {
-        params.read().get("quest_id").unwrap_or_default()
-    };
+    let quest_id = move || params.read().get("quest_id").unwrap_or_default();
 
     view! {
         <div class="engine-cab-layout h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
@@ -20,7 +18,7 @@ pub fn EngineCabLayout() -> impl IntoView {
                             "Quest: " {move || quest_id()}
                         </div>
                     </div>
-                    
+
                     // Placeholder for Fuel Gauge (Cognitive Load)
                     <div class="w-64 h-3 bg-slate-900 rounded-full border border-[#CFB991]/50">
                         <div class="h-full w-1/3 bg-gradient-to-r from-green-500 to-yellow-500 rounded-full transition-all">
@@ -38,7 +36,7 @@ pub fn EngineCabLayout() -> impl IntoView {
                             "This is the immersive student experience powered by client-side AI. "
                             "Students will interact with the story graph through natural conversation."
                         </p>
-                        
+
                         // Placeholder for chat interface
                         <div class="mt-8 space-y-4">
                             <div class="bg-slate-900/50 rounded p-4 border-l-4 border-[#CFB991]">

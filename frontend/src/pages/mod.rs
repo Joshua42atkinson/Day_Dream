@@ -8,4 +8,3 @@ pub mod settings;
 pub mod engine_cab_layout;
 pub mod knowledge_library;
 pub mod train_yard_layout;
-pub mod weigh_station;

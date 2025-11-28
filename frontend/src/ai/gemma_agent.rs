@@ -1,12 +1,13 @@
 use candle_core::Device;
-use candle_transformers::models::quantized_llama::ModelWeights as QModel;
 use candle_transformers::generation::LogitsProcessor;
+use candle_transformers::models::quantized_llama::ModelWeights as QModel;
 // use tokenizers::Tokenizer; // Replaced by custom tokenizer
 use crate::ai::tokenizer::GemmaTokenizer;
-use wasm_bindgen::prelude::*;
 use gloo_net::http::Request;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+#[allow(dead_code)]
 pub struct GemmaAgent {
     model: QModel,
     tokenizer: GemmaTokenizer,
@@ -34,10 +35,10 @@ impl GemmaAgent {
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
         let model = QModel::from_gguf(content, &mut cursor, &device)
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
-            
+
         let tokenizer_json = String::from_utf8(tokenizer_data)
             .map_err(|e| JsValue::from_str(&format!("Invalid UTF-8: {}", e)))?;
-            
+
         let tokenizer = GemmaTokenizer::from_json_str(&tokenizer_json)
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
 
@@ -66,9 +67,13 @@ impl GemmaAgent {
 
 // Helper for fetching binary data
 async fn fetch_bytes(url: &str) -> Result<Vec<u8>, JsValue> {
-    let resp = Request::get(url).send().await
+    let resp = Request::get(url)
+        .send()
+        .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    let bytes = resp.binary().await
+    let bytes = resp
+        .binary()
+        .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(bytes)
 }
