@@ -13,7 +13,7 @@ use crate::pages::research_dashboard::ResearchDashboard;
 use crate::pages::engine_cab_layout::EngineCabLayout;
 use crate::pages::knowledge_library::KnowledgeLibrary;
 use crate::pages::train_yard_layout::TrainYardLayout;
-use crate::pages::weigh_station::WeighStation;
+// use crate::pages::weigh_station::WeighStation;
 
 #[component]
 pub fn App() -> impl IntoView {

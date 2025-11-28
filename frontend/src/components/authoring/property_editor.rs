@@ -1,5 +1,7 @@
 use common::expert::StoryNode;
 use leptos::prelude::*;
+use wasm_bindgen::JsCast;
+// use web_sys::document; // Removed invalid import
 
 #[component]
 pub fn PropertyEditor(
@@ -109,6 +111,66 @@ pub fn PropertyEditor(
 
             <div class="text-xs text-slate-500 font-mono">
                 "ID: " {move || node_data().id}
+            </div>
+
+            // Requirements / Triggers Section
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-slate-400">"Requirements (Triggers)"</label>
+                <div class="bg-slate-800 border border-slate-700 rounded p-2 space-y-2">
+                    <For
+                        each=move || node_data().required_stats.into_iter()
+                        key=|stat| stat.0.clone()
+                        children=move |(stat, val)| {
+                            let stat_clone = stat.clone();
+                            view! {
+                                <div class="flex justify-between items-center bg-slate-700/50 p-1 rounded">
+                                    <span class="text-xs text-white font-mono">{stat.clone()} ": " {val}</span>
+                                    <button
+                                        class="text-red-400 hover:text-red-300 px-1"
+                                        on:click=move |_| {
+                                            node.update(|n| { n.required_stats.remove(&stat_clone); });
+                                        }
+                                    >
+                                        "×"
+                                    </button>
+                                </div>
+                            }
+                        }
+                    />
+
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            id="new-stat-name"
+                            class="w-2/3 bg-slate-900 border border-slate-600 rounded p-1 text-xs text-white"
+                            placeholder="Stat"
+                        />
+                        <input
+                            type="number"
+                            id="new-stat-val"
+                            class="w-1/3 bg-slate-900 border border-slate-600 rounded p-1 text-xs text-white"
+                            placeholder="Val"
+                        />
+                        <button
+                            class="bg-cyan-600 hover:bg-cyan-500 text-white rounded px-2 text-xs"
+                            on:click=move |_| {
+                                let doc = web_sys::window().unwrap().document().unwrap();
+                                let name_el = doc.get_element_by_id("new-stat-name").unwrap().unchecked_into::<web_sys::HtmlInputElement>();
+                                let val_el = doc.get_element_by_id("new-stat-val").unwrap().unchecked_into::<web_sys::HtmlInputElement>();
+                                let name = name_el.value();
+                                let val = val_el.value().parse::<u32>().unwrap_or(0);
+
+                                if !name.is_empty() {
+                                    node.update(|n| { n.required_stats.insert(name, val); });
+                                    name_el.set_value("");
+                                    val_el.set_value("");
+                                }
+                            }
+                        >
+                            "+"
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="pt-4 border-t border-white/10">

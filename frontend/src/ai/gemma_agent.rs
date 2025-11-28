@@ -1,4 +1,4 @@
-use candle_core::{Device, Tensor, DType};
+use candle_core::Device;
 use candle_transformers::models::quantized_llama::ModelWeights as QModel;
 use candle_transformers::generation::LogitsProcessor;
 // use tokenizers::Tokenizer; // Replaced by custom tokenizer

@@ -15,8 +15,11 @@ pub struct StoryNode {
     #[serde(default)]
     pub learner_profiles: Vec<String>, // Which "trains" can use this
     #[serde(default)]
-    pub gardens_active: Vec<String>, // Which activities (Knowledge, Skills, Wisdom, Community)
-                                     // Future: connections, triggers, etc.
+    pub gardens_active: Vec<String>, // Which activities (Knowledge, Skills, Community)
+
+    // Game State Logic (Triggers)
+    #[serde(default)]
+    pub required_stats: std::collections::HashMap<String, u32>, // e.g. "Strength" -> 5
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
