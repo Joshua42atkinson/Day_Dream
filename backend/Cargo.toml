@@ -46,7 +46,7 @@ candle-transformers = "0.8.0"
 tokenizers = "0.19"
 
 # Caching and concurrency
-lru = "0.12"
+lru = "0.16"
 dashmap = "5"
 
 # Logging
