@@ -12,7 +12,27 @@ frontend/dist/
 
 # OS-specific files
 .DS_Store
+Thumbs.db
 
-# Log files
+# Log and error dump files
 *.log
+*_log*.txt
+*_error*.txt
+*_check*.txt
+*error*.txt
+
+# Build artifacts and temp files
 node_modules/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# AI model files (too large for git)
+models/
+*.gguf
+*.bin
+*.safetensors
+
+# Gemini agent data
+.gemini/
