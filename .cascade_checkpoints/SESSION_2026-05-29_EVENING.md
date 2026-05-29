@@ -67,35 +67,113 @@ Both sites share the same StoryGraph JSON format. An author can:
 ### playdaydream/ (React Player)
 ```
 src/
-  main.jsx          → Entry point
-  App.jsx           → Router: /, /play/:id, /custom
+  main.jsx                → Entry point
+  App.jsx                 → Router: /, /play/:id, /custom, /codex, /create/*, /settings
+  index.css               → The Great Game design system (dark fantasy, LitRPG)
   adapters/
-    storygraph.js   → Rust JSON → React curriculum adapter
+    storygraph.js         → Rust JSON → React curriculum adapter
   data/
-    curriculum.js   → Hardcoded demo adventures (Bias & Mirrors, Feelings Garden)
-    constants.js    → Channel enum, Mastery enum
+    curriculum.js         → Hardcoded demo adventures
+    constants.js          → Channel enum, Mastery enum, CHANNEL_COLORS
+    arcana.js             → 20 ARCANA words, synergies, archetypes, symbols
+  lib/
+    artPromptBuilder.js   → Cinematic prompt gen + ComfyUI workflow builder
   hooks/
     useSwipeGesture.js    → Mouse/touch drag, swipe detection, double-tap
     useAmbientDrone.js    → Web Audio API sine wave drone
     useStudentTrail.js    → localStorage persistence, trail, SpellBook, emergent class
+    useCharacter.js       → Character state: name, archetype, channels, XP
+    useSettings.js        → Vibe portal: voice, mood, deck, audio prefs
+    useSceneArtist.js     → ComfyUI single-scene art generation
+    useBatchArtist.js     → Multi-scene queue + parallel polling
+    useStorytellerAI.js   → StepAudio R1.1 vLLM / local AI integration
+    useVoiceCommands.js   → Bluetooth, sound-controlled navigation
+    useCodexProgress.js   → Academy: enrollment, XP, lesson completion, locked progression
+  components/
+    SceneArtist.jsx       → Per-node art generation UI (gold orb, progress, preview)
+    BatchForge.jsx        → Bulk forge panel ("Forge All N Scenes")
+    ReflectionModal.jsx   → Socratic reflection journaling modal
   pages/
-    Home.jsx        → Adventure picker + StoryGraph JSON upload
-    Home.css        → Styling for cards + upload section
-    Play.jsx        → Core game: swipe-card narrative, depth overlay, end screen
+    Home.jsx              → Cinematic hero, character preview, LitRPG action grid
+    Home.css              → Layout + element styles for Home
+    Play.jsx              → Core game: swipe-card narrative, depth overlay, end screen
+    CharacterCreator.jsx  → Name, archetype, channel sliders, preview card
+    DeckBuilder.jsx       → ARCANA word library, tap-to-deck, synergy detection
+    JourneyAuthor.jsx     → Word-DAG node editor, Mad Libs, ComfyUI art, export JSON
+    PlayerCodex.jsx       → The Academy: 5 Classes, enrollment, XP, reflections
+    Settings.jsx          → Vibe portal: narration voice, ambient mood, deck selection
+    AudioPlay.jsx         → Hands-free audio play mode (Bluetooth, voice nav)
 ```
 
 ### Deployment
-- **GitHub:** `Joshua42atkinson/Day_Dream` — `a493a01` pushed to `main`
-- **Vercel:** Connected, builds clean, `day-dream-xxx.vercel.app` active
-- **DNS:** Squarespace A + CNAME records set, domain ready for Vercel verification
+- **GitHub:** `Joshua42atkinson/Day_Dream` — `8bc5e7b` pushed to `main` (latest)
+- **Vercel:** Auto-deploys on push, builds clean at ~120ms
+- **DNS:** playdaydream.com → Vercel (A + CNAME configured)
+- **Current build:** 355KB JS (+22KB art pipeline), 20KB CSS, 16 precached entries
+
+### Built LATER SAME DAY (May 29 Evening Session)
+
+#### 7. Character Creator (`/create/character`)
+- Name, Archetype picker (Oracle/Bard/Cultivator/Templar/Architect)
+- Channel affinity sliders (Mind/Heart/Body/Action)
+- Character preview card with channel visualization
+
+#### 8. Spell Deck Builder (`/create/deck`)
+- ARCANA word library (20 words across 4 channels)
+- Tap-to-add/remove from deck (max 20)
+- Synergy detection (Resilience+Patience = Steadfast, etc.)
+- Channel balance visualization bar
+
+#### 9. Journey Author (`/create/journey`)
+- Multi-node word-DAG editor
+- Mad Libs slots per node: Setting, Subject, Action, Modifier
+- Socratic depth question per node
+- Node connection DAG builder
+- Export as StoryGraph JSON
+- **ComfyUI SceneArtist per node** — art generation inline
+- **BatchForge** — "Forge All N Scenes" one-click bulk generation
+
+#### 10. Player's Codex → The Academy (`/codex`)
+- Enrollment gate — must enroll before accessing
+- 5 Classes (was Tomes), 3 Lessons each = 15 total
+- **Locked progression** — Class II unlocks after 2/3 of Class I
+- **XP system** — 100 XP per reflection
+- **Socratic Reflection Modal** — free-form journaling after each lesson
+- Reflections persisted to localStorage as trail entries
+- Completion celebration at 100%
+
+#### 11. ComfyUI Art Pipeline
+- `artPromptBuilder.js` — cinematic prompt generation from node data
+- `useSceneArtist.js` — health check → submit → poll → download → blob URL
+- `SceneArtist.jsx` — per-node forge UI with gold orb + progress bar
+- `useBatchArtist.js` — multi-scene queue + parallel polling
+- `BatchForge.jsx` — bulk generation panel with overall progress
+- Vite proxy: `/api/comfyui` → `localhost:8188`
+
+#### 12. Design System (index.css)
+- Dark fantasy palette: void-black, parchment panels, gold (#C9A84C)
+- Four channel colors: Mind (cyan), Heart (magenta), Body (green), Action (amber)
+- Typography: Cinzel (headings) + Cormorant Garamond + Inter
+- Starfield background, gold shimmer, parchment glow animations
+- `.parchment-panel`, `.btn`, `.tome-section`, `.hero-glow`
+
+#### 13. Home Page Overhaul
+- Cinematic hero with starfield + radial glow
+- Character preview card (from localStorage)
+- LitRPG action grid: Create Character, Build Deck, Author Journey, Open Codex
+- Adventure cards with "Oral Tradition" audio play button
+- Upload section for custom StoryGraph JSON
 
 ### Not Yet Built (Next Session Priority)
-1. **Character Creator** (`/create/character`) — Name, archetype, channel sliders
-2. **Spell Deck Builder** (`/create/deck`) — Drag/tap word-spells into personal deck
-3. **Journey Author** (`/create/journey`) — Visual node editor in React
-4. **Enhanced Player** — Character Sheet overlay, spell hand display, live synergy
-5. **SpellBook persistence** — Cross-session save/load, mastery tracking
-6. **greatrecycler.com** — Discovery hub for published journeys
+1. **Trail page** — Surface all reflections as journal/timeline
+2. **Character sheet integration** — Reflections shape emergent class
+3. **Page transitions** — Framer Motion AnimatePresence
+4. **Auto-generate stories** — LongCat-Next writes Mad Libs from title
+5. **Upscale pipeline** — Real-ESRGAN on generated images
+6. **Generated art on Home cards** — Replace CSS gradients with ComfyUI output
+7. **Socratic Pause in Play mode** — Modal before each choice
+8. **Wordmark/logo asset** — Custom "Daydream" or "The Great Game" image
+9. **greatrecycler.com** — Discovery hub for published journeys
 
 ---
 
@@ -149,10 +227,38 @@ Author (Leptos tool) → StoryGraph JSON → playdaydream.com /custom (upload)
 | `frontend/src/components/authoring/node_canvas.rs` | Modified | ..Default::default() fixes |
 | `frontend/src/pages/daydream.rs` | Modified | ..Default::default() fixes |
 
+### Evening Session Files (May 29)
+| File | Action | Purpose |
+|------|--------|---------|
+| `playdaydream/src/index.css` | **Rewritten** | The Great Game design system |
+| `playdaydream/src/pages/Home.jsx` | **Rewritten** | Cinematic hero, action grid, character preview |
+| `playdaydream/src/pages/Home.css` | **Rewritten** | Layout + element styles |
+| `playdaydream/src/pages/PlayerCodex.jsx` | **Rewritten** | The Academy — 5 Classes, enrollment, XP |
+| `playdaydream/src/pages/JourneyAuthor.jsx` | Modified | + SceneArtist + BatchForge |
+| `playdaydream/src/pages/CharacterCreator.jsx` | Created | Name, archetype, channel sliders |
+| `playdaydream/src/pages/DeckBuilder.jsx` | Created | ARCANA word library, deck building |
+| `playdaydream/src/pages/Settings.jsx` | Created | Vibe portal, voice, mood |
+| `playdaydream/src/pages/AudioPlay.jsx` | Created | Hands-free audio play mode |
+| `playdaydream/src/hooks/useCodexProgress.js` | Created | Academy lesson tracking, XP, persistence |
+| `playdaydream/src/hooks/useSceneArtist.js` | Created | ComfyUI single-scene generation |
+| `playdaydream/src/hooks/useBatchArtist.js` | Created | Multi-scene queue + poll automation |
+| `playdaydream/src/hooks/useCharacter.js` | Created | Character state + localStorage |
+| `playdaydream/src/hooks/useSettings.js` | Created | Settings state + persistence |
+| `playdaydream/src/hooks/useStorytellerAI.js` | Created | StepAudio / vLLM integration |
+| `playdaydream/src/hooks/useVoiceCommands.js` | Created | Bluetooth, sound-controlled nav |
+| `playdaydream/src/components/SceneArtist.jsx` | Created | Per-node art generation UI |
+| `playdaydream/src/components/BatchForge.jsx` | Created | Bulk forge panel with progress |
+| `playdaydream/src/components/ReflectionModal.jsx` | Created | Socratic reflection journaling modal |
+| `playdaydream/src/lib/artPromptBuilder.js` | Created | Prompt generation + workflow builder |
+| `playdaydream/src/data/arcana.js` | Created | 20 ARCANA words, synergies, archetypes |
+| `playdaydream/vite.config.js` | Modified | + ComfyUI proxy |
+| `playdaydream/src/App.jsx` | Modified | + /codex, /create/*, /settings routes |
+
 ---
 
 ## Session Status
 
+### Morning/Early Session
 **Deployment:** ✅ playdaydream.com live on Vercel (DNS configured)
 **PWA:** ✅ Offline-capable after first visit
 **Shareable URLs:** ✅ /play/:id works
@@ -160,7 +266,18 @@ Author (Leptos tool) → StoryGraph JSON → playdaydream.com /custom (upload)
 **Rust Model:** ✅ New fields backward-compatible
 **Leptos Editor:** ✅ Channel, depth, virtue editable
 
-**Next Gate:** Character Creator + Deck Builder + Journey Author (self-authoring trinity)
+### Evening Session (UI + Art + Academy)
+**Design System:** ✅ The Great Game CSS custom properties, animations, LitRPG components
+**Home Page:** ✅ Cinematic hero, character preview, action grid, adventure cards
+**Character Creator:** ✅ /create/character — name, archetype, channel sliders
+**Deck Builder:** ✅ /create/deck — 20 ARCANA words, synergies, channel balance
+**Journey Author:** ✅ /create/journey — word-DAG editor, Mad Libs, depth questions
+**ComfyUI Pipeline:** ✅ artPromptBuilder, useSceneArtist, SceneArtist, useBatchArtist, BatchForge
+**Academy Mode:** ✅ /codex — enrollment, XP, locked progression, Socratic reflections
+**Build:** ✅ 355KB JS, 20KB CSS, zero errors
+**Git Push:** ✅ `8bc5e7b` on `main`, Vercel auto-deployed
+
+**Next Gate:** Trail page, character sheet integration, page transitions, auto-story generation
 
 ---
 

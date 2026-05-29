@@ -231,7 +231,7 @@ export default function Home() {
               style={{
                 padding: '16px 12px',
                 borderRadius: 'var(--radius-lg)',
-                border: `1px solid ${color}20`,
+                border: `1px solid ${btn.color}20`,
                 background: 'linear-gradient(135deg, var(--void-surface), var(--void))',
                 color: 'var(--ink-primary)',
                 cursor: 'pointer',
