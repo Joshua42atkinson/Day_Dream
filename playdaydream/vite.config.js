@@ -4,6 +4,15 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api/comfyui': {
+        target: 'http://127.0.0.1:8188',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/comfyui/, ''),
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

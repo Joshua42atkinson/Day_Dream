@@ -1,25 +1,7 @@
 /* ════════════════════════════════════════════════════════════ */
 /* DAYDREAM — Home / Adventure Picker Styles                   */
 /* ════════════════════════════════════════════════════════════ */
-
-.home-container {
-  position: fixed;
-  inset: 0;
-  background: #0a0a0f;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.home-bg {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 20%,
-    rgba(74, 126, 181, 0.08) 0%,
-    rgba(10, 10, 15, 0) 70%
-  );
-  pointer-events: none;
-}
+/* Uses The Great Game design system from index.css             */
 
 .home-content {
   position: relative;
@@ -38,27 +20,19 @@
 }
 
 .home-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(2.5rem, 8vw, 4rem);
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 0.04em;
+  font-family: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 400;
+  color: var(--ink-bright);
+  letter-spacing: 0.02em;
   margin-bottom: 0.6rem;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.6) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .home-subtitle {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(0.95rem, 2.5vw, 1.2rem);
   font-style: italic;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--ink-muted);
   line-height: 1.6;
   max-width: 28rem;
   margin: 0 auto;
