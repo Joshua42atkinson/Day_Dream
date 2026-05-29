@@ -16,8 +16,8 @@ impl PromptStrategy {
     pub fn select_strategy(user_input: &str, history: &[Turn]) -> Self {
         let word_count = user_input.split_whitespace().count();
 
-        // Simple heuristics for Phase 1
-        // TODO: Implement more sophisticated analysis in Phase 2
+        // Simple heuristics for Phase 1 (placeholder until full implementation)
+        // For now, use basic word count and keyword checks
 
         // Very short responses might indicate confusion or being stuck
         if word_count < 5 {

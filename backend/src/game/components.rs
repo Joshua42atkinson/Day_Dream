@@ -72,15 +72,8 @@ pub struct CognitiveLoad {
 
 // --- Narrative Components ---
 
-// StoryNode: Represents a point in the narrative graph
-#[derive(Component, Reflect, Default, Clone, Debug, PartialEq, Serialize, Deserialize)]
-#[reflect(Component)]
-pub struct StoryNode {
-    pub id: String,
-    pub content: String,
-    pub choices: Vec<String>, // IDs of connected nodes
-    pub visited: bool,
-}
+// NOTE: StoryNode is defined in common::expert::StoryNode.
+// The ECS-level narrative tracking is handled by StoryProgress below.
 
 // StoryProgress: Tracks the player's position in the narrative
 #[derive(Component, Reflect, Default, Clone, Debug, PartialEq, Serialize, Deserialize)]

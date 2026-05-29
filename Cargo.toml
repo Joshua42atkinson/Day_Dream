@@ -3,6 +3,7 @@ members = [
     "frontend",
     "backend",
     "common",
+    "engine",
 ]
 resolver = "2"
 

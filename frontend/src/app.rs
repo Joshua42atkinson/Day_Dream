@@ -7,7 +7,6 @@ use leptos_router::{
 use crate::pages::authoring::AuthoringPage;
 use crate::pages::daydream::Daydream;
 use crate::pages::not_found::NotFound;
-use crate::pages::research_dashboard::ResearchDashboard;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -46,9 +45,8 @@ fn Layout() -> impl IntoView {
 
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
-                                <a href="/" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Sandbox"</a>
-                                <a href="/research" class="text-gray-300 hover:text-green-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Research Logs"</a>
-                                <a href="/authoring" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Authoring"</a>
+                                <a href="/" class="text-gray-300 hover:text-purple-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Play"</a>
+                                <a href="/authoring" class="text-gray-300 hover:text-cyan-400 hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">"Author"</a>
                             </div>
                         </div>
                     </div>
@@ -59,7 +57,6 @@ fn Layout() -> impl IntoView {
                 <Router>
                     <Routes fallback=|| view! { "Page Not Found" }>
                         <Route path=path!("/") view=Daydream/>
-                        <Route path=path!("/research") view=ResearchDashboard/>
                         <Route path=path!("/authoring") view=AuthoringPage/>
                         <Route path=path!("/*any") view=NotFound/>
                     </Routes>

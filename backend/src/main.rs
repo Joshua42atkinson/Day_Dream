@@ -17,6 +17,7 @@ mod domain;
 mod error;
 mod game;
 mod handlers;
+mod narrative; // [NEW] YouTube video generation pipeline
 mod routes;
 mod static_assets; // [NEW]
 
@@ -27,7 +28,7 @@ use routes::expert::expert_routes;
 use routes::persona::persona_routes;
 use routes::player::player_routes;
 use routes::research::research_routes;
-use static_assets::Assets; // [NEW]
+use static_assets::static_handler;
 
 use crate::game::components::*;
 use crate::game::systems::*;
@@ -110,37 +111,9 @@ fn run_bevy_app(shared_log: Arc<RwLock<ResearchLog>>, shared_virtues: Arc<RwLock
     app.run();
 }
 
-// [NEW] Handler for static assets
-async fn static_handler(uri: axum::http::Uri) -> impl axum::response::IntoResponse {
-    let mut path = uri.path().trim_start_matches('/').to_string();
-
-    if path.is_empty() {
-        path = "index.html".to_string();
-    }
-
-    match Assets::get(&path) {
-        Some(content) => {
-            let mime = mime_guess::from_path(path).first_or_octet_stream();
-            (
-                [(axum::http::header::CONTENT_TYPE, mime.as_ref())],
-                content.data,
-            )
-                .into_response()
-        }
-        None => {
-            if path.contains('.') {
-                return axum::http::StatusCode::NOT_FOUND.into_response();
-            }
-            // Fallback to index.html for SPA routing
-            static_handler(axum::http::Uri::from_static("/index.html"))
-                .await
-                .into_response()
-        }
-    }
-}
 
 #[tokio::main]
-async fn main() {
+async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     println!("Starting Daydream Backend Server...");
 
     let shared_research_log = Arc::new(RwLock::new(ResearchLog::default()));
@@ -151,9 +124,10 @@ async fn main() {
 
     thread::spawn(move || run_bevy_app(log_clone, virtues_clone));
 
-    let conf = get_configuration(None).unwrap();
+    let conf = get_configuration(None)
+        .map_err(|e| format!("Failed to load Leptos configuration: {}", e))?;
     let leptos_options = conf.leptos_options;
-    let addr = leptos_options.site_addr.clone();
+    let addr = leptos_options.site_addr;
     // let routes = generate_route_list(App); // Not used in SPA mode
 
     let pool = match env::var("DATABASE_URL") {
@@ -181,8 +155,12 @@ async fn main() {
         shared_virtues,
     };
 
+    // SECURITY: Restrict CORS to known origins. Use env var for production override.
+    let allowed_origin = env::var("CORS_ORIGIN")
+        .unwrap_or_else(|_| "http://localhost:3000".to_string());
     let cors = CorsLayer::new()
-        .allow_origin(Any)
+        .allow_origin(allowed_origin.parse::<axum::http::HeaderValue>()
+            .unwrap_or_else(|_| "http://localhost:3000".parse().expect("static origin")))
         .allow_methods(Any)
         .allow_headers(Any);
 
@@ -198,7 +176,10 @@ async fn main() {
         .with_state(app_state);
 
     println!("Backend listening on http://{}", &addr);
-    axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await
+        .map_err(|e| format!("Failed to bind to {}: {}", addr, e))?;
+    axum::serve(listener, app).await
+        .map_err(|e| format!("Server error: {}", e))?;
+
+    Ok(())
 }

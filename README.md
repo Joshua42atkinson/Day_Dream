@@ -1,294 +1,143 @@
-# Daydream Initiative - Sovereign Gamutainment System
+# Daydream — Words Are Spells
 
-**A Headless Instructional Engine for Transformational Learning**
+**A Meaning-Making Engine Where Vocabulary Is Magic**
 
-[![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org/)
+[![Bevy](https://img.shields.io/badge/bevy-0.18-blue.svg)](https://bevyengine.org/)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![WASM](https://img.shields.io/badge/WebAssembly-Ready-blueviolet)](https://webassembly.org/)
 
-> **A generative, sovereign educational ecosystem that transforms instructor's text prompts into immersive 3D/Audio-Visual worlds**
-
----
-
-## 🎯 Vision
-
-The Daydream Initiative solves the **"Edutainment Gap"** - the false choice between pedagogical rigor (LMS, quizzes) and narrative immersion (AAA games). We provide a **sovereign, privacy-first platform** where:
-
-- ✅ **Non-programmers** (Instructional Designers, educators) create sophisticated learning experiences
-- ✅ **Students own their data** - All AI runs locally, no cloud leakage (FERPA-compliant)
-- ✅ **Institutions own the IP** - 100% open source under GPLv3, no vendor lock-in
-- ✅ **Research flourishes** - A "Living Laboratory" for Affective Computing and AI Ethics
-
-### The Pedagogical Innovation
-
-**Transformational Play** replaces "points and badges" with **Identity Work**:
-
-1. **Projective Identity Dissonance** (James Paul Gee): Learners choose an archetype
-2. **Inverse Persona Agent**: Local AI generates NPCs embodying traits the learner avoids
-3. **Resolution Through Learning**: Progress requires adopting new vocabulary, ethical frameworks, constructing a richer identity
+> **Letters spell words. Words cast spells. The student is a wizard learning to wield meaning itself.**
 
 ---
 
-## 🏗️ Architecture: The "Headless" Design
+## What Is Daydream?
 
-### The "Brain" (Authoritative Backend)
+Daydream is a **sovereign, local-first educational engine** built on [Bevy ECS](https://bevyengine.org/) that teaches vocabulary through experiential narrative — not definitions.
 
-**Rust/Bevy ECS** - Secure, sovereign state management on university servers
+Every word in a curriculum is a **spell card** with a Channel (Mind/Heart/Body/Action), a story moment, and a Socratic depth question. The student swipes through an interactive Choose-Your-Own-Adventure, building a **SpellBook** of mastered word-spells. Their journey reveals how they think — which channels they favor, which they avoid — reflected back as a living **Character Sheet**.
 
-```
-Backend (Rust/Axum)
-├── Bevy ECS Engine       → Authoritative game state
-├── Candle (Local AI)     → Llama-3-8B inference (on-premises)
-├── bevy_yarnspinner      → Branching narrative logic
-└── PostgreSQL            → Story/reflection persistence
-```
+This is **VAAM**: Vocabulary Acquisition Autonomous Meaning. A word isn't defined by other words. It's defined by experience.
 
-**Key Benefit**: Educational logic, student data, and AI never leave controlled environment.
-
-### The "Body" (Presentation Layer)
-
-**Leptos/WASM** - High-performance web client
+### The Core Mechanic
 
 ```
-Frontend (Leptos)  
-└── Compiles to WebAssembly → Runs in any browser
-    ├── No installation needed
-    ├── Works on Chromebooks, iPads, Lab PCs
-    └── "Frictionless Access" - Just click a link
+ENCOUNTER the word → EXPERIENCE it through story → OWN it as a spell
+        ↑                                                    │
+        └────────────── The Great Recycler ──────────────────┘
 ```
 
-### The "Lego" Stack
+### The Triple Sandwich
 
-| Module | Technology | Purpose |
-|--------|-----------|---------|
-| **Core Engine** | `bevy` ECS | Data-driven game logic, WASM-ready |
-| **Narrative** | `bevy_yarnspinner` | Branching dialogue (pedagogy as text files) |
-| **Physics** | `avian` | Deterministic puzzles and movement |
-| **AI Brain** | `candle` | Local LLM inference (privacy-preserving) |
-| **Audio** | `rodio` / `bevy_audio` | Procedural audio synthesis |
+Every slide delivers the word across three channels simultaneously:
 
-### Critical Architectural Patterns
+| Layer | Channel | Experience |
+|-------|---------|------------|
+| **Card** (top) | Mind | *What is this word?* |
+| **Story** (middle) | Heart | *What does it feel like?* |
+| **Setting** (bottom) | Body | *What's the vibe right now?* |
 
-#### 1. Async/Sync Bridge (`bevy_defer`)
-
-**Problem**: Axum (async) ↔ Bevy (sync) impedance mismatch
-
-**Solution**:
-
-```rust
-async fn save_story(State(async_world): State<AsyncWorld>) {
-    async_world.apply(|world: &mut World| {
-        // Safe mutation of Bevy state
-    }).await;
-}
-```
-
-#### 2. Blocking Compute Isolation
-
-**Problem**: AI inference blocks Tokio runtime
-
-**Solution**:
-
-```rust
-tokio::task::spawn_blocking(move || {
-    candle_llm_inference(prompt) // ✅ Non-blocking
-}).await?
-```
+When all three land, the student doesn't memorize — they **Flow**.
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Rust** 1.70+ ([rustup.rs](https://rustup.rs))
-- **PostgreSQL** 14+
-- **Trunk**: `cargo install trunk`
-- **sqlx-cli**: `cargo install sqlx-cli --no-default-features --features postgres`
-
-### Quick Start
+## Quick Start
 
 ```bash
-# 1. Setup database
-export DATABASE_URL="postgres://postgres:password@localhost:5432/daydream"
-cd backend && sqlx database create && sqlx migrate run
+# Build the engine
+cargo build -p daydream-engine
 
-# 2. Run backend
-cd backend && cargo run
-# → Server on http://localhost:8080
-
-# 3. Run frontend (new terminal)
-cd frontend && trunk serve
-# → UI on http://127.0.0.1:8080
+# Run it
+cargo run -p daydream-engine
 ```
 
-**👉 Full setup guide**: See [SETUP.md](SETUP.md)
+**Controls:**
+- `→` or `D` — Swipe Right (Yes / Accept)
+- `←` or `A` — Swipe Left (No / Reject)
+- `↓` or `S` or `Space` — Dig Deeper (VAAM depth prompt)
+- Mouse drag also works for all three directions
 
 ---
 
-## 📚 The "Generative Seed" Workflow
+## The Great Game Framework
 
-1. **Instructor Input** (No code required):
+Daydream's game design is powered by [*The Great Game*](2025_07_23%20great%20game%20book.md) — a self-mastery framework that maps directly to ECS mechanics:
 
-   ```toml
-   # seed_artifact.toml
-   theme = "Cyberpunk Ethics"
-   vocabulary = ["Utilitarianism", "Deontology", "Virtue Ethics"]
-   learning_goal = "Apply ethical frameworks to AI trolley problems"
-   ```
-
-2. **Engine Processing**:
-   - `bevy_yarnspinner` + `candle` LLM expand seed → dialogue trees
-   - Bevy ECS spawns entities, NPCs, quests at runtime
-
-3. **Student Experience**:
-   - 3D environment with NPCs posing ethical dilemmas
-   - Use vocabulary words to unlock dialogue options (Vocabulary-as-a-Mechanic)
-   - Real-time "Virtue Topology" dashboard shows identity shifts
+| Game Element | Great Game Concept | ECS Implementation |
+|---|---|---|
+| Card elements | Four Channels of Consciousness | `Channel` enum (Mind 🟢, Heart 🟠, Body 🔵, Action 🟡) |
+| Difficulty tiers | Four Stages | `Stage` enum (Hero → Outlaw → Edge Lord → Best Self) |
+| Crafting | The Great Recycler | Core gameplay loop: encounter → experience → own |
+| Collection | SpellBook | `SpellBook` resource with mastery levels |
+| Synergies | Five Phases / Generation Cycle | `SynergyLinks` component on word entities |
+| Player profile | Character Sheet | `CharacterSheet` resource with attunement scores |
+| Classes | Emergent archetypes | Auto-detected from play patterns (Oracle, Bard, Templar...) |
 
 ---
 
-## 🎓 For Purdue University
-
-### Institutional Value Proposition
-
-| Dimension | Value |
-|-----------|-------|
-| **Research Utility** | Living Laboratory for Affective Computing, Narrative Psychology, AI Ethics |
-| **Grant Eligibility** | Aligns with NSF "AI in Education" + "Open Cyberinfrastructure" calls |
-| **Interdisciplinary** | English (Interactive Fiction) + CS (Rust/AI) + Psychology (Identity Theory) |
-| **IP Protection** | GPLv3 ensures institutional ownership, prevents proprietary forks |
-
-### MVP Deliverables
-
-1. **The Holodeck**: Grey-box 3D environment (`bevy_fps_controller`)
-2. **The Conversationalist**: NPC with `bevy_yarnspinner` + local AI
-3. **The Mirror**: Real-time "Virtue Topology" UI dashboard
-
-### Evaluation Metrics
-
-- **Feasibility**: Frame time budget (LLM response <200ms on university GPU)
-- **Learning Outcomes**:
-  - Flow State Retention (time-on-task vs. LMS)
-  - Vocabulary Transfer (pre/post tests)
-  - Identity Expansion (Self-Efficacy surveys)
-
----
-
-## 🔐 Privacy & Sovereignty
-
-### FERPA/COPPA Compliance
-
-✅ **Local AI Processing**: Whisper (STT) + OpenAudio (TTS) run on university servers  
-✅ **No Cloud Dependencies**: Student voice/reflection data never leaves campus  
-✅ **Data Sovereignty**: PostgreSQL on-premises, full institutional control  
-✅ **Open Source**: Auditable codebase, no proprietary "black boxes"
-
-### The Anti-Walled Garden
-
-Unlike Unity/Unreal/Roblox platforms that create vendor lock-in:
-
-- **Own the Stack**: Rust code, Bevy engine, Candle AI - all open source
-- **Own the Data**: PostgreSQL under institutional control
-- **Own the Future**: No licensing fees, no platform deprecation risk
-
----
-
-## 🛠️ Development Workflow
-
-### Agentic Development with Google Antigravity
-
-**The "Force Multiplier" Approach**:
+## Architecture
 
 ```
-You (Architect)  : "Create ECS component `CognitiveLoad`"
-Antigravity (AI) : "Here's the Bevy system that adjusts fog  
-                    density based on learner confusion"
-Result           : Complex visual metaphors in minutes, not days
+engine/
+├── Cargo.toml          # Bevy 0.18 + serde
+└── src/
+    ├── main.rs         # App setup, system registration
+    ├── components.rs   # Full ECS type system (Channel, Stage, SpellPower, etc.)
+    ├── dag.rs          # Curriculum DAG loading + demo data
+    ├── input.rs        # Swipe gesture detection (mouse + keyboard)
+    └── render.rs       # Triple Sandwich visuals + trail review
 ```
 
-**Development Velocity Metric**: Features/week with AI agent vs. manual coding
+### Key Types
 
-### Current Status
-
-- ✅ **Frontend**: Leptos 0.8, compiling to WASM
-- ✅ **Backend**: Axum + PostgreSQL integration
-- ✅ **Database**: Story graph persistence with sqlx
-- 🔄 **Next**: Bevy ECS game loop integration
-- 🎯 **Planned**: Candle LLM + bevy_yarnspinner
-
----
-
-## 📖 Documentation
-
-- **[SETUP.md](SETUP.md)** - Platform-specific installation
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines
-- **[walkthrough.md](.gemini/antigravity/brain/*/walkthrough.md)** - Build verification
-
-### API Documentation
-
-See [API Endpoints](#) section in main README for story graph CRUD operations.
+- **`WordCard`** — The spell entity. Word, depth prompt, themes.
+- **`Channel`** — Mind/Heart/Body/Action with color derivation.
+- **`Stage`** — Hero/Outlaw/EdgeLord/BestSelf with star indicators.
+- **`SpellPower`** — Per-word mastery tracking (Encountered → Experienced → Owned → Mastered).
+- **`CharacterSheet`** — Student profile with channel attunement and emergent class detection.
+- **`SpellBook`** — Collection of all word-spells the student has engaged with.
 
 ---
 
-## 📜 License
+## Roadmap
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **Framework** | ✅ Done | Great Game type system, demo curriculum, Triple Sandwich rendering |
+| **Curriculum Authoring** | 🔲 Next | JSON loader, parent-facing authoring tool |
+| **Persistence** | 🔲 | Save/load SpellBook + CharacterSheet across sessions |
+| **Visual Polish** | 🔲 | Generated card art, animations, custom typography |
+| **AI Narrator** | 🔲 | WebLLM + fine-tuned Gemma 4 E2B per curriculum |
+| **Mobile** | 🔲 | WASM compile, PWA wrapper, touch swipe |
+
+Full details: **[docs/MASTER_DESIGN_DOC.md](docs/MASTER_DESIGN_DOC.md)**
+
+---
+
+## Who This Is For
+
+| User | Role |
+|------|------|
+| **Parent** | Authors word-DAG curricula. Chooses words, writes stories, sets moods. |
+| **Child** | Plays through the story. Swipes to navigate. Builds a SpellBook. |
+| **AI** | (Future) Narrates the journey. Fine-tuned Gemma model, runs on-device. |
+
+---
+
+## Privacy & Sovereignty
+
+- ✅ **100% Local** — No cloud. No accounts. No telemetry.
+- ✅ **On-Device AI** — Fine-tuned models run in-browser via WebLLM.
+- ✅ **Open Source** — GPL-3.0. Auditable. Forkable. Forever.
+- ✅ **COPPA/GDPR** — Privacy-first by architecture, not by policy.
+
+---
+
+## License
 
 **GNU General Public License v3.0 (GPLv3)**
 
-This copyleft license ensures:
-
-- ✅ Anyone can use, study, modify the code
-- ✅ All derivatives must remain open source
-- ✅ Prevents proprietary forks
-- ✅ Purdue University retains institutional ownership
-
-**Why GPLv3?** We reject permissive licenses (MIT/Apache) that allow commercial entities to create closed-source forks. Education should remain a public good.
+All derivatives must remain open source. Education should remain a public good.
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions from:
-
-- **Learning scientists** - Pedagogical theory implementation
-- **Rust developers** - ECS systems, WASM optimization
-- **AI researchers** - Candle LLM integration, quantization
-- **Narrative designers** - Yarnspinner scenario authoring
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
-
-## 📞 Contact & Support
-
-- **Issues**: [GitHub Issues](https://github.com/YOUR_ORG/Day_Dream/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_ORG/Day_Dream/discussions)
-- **Purdue Contacts**:
-  - Faculty Champion: [Prof. George Hanshaw](mailto:email@purdue.edu)
-  - Innovation Hub: [Purdue Envision Center](https://www.purdue.edu/envision/)
-
----
-
-## 🎖️ Acknowledgments
-
-**Built with**:
-
-- 🦀 **Rust** - Fearless concurrency, memory safety
-- 🎮 **Bevy** - ECS game engine
-- 🤖 **Candle** - HuggingFace ML framework
-- 🌐 **Leptos** - Reactive WASM frontend
-- 🏛️ **Purdue University** - Learning Design & Technology program
-
-**Developed using**: Google Antigravity (Agentic Development Platform)
-
----
-
-### Executive Summary
-
-> *"The Daydream Initiative moves beyond the 'Walled Gardens' of proprietary EdTech. By leveraging **Rust** for performance, **Bevy** for modularity, and **Local AI** for privacy, we are building a sovereign, generative learning engine. This system transforms the instructor's simple text prompts into immersive, 3D/Audio-Visual worlds, democratizing high-fidelity game-based learning for the entire university."*
-
-**Status**: Pre-alpha, architectural design validated. Frontend compiling successfully. Ready for Purdue institutional pickup.
-
----
-
-**Built with ❤️ in Rust** | **Privacy by Design** | **Open Source Forever** | **Purdue University**
+**Built with ❤️ in Rust + Bevy** | **Privacy by Design** | **Words Are Spells**

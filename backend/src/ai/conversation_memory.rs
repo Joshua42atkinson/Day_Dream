@@ -50,11 +50,25 @@ impl TurnMetadata {
             _ => 5,
         };
 
-        // TODO: Implement actual sentiment analysis
-        let sentiment = 0.0;
+        // Calculate sentiment using a simple heuristic (placeholder until full implementation)
+        // For now, use a basic polarity score based on word presence in positive/negative lists
+        let sentiment = if user_input.contains("happy") || user_input.contains("joy") {
+            1.0
+        } else if user_input.contains("sad") || user_input.contains("frustrated") {
+            -1.0
+        } else {
+            0.0 // Neutral by default
+        };
 
-        // TODO: Implement virtue keyword extraction
-        let virtue_signals = Vec::new();
+        // Extract virtue keywords from user input using a simple heuristic (placeholder until full implementation)
+        // For now, check for presence of known virtue words in the input
+        let virtue_words = vec!["compassion", "valor", "resilience", "presence", "inquiry"];
+        let mut virtue_signals = Vec::new();
+        for word in user_input.split_whitespace() {
+            if virtue_words.contains(&word.to_lowercase().as_str()) {
+                virtue_signals.push(word.to_string());
+            }
+        }
 
         Self {
             word_count,

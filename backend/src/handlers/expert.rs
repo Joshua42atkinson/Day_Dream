@@ -65,8 +65,10 @@ pub async fn save_graph(
         }
     };
 
-    let nodes_json = serde_json::to_value(&payload.nodes).unwrap();
-    let connections_json = serde_json::to_value(&payload.connections).unwrap();
+    let nodes_json = serde_json::to_value(&payload.nodes)
+        .map_err(|_| AppError::InternalServerError)?;
+    let connections_json = serde_json::to_value(&payload.connections)
+        .map_err(|_| AppError::InternalServerError)?;
 
     sqlx::query(
         r#"
@@ -91,4 +93,75 @@ pub async fn save_graph(
     })?;
 
     Ok(Json(payload))
+}
+
+/// Process a student's branching choice and update virtue topology.
+///
+/// This handler bridges the frontend's choice events into the Bevy ECS
+/// state engine. Each VAAM subject word maps to specific virtue adjustments,
+/// making the "topological choice mapping" from the Daydream Bible quantitative.
+pub async fn submit_choice(
+    State(app_state): State<AppState>,
+    Json(payload): Json<common::expert::ChoiceAction>,
+) -> Result<Json<common::expert::VirtueSnapshot>> {
+    // Map the subject word to virtue adjustments
+    // This is the pedagogical core: different concepts reinforce different virtues
+    let virtues = app_state.shared_virtues.clone();
+
+    {
+        let mut v = virtues.write().map_err(|_| AppError::InternalServerError)?;
+
+        match payload.subject_word.to_lowercase().as_str() {
+            "presence" => {
+                v.spirituality += 0.05;  // Grounding
+                v.self_efficacy += 0.02; // Willingness to engage
+            }
+            "bias" => {
+                v.competence += 0.05;    // Inquiry / curiosity
+                v.self_esteem += 0.03;   // Facing uncomfortable truths
+            }
+            "growth" | "resilience" => {
+                v.honor += 0.05;         // Persistence
+                v.self_efficacy += 0.04; // Agency
+                v.self_esteem += 0.03;   // Self-worth
+            }
+            "self-reflection" | "withdrawal" => {
+                v.compassion += 0.04;    // Self-compassion
+                v.interdependence += 0.03;
+            }
+            "conflict" => {
+                v.valor += 0.04;
+                v.self_efficacy += 0.03;
+            }
+            _ => {
+                // Unknown subject words still reward presence
+                v.self_efficacy += 0.01;
+            }
+        }
+    }
+
+    // Read back the updated snapshot
+    let snapshot = {
+        let v = virtues.read().map_err(|_| AppError::InternalServerError)?;
+        common::expert::VirtueSnapshot {
+            self_efficacy: v.self_efficacy,
+            self_esteem: v.self_esteem,
+            interdependence: v.interdependence,
+            compassion: v.compassion,
+            valor: v.valor,
+            inquiry: v.competence,          // Map competence → inquiry
+            resilience: v.honor,            // Map honor → resilience
+            presence: v.spirituality,       // Map spirituality → presence
+            total_choices: 0,               // TODO: add counter to VirtueTopology
+        }
+    };
+
+    tracing::info!(
+        "Choice processed: node={}, word={}, choice={}",
+        payload.node_id,
+        payload.subject_word,
+        payload.choice_id
+    );
+
+    Ok(Json(snapshot))
 }

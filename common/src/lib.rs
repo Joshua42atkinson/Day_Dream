@@ -1,13 +1,24 @@
-// This file defines all the data structures that are shared
-// between your `backend` server and your `frontend` UI.
-// This is the "common language" they both speak.
+// ============================================================================
+// COMMON CRATE — Shared data structures for the Daydream Somatic Sandbox
+// ============================================================================
+//
+// Active modules:
+//   - expert:      StoryGraph, StoryNode, StoryChoice, ChoiceAction, VirtueSnapshot
+//   - reflection:  Reflection form types
+//   - legacy:      Archived LitRPG/Iron Road types (still used by backend domain layer)
+//
+// The types below in this file are from the original LitRPG system.
+// They remain here because the backend domain layer still references them.
+// As we migrate handlers to use the new expert module types, these will
+// be moved to legacy.rs and eventually deleted.
 
 pub mod expert;
+pub mod legacy;
 pub mod reflection;
 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet}; // For loading static data
+use std::collections::{HashMap, HashSet};
 
 // --- Data Structures from quests.py ---
 // These are direct Rust translations of your Python quest data.

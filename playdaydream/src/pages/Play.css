@@ -1,0 +1,471 @@
+/* ════════════════════════════════════════════════════════════ */
+/* DAYDREAM — Play Page Styles                                 */
+/* ════════════════════════════════════════════════════════════ */
+/* Ported from prototype/index.html <style> block.             */
+/* Dark, cinematic, full-viewport. Mobile-first.               */
+
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── CONTAINER ───────────────────────────────────────── */
+.play-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  background: #0a0a0f;
+  overflow: hidden;
+}
+
+/* ── THE SLIDE CARD ──────────────────────────────────── */
+.slide-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  will-change: transform, opacity;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slide-card.entering {
+  animation: slideIn 0.5s var(--ease-out-expo) forwards;
+}
+
+.slide-card.interactive {
+  /* Transform controlled by JS — no CSS transition during drag */
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+/* ── BACKGROUND ──────────────────────────────────────── */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.55) saturate(1.2);
+  transition: filter 0.6s ease;
+}
+
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 15, 0.92) 0%,
+    rgba(5, 5, 15, 0.6) 30%,
+    rgba(5, 5, 15, 0.1) 55%,
+    rgba(5, 5, 15, 0.0) 70%
+  );
+}
+
+/* ── STORY CONTENT ───────────────────────────────────── */
+.slide-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 2rem 3rem;
+  z-index: 10;
+}
+
+.focus-word {
+  display: inline-block;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+.slide-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.slide-story {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  max-width: 36rem;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* ── DIRECTIONAL EXIT HINTS ──────────────────────────── */
+.exit-hint {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0);
+  transition: color 0.5s ease, opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.exit-hint.visible {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.exit-hint .arrow {
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+.exit-hint.up {
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+}
+.exit-hint.down {
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column-reverse;
+}
+.exit-hint.left {
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row;
+}
+.exit-hint.right {
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row-reverse;
+}
+
+/* ── ACTIVE DIRECTION FEEDBACK ───────────────────────── */
+.direction-label {
+  position: absolute;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0);
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease;
+  pointer-events: none;
+}
+
+.direction-label .dir-arrow {
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+  opacity: 0.7;
+}
+
+.direction-label.up {
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.direction-label.down {
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.direction-label.left {
+  left: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.direction-label.right {
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ── BREATHING RING ──────────────────────────────────── */
+.breathing-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  animation: breathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.breathing-ring.active {
+  opacity: 1;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* ── DEPTH OVERLAY (double-tap Socratic) ─────────────── */
+.depth-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 15, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 35;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  cursor: pointer;
+}
+
+.depth-overlay.visible {
+  opacity: 1;
+}
+
+.depth-word {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.depth-question {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 28rem;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  padding: 0 1.5rem;
+}
+
+.depth-dismiss {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── PROGRESS DOTS ───────────────────────────────────── */
+.progress-dots {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4rem;
+  z-index: 50;
+}
+
+.progress-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.3s ease, transform 0.3s var(--ease-out-back);
+}
+
+.progress-dot.visited {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.progress-dot.active {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.4);
+}
+
+/* ── END SCREEN ──────────────────────────────────────── */
+.end-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 15, 0.85);
+  backdrop-filter: blur(16px);
+  z-index: 40;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.end-overlay.visible {
+  opacity: 1;
+}
+
+.end-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.4rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.end-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.trail-container {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 20rem;
+  margin-bottom: 2rem;
+}
+
+.trail-step {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.3rem 0.7rem;
+  border-radius: 100px;
+}
+
+.trail-arrow {
+  opacity: 0.4;
+}
+
+.end-pattern {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 26rem;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.restart-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.7rem 2rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.restart-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── BACK BUTTON ─────────────────────────────────────── */
+.back-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 55;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.back-btn:hover {
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── KEY HINT ────────────────────────────────────────── */
+.key-hint {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.15);
+  z-index: 50;
+}
+
+/* ── MOBILE OPTIMIZATION ─────────────────────────────── */
+@media (max-width: 600px) {
+  .slide-content {
+    padding: 1.5rem 1.5rem 2.5rem;
+  }
+  .exit-hint {
+    font-size: 0.6rem;
+  }
+  .direction-label {
+    font-size: 1.3rem;
+  }
+}

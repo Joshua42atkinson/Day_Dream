@@ -8,6 +8,9 @@ edition = "2021"
 common = { path = "../common", features = ["ssr"] }
 frontend = { path = "../frontend" }
 
+# TRINITY protocol for shared AI components
+trinity-protocol = { path = "../../../Desktop/crates/trinity-protocol" }
+
 # Web Server framework
 axum = "0.7.5"
 tower-http = { version = "0.5", features = ["cors"] }
@@ -28,16 +31,25 @@ leptos = { version = "0.8.0-rc3", features = ["ssr"] }
 leptos_axum = "0.8.0-rc3"
 
 # State Management
-bevy = { version = "0.14" }
-bevy_ecs = { version = "0.14" }
-bevy_defer = "0.14"
-bevy_yarnspinner = "0.3.0"
+bevy = { version = "0.18", default-features = false, features = ["2d"] }
 
 # Database
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
 dotenvy = "0.15"
 uuid = { version = "1.8", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
+
+# YouTube Pipeline Dependencies
+# FFmpeg bindings for video assembly
+ffmpeg-next = "7.1"
+
+# Image processing
+image = "0.25"
+
+# HTTP client for API calls
+reqwest = { version = "0.12", features = ["json"] }
+
+# TODO: Add YouTube API client when ready for integration
 
 # AI/LLM - Local inference via Candle
 candle-core = "0.8.0"
@@ -53,5 +65,5 @@ dashmap = "5"
 log = "0.4"
 
 # Static Asset Embedding
-rust-embed = "8.5"
+rust-embed = "8.9.0"
 mime_guess = "2.0"

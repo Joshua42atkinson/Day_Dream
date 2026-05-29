@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Daydream</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0a0a0f;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
+}
+
+/* ── THE SLIDE CONTAINER ─────────────────────── */
+#slide-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+/* ── THE SLIDE CARD ──────────────────────────── */
+.slide-card {
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: grab;
+  will-change: transform, opacity;
+  transition: none;
+}
+
+.slide-card.animating {
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.slide-card.entering {
+  transition: transform 0.5s var(--ease-out-expo), opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* Background image */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.55) saturate(1.2);
+  transition: filter 0.6s ease;
+}
+
+.slide-card:not(.dragging) .slide-bg {
+  filter: brightness(0.55) saturate(1.2);
+}
+
+/* Gradient overlay for text readability */
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 15, 0.92) 0%,
+    rgba(5, 5, 15, 0.6) 30%,
+    rgba(5, 5, 15, 0.1) 55%,
+    rgba(5, 5, 15, 0.0) 70%
+  );
+}
+
+/* ── STORY CONTENT ───────────────────────────── */
+.slide-content {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  padding: 2rem 2rem 3rem;
+  z-index: 10;
+}
+
+.focus-word {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+.slide-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+
+.slide-story {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+  max-width: 36rem;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.4);
+}
+
+/* ── DIRECTIONAL EXIT HINTS ──────────────────── */
+.exit-hint {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.0);
+  transition: color 0.5s ease, transform 0.5s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.exit-hint.visible {
+  color: rgba(255,255,255,0.4);
+}
+
+.exit-hint .arrow {
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+.exit-hint.up    { top: 1.5rem; left: 50%; transform: translateX(-50%); flex-direction: column; }
+.exit-hint.down  { bottom: 1.5rem; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }
+.exit-hint.left  { left: 1.2rem; top: 50%; transform: translateY(-50%); flex-direction: row; }
+.exit-hint.right { right: 1.2rem; top: 50%; transform: translateY(-50%); flex-direction: row-reverse; }
+
+/* ── ACTIVE DIRECTION FEEDBACK ───────────────── */
+.direction-label {
+  position: absolute;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0);
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease;
+  pointer-events: none;
+}
+
+.direction-label .dir-arrow {
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+  opacity: 0.7;
+}
+
+.direction-label.up    { top: 15%; left: 50%; transform: translateX(-50%); }
+.direction-label.down  { bottom: 15%; left: 50%; transform: translateX(-50%); }
+.direction-label.left  { left: 8%; top: 50%; transform: translateY(-50%); }
+.direction-label.right { right: 8%; top: 50%; transform: translateY(-50%); }
+
+/* ── BREATHING PULSE ─────────────────────────── */
+.breathing-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.breathing-ring.active { opacity: 1; }
+.breathing-ring.done { opacity: 0; transition: opacity 0.5s ease; }
+
+@keyframes breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.8); border-color: rgba(255,255,255,0.1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); border-color: rgba(255,255,255,0.25); }
+}
+
+/* ── SOCRATIC DEPTH OVERLAY (double-tap) ─────── */
+.depth-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,5,15,0.88);
+  backdrop-filter: blur(12px);
+  z-index: 35;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.depth-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.depth-word {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.depth-question {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-style: italic;
+  color: rgba(255,255,255,0.6);
+  max-width: 28rem;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.depth-dismiss {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── KEY HINT ────────────────────────────────── */
+.key-hint {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.15);
+  z-index: 50;
+  transition: opacity 1s ease;
+}
+
+/* ── END SLIDE ───────────────────────────────── */
+.end-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,5,15,0.85);
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.end-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.end-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.4rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.end-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 1.5rem;
+}
+
+.end-pattern {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.55);
+  max-width: 26rem;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.trail-container {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 20rem;
+  margin-bottom: 2rem;
+}
+
+.trail-step {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 0.3rem 0.7rem;
+  border-radius: 100px;
+}
+
+.trail-step .trail-arrow { opacity: 0.4; }
+
+.restart-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 0.7rem 2rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.restart-btn:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.25);
+}
+
+/* ── SUBTLE PROGRESS DOTS ────────────────────── */
+.progress-dots {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4rem;
+  z-index: 50;
+}
+
+.progress-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transition: background 0.3s ease, transform 0.3s var(--ease-out-back);
+}
+
+.progress-dot.visited { background: rgba(255,255,255,0.4); }
+.progress-dot.active { background: rgba(255,255,255,0.8); transform: scale(1.4); }
+
+/* ── MOBILE OPTIMIZATION ─────────────────────── */
+@media (max-width: 600px) {
+  .slide-content { padding: 1.5rem 1.5rem 2.5rem; }
+  .exit-hint { font-size: 0.6rem; }
+  .direction-label { font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="slide-container"></div>
+
+<div class="progress-dots" id="progress-dots"></div>
+
+<div class="end-overlay" id="end-overlay">
+  <div class="end-title">Your journey, traced.</div>
+  <div class="end-subtitle">Here's the path you chose:</div>
+  <div class="trail-container" id="trail-container"></div>
+  <div class="end-pattern" id="end-pattern"></div>
+  <button class="restart-btn" onclick="restartAdventure()">Begin Again</button>
+</div>
+
+<div class="key-hint" id="key-hint">↑ ↓ ← → to navigate · double-tap to dig deeper</div>
+
+<script>
+// ════════════════════════════════════════════════
+// THE STORY GRAPH — A DAG of slide nodes
+// ════════════════════════════════════════════════
+const GRAPH = {
+  start: "threshold",
+  nodes: {
+    threshold: {
+      title: "The Threshold",
+      focusWord: "Presence",
+      story: "You stand before an ancient stone archway. Warm light spills through from the other side. The air is still. Something waits for you to choose.",
+      image: "images/threshold.png",
+      depth: "What does it mean to be present? Not yesterday, not tomorrow — just here, at this archway, with the light on your face.",
+      droneHz: 136.1,
+      exits: {
+        up:    { label: "Step through with curiosity", to: "forest", virtue: "curiosity" },
+        right: { label: "Touch the stone and listen", to: "garden", virtue: "courage" },
+        down:  null,
+        left:  null
+      }
+    },
+    forest: {
+      title: "The Glass Forest",
+      focusWord: "Bias",
+      story: "Dark glass trees reflect a warped version of you. A whisper echoes: 'You will fail here, just as you have before.' The reflection shows what you fear — not what is true.",
+      image: "images/forest.png",
+      depth: "The whisper uses your own voice. Why do we believe the worst stories we tell about ourselves? Where did you first learn that story?",
+      droneHz: 174.6,
+      exits: {
+        up:    { label: "Look closer at the reflection", to: "summit", virtue: "curiosity" },
+        right: { label: "Speak back to the whisper", to: "canyon", virtue: "courage" },
+        left:  { label: "Sit quietly in the moss", to: "garden", virtue: "caution" },
+        down:  { label: "Ask: why does this voice know my name?", to: "canyon", virtue: "depth" }
+      }
+    },
+    garden: {
+      title: "The Quiet Garden",
+      focusWord: "Patience",
+      story: "A walled garden filled with sunlight and birdsong. A fountain murmurs at the center. Nothing here demands anything of you. You can simply be.",
+      image: "images/garden.png",
+      depth: "Patience isn't waiting. It's the ability to be at peace while things unfold. What grows when you stop pulling at it?",
+      droneHz: 196.0,
+      exits: {
+        up:    { label: "Explore what grows here", to: "summit", virtue: "curiosity" },
+        right: { label: "Follow the path beyond the wall", to: "canyon", virtue: "courage" },
+        down:  { label: "Stay and listen to the water", to: "summit", virtue: "depth" },
+        left:  null
+      }
+    },
+    canyon: {
+      title: "The Stone Bridge",
+      focusWord: "Resilience",
+      story: "A narrow bridge over a deep canyon. The wind pushes hard. Across the gap, golden light breaks through clouds. Every step forward is a choice to keep going.",
+      image: "images/canyon.png",
+      depth: "Resilience isn't about not falling. It's about what you do with the wind. Can you lean into it instead of fighting it?",
+      droneHz: 220.0,
+      exits: {
+        up:    { label: "Cross the bridge", to: "summit", virtue: "curiosity" },
+        right: { label: "Run across — don't look down", to: "summit", virtue: "courage" },
+        down:  { label: "Look into the canyon below", to: "summit", virtue: "depth" },
+        left:  { label: "Go back to solid ground", to: "garden", virtue: "caution" }
+      }
+    },
+    summit: {
+      title: "The Summit",
+      focusWord: "Clarity",
+      story: "Above the clouds. The world stretches out below — every path you've walked visible from here. You understand now: there were no wrong choices. Only the ones you made.",
+      image: "images/summit.png",
+      depth: "Clarity isn't knowing the answer. It's seeing the question clearly for the first time.",
+      droneHz: 261.6,
+      exits: { up: null, down: null, left: null, right: null }
+    }
+  }
+};
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let currentNodeId = GRAPH.start;
+let trail = [];
+let isDragging = false;
+let startX = 0, startY = 0;
+let deltaX = 0, deltaY = 0;
+let activeCard = null;
+let breathingTimeout = null;
+let exitsRevealed = false;
+let depthShowing = false;
+let lastTapTime = 0;
+
+// ════════════════════════════════════════════════
+// AMBIENT DRONE (Web Audio API)
+// ════════════════════════════════════════════════
+let audioCtx = null;
+let droneOsc = null;
+let droneGain = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  droneGain = audioCtx.createGain();
+  droneGain.gain.value = 0;
+  droneGain.connect(audioCtx.destination);
+}
+
+function playDrone(hz) {
+  if (!audioCtx) return;
+  if (droneOsc) { droneOsc.stop(); droneOsc = null; }
+  droneOsc = audioCtx.createOscillator();
+  droneOsc.type = 'sine';
+  droneOsc.frequency.value = hz;
+  droneOsc.connect(droneGain);
+  droneOsc.start();
+  droneGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  droneGain.gain.setTargetAtTime(0.06, audioCtx.currentTime, 0.8);
+}
+
+function fadeDrone() {
+  if (!audioCtx || !droneGain) return;
+  droneGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.3);
+}
+
+// ════════════════════════════════════════════════
+// RENDER SLIDE
+// ════════════════════════════════════════════════
+function renderSlide(nodeId, entryDirection) {
+  const node = GRAPH.nodes[nodeId];
+  if (!node) return;
+  
+  currentNodeId = nodeId;
+  exitsRevealed = false;
+  
+  const container = document.getElementById('slide-container');
+  
+  // Build card HTML
+  const card = document.createElement('div');
+  card.className = 'slide-card entering';
+  card.innerHTML = `
+    <div class="slide-bg" style="background-image: url('${node.image}')"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="breathing-ring" id="breathing-ring"></div>
+    
+    ${buildExitHint('up', node.exits.up)}
+    ${buildExitHint('down', node.exits.down)}
+    ${buildExitHint('left', node.exits.left)}
+    ${buildExitHint('right', node.exits.right)}
+    
+    ${buildDirectionLabel('up', node.exits.up)}
+    ${buildDirectionLabel('down', node.exits.down)}
+    ${buildDirectionLabel('left', node.exits.left)}
+    ${buildDirectionLabel('right', node.exits.right)}
+    
+    <div class="slide-content">
+      <div class="focus-word">${node.focusWord}</div>
+      <h1 class="slide-title">${node.title}</h1>
+      <p class="slide-story">${node.story}</p>
+    </div>
+  `;
+  
+  // Entry animation: slide in from opposite of entry direction
+  const offsets = {
+    up: 'translateY(100%)',
+    down: 'translateY(-100%)',
+    left: 'translateX(100%)',
+    right: 'translateX(-100%)',
+    none: 'scale(0.92)'
+  };
+  
+  card.style.transform = offsets[entryDirection || 'none'];
+  card.style.opacity = entryDirection ? '1' : '0';
+  
+  container.appendChild(card);
+  activeCard = card;
+  
+  // Trigger entry animation
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      card.style.transform = 'translate(0,0) scale(1)';
+      card.style.opacity = '1';
+    });
+  });
+  
+  // Start ambient drone (audio requires user gesture, so it starts on first interaction)
+  if (node.droneHz && audioCtx) playDrone(node.droneHz);
+  
+  // Check if this is an end node
+  const hasExits = Object.values(node.exits).some(e => e !== null);
+  if (!hasExits) {
+    setTimeout(() => { fadeDrone(); showEndScreen(); }, 1200);
+    return;
+  }
+  
+  // Breathing pause (2 seconds), then reveal exits
+  const ring = card.querySelector('#breathing-ring');
+  setTimeout(() => ring.classList.add('active'), 600);
+  
+  breathingTimeout = setTimeout(() => {
+    ring.classList.add('done');
+    revealExits(card);
+    
+    // Remove entering class and enable interaction
+    card.classList.remove('entering');
+    attachDragListeners(card, node);
+  }, 2600);
+  
+  updateProgressDots();
+}
+
+function buildExitHint(dir, exit) {
+  if (!exit) return '';
+  const arrows = { up: '↑', down: '↓', left: '←', right: '→' };
+  return `<div class="exit-hint ${dir}" data-dir="${dir}">
+    <span class="arrow">${arrows[dir]}</span>
+    <span>${exit.label}</span>
+  </div>`;
+}
+
+function buildDirectionLabel(dir, exit) {
+  if (!exit) return '';
+  const arrows = { up: '↑', down: '↓', left: '←', right: '→' };
+  return `<div class="direction-label ${dir}" data-dir-label="${dir}">
+    <span class="dir-arrow">${arrows[dir]}</span>
+    <span>${exit.label}</span>
+  </div>`;
+}
+
+function revealExits(card) {
+  exitsRevealed = true;
+  card.querySelectorAll('.exit-hint').forEach(h => h.classList.add('visible'));
+}
+
+// ════════════════════════════════════════════════
+// DRAG / SWIPE INTERACTION
+// ════════════════════════════════════════════════
+// Single global handlers — avoids listener leak across slide transitions
+let currentDragState = { card: null, node: null };
+
+window.addEventListener('mousemove', e => {
+  if (isDragging && currentDragState.card) {
+    onDragMove(e.clientX, e.clientY, currentDragState.card, currentDragState.node);
+  }
+});
+window.addEventListener('mouseup', () => {
+  if (isDragging && currentDragState.card) {
+    onDragEnd(currentDragState.card, currentDragState.node);
+  }
+});
+window.addEventListener('touchmove', e => {
+  if (isDragging && currentDragState.card) {
+    const t = e.touches[0];
+    onDragMove(t.clientX, t.clientY, currentDragState.card, currentDragState.node);
+  }
+}, { passive: true });
+window.addEventListener('touchend', () => {
+  if (isDragging && currentDragState.card) {
+    onDragEnd(currentDragState.card, currentDragState.node);
+  }
+});
+
+function attachDragListeners(card, node) {
+  currentDragState = { card, node };
+  
+  // Mouse — only mousedown is per-card
+  card.addEventListener('mousedown', e => onDragStart(e.clientX, e.clientY, card, node));
+  
+  // Touch — only touchstart is per-card
+  card.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    onDragStart(t.clientX, t.clientY, card, node);
+  }, { passive: true });
+  
+  // Double-tap/double-click — Socratic "dig deeper" (5th action: VAAM depth)
+  card.addEventListener('dblclick', e => {
+    e.preventDefault();
+    showDepth(card, node);
+  });
+}
+
+function onDragStart(x, y, card, node) {
+  if (!exitsRevealed) return;
+  isDragging = true;
+  startX = x; startY = y;
+  deltaX = 0; deltaY = 0;
+  card.classList.add('dragging');
+  card.style.transition = 'none';
+  card.style.cursor = 'grabbing';
+}
+
+function onDragMove(x, y, card, node) {
+  deltaX = x - startX;
+  deltaY = y - startY;
+  
+  // Determine primary direction
+  const dir = getPrimaryDirection(deltaX, deltaY);
+  const exit = dir ? node.exits[dir] : null;
+  
+  // Apply dampening if no exit in that direction
+  let dx = deltaX, dy = deltaY;
+  if (!exit) {
+    dx *= 0.15;
+    dy *= 0.15;
+  }
+  
+  // Apply transform
+  const rotate = dx * 0.015;
+  card.style.transform = `translate(${dx}px, ${dy}px) rotate(${rotate}deg)`;
+  
+  // Show direction label
+  const magnitude = Math.sqrt(dx*dx + dy*dy);
+  const threshold = 60;
+  
+  card.querySelectorAll('.direction-label').forEach(l => {
+    const lDir = l.dataset.dirLabel;
+    if (lDir === dir && exit && magnitude > threshold * 0.4) {
+      const alpha = Math.min(1, (magnitude - threshold * 0.4) / (threshold * 1.5));
+      l.style.color = `rgba(255,255,255,${alpha})`;
+    } else {
+      l.style.color = 'rgba(255,255,255,0)';
+    }
+  });
+  
+  // Dim exit hints during drag
+  card.querySelectorAll('.exit-hint').forEach(h => {
+    h.style.color = magnitude > 20 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)';
+  });
+}
+
+function onDragEnd(card, node) {
+  isDragging = false;
+  card.classList.remove('dragging');
+  card.style.cursor = 'grab';
+  
+  const dir = getPrimaryDirection(deltaX, deltaY);
+  const exit = dir ? node.exits[dir] : null;
+  const magnitude = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+  const threshold = 80;
+  
+  if (exit && magnitude > threshold) {
+    // COMMIT: fly card off screen in swipe direction
+    const flyX = (dir === 'left' ? -1 : dir === 'right' ? 1 : 0) * window.innerWidth * 1.5;
+    const flyY = (dir === 'up' ? -1 : dir === 'down' ? 1 : 0) * window.innerHeight * 1.5;
+    
+    fadeDrone();
+    card.classList.add('animating');
+    card.style.transform = `translate(${flyX}px, ${flyY}px) rotate(${flyX * 0.01}deg)`;
+    card.style.opacity = '0';
+    
+    // Init audio on first user gesture
+    initAudio();
+    
+    // Record trail
+    trail.push({ node: currentNodeId, direction: dir, virtue: exit.virtue, label: exit.label });
+    
+    // Render next slide after animation
+    setTimeout(() => {
+      card.remove();
+      renderSlide(exit.to, dir);
+    }, 400);
+  } else {
+    // SNAP BACK
+    card.classList.add('animating');
+    card.style.transform = 'translate(0,0) rotate(0deg)';
+    
+    // Reset labels
+    card.querySelectorAll('.direction-label').forEach(l => l.style.color = 'rgba(255,255,255,0)');
+    card.querySelectorAll('.exit-hint').forEach(h => h.style.color = 'rgba(255,255,255,0.4)');
+    
+    setTimeout(() => card.classList.remove('animating'), 400);
+  }
+}
+
+function getPrimaryDirection(dx, dy) {
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+  if (absDx < 20 && absDy < 20) return null;
+  
+  if (absDx > absDy) {
+    return dx > 0 ? 'right' : 'left';
+  } else {
+    return dy > 0 ? 'down' : 'up';
+  }
+}
+
+// ════════════════════════════════════════════════
+// SOCRATIC DEPTH (double-tap: the 5th action)
+// ════════════════════════════════════════════════
+function showDepth(card, node) {
+  if (depthShowing || !node.depth) return;
+  depthShowing = true;
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'depth-overlay';
+  overlay.innerHTML = `
+    <div class="depth-word">${node.focusWord}</div>
+    <div class="depth-question">${node.depth}</div>
+    <div class="depth-dismiss">tap anywhere to return</div>
+  `;
+  card.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+  
+  overlay.addEventListener('click', () => {
+    overlay.classList.remove('visible');
+    setTimeout(() => { overlay.remove(); depthShowing = false; }, 400);
+  });
+}
+
+// ════════════════════════════════════════════════
+// KEYBOARD NAVIGATION (arrow keys + space for depth)
+// ════════════════════════════════════════════════
+window.addEventListener('keydown', e => {
+  if (!exitsRevealed || isDragging) return;
+  const { card, node } = currentDragState;
+  if (!card || !node) return;
+  
+  const keyMap = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
+  const dir = keyMap[e.key];
+  
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    showDepth(card, node);
+    return;
+  }
+  
+  if (!dir) return;
+  e.preventDefault();
+  const exit = node.exits[dir];
+  if (!exit) return;
+  
+  // Hide key hint after first use
+  const hint = document.getElementById('key-hint');
+  if (hint) hint.style.opacity = '0';
+  
+  initAudio();
+  fadeDrone();
+  
+  const flyX = (dir === 'left' ? -1 : dir === 'right' ? 1 : 0) * window.innerWidth * 1.5;
+  const flyY = (dir === 'up' ? -1 : dir === 'down' ? 1 : 0) * window.innerHeight * 1.5;
+  card.classList.add('animating');
+  card.style.transform = `translate(${flyX}px, ${flyY}px)`;
+  card.style.opacity = '0';
+  
+  trail.push({ node: currentNodeId, direction: dir, virtue: exit.virtue, label: exit.label });
+  setTimeout(() => { card.remove(); renderSlide(exit.to, dir); }, 400);
+});
+
+// ════════════════════════════════════════════════
+// END SCREEN
+// ════════════════════════════════════════════════
+function showEndScreen() {
+  const overlay = document.getElementById('end-overlay');
+  const trailEl = document.getElementById('trail-container');
+  const patternEl = document.getElementById('end-pattern');
+  
+  // Build trail visualization
+  const dirSymbols = { up: '↑', down: '↓', left: '←', right: '→' };
+  trailEl.innerHTML = trail.map((step) => {
+    const nodeName = GRAPH.nodes[step.node]?.focusWord || step.node;
+    return `<div class="trail-step">
+      <span>${nodeName}</span>
+      <span class="trail-arrow">${dirSymbols[step.direction]}</span>
+    </div>`;
+  }).join('') + `<div class="trail-step"><span>Clarity</span></div>`;
+  
+  // Traversal pattern analysis
+  const counts = { curiosity: 0, courage: 0, caution: 0, depth: 0 };
+  trail.forEach(s => { if (counts[s.virtue] !== undefined) counts[s.virtue]++; });
+  const dominant = Object.entries(counts).sort((a,b) => b[1] - a[1])[0];
+  const patterns = {
+    curiosity: "You moved toward the unknown. Your instinct is to explore before deciding.",
+    courage:   "You chose action when others might have hesitated. You trust yourself to handle what comes.",
+    caution:   "You paused when the path felt uncertain. Wisdom often sounds like silence.",
+    depth:     "You asked 'why' more than 'what.' You look beneath the surface of things."
+  };
+  patternEl.textContent = patterns[dominant[0]] || '';
+  
+  overlay.classList.add('visible');
+}
+
+function restartAdventure() {
+  trail = [];
+  currentNodeId = GRAPH.start;
+  document.getElementById('end-overlay').classList.remove('visible');
+  document.getElementById('slide-container').innerHTML = '';
+  renderSlide(GRAPH.start, null);
+}
+
+// ════════════════════════════════════════════════
+// PROGRESS DOTS
+// ════════════════════════════════════════════════
+function updateProgressDots() {
+  const allNodes = Object.keys(GRAPH.nodes);
+  const dotsEl = document.getElementById('progress-dots');
+  const visitedIds = trail.map(s => s.node);
+  
+  dotsEl.innerHTML = allNodes.map(id => {
+    let cls = 'progress-dot';
+    if (id === currentNodeId) cls += ' active';
+    else if (visitedIds.includes(id)) cls += ' visited';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════
+renderSlide(GRAPH.start, null);
+</script>
+</body>
+</html>

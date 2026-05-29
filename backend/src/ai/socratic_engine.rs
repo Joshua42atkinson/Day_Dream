@@ -126,7 +126,7 @@ impl SocraticEngine {
         let mut processed = response.trim().to_string();
 
         // Ensure response doesn't give direct answers (basic heuristic)
-        // TODO: More sophisticated filtering
+        // For now, use simple keyword checks to avoid giving answers
 
         // Ensure response ends with a question mark
         if !processed.ends_with('?') {

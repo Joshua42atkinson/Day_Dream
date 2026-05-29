@@ -103,3 +103,24 @@ pub async fn save_graph(graph: StoryGraph) -> Result<StoryGraph, String> {
         Err(format!("Failed to save graph: {}", res.status()))
     }
 }
+
+// --- Bevy ECS Virtue Bridge ---
+
+use common::expert::{ChoiceAction, VirtueSnapshot};
+
+pub async fn submit_choice_action(action: ChoiceAction) -> Result<VirtueSnapshot, String> {
+    let res = gloo_net::http::Request::post("http://localhost:3000/api/quest/action")
+        .json(&action)
+        .map_err(|e| e.to_string())?
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if res.ok() {
+        let snapshot: VirtueSnapshot = res.json().await.map_err(|e| e.to_string())?;
+        Ok(snapshot)
+    } else {
+        Err(format!("Failed to submit choice: {}", res.status()))
+    }
+}
+
