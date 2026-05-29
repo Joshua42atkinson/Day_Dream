@@ -51,6 +51,7 @@ pub fn NodeCanvas() -> impl IntoView {
                 },
                 nodes: current_nodes,
                 connections: current_connections,
+                ..Default::default()
             };
 
             match save_graph(graph).await {
@@ -142,7 +143,14 @@ pub fn NodeCanvas() -> impl IntoView {
                             content: "Write something...".to_string(),
                             x: 100.0,
                             y: 100.0,
+                            subject_word: "".to_string(),
+                            image_url: None,
+                            audio_url: None,
+                            target_freq: None,
+                            choices: vec![],
+                            ..Default::default()
                         };
+
                         set_nodes.update(|n| n.push(RwSignal::new(new_node)));
                     }
                 >
